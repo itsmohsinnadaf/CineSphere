@@ -1,0 +1,299 @@
+/* src/styles/player.css */
+
+/* Player page wrapper – full-width center like your screenshot */
+.cs-player-page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.cs-player-card {
+  background: var(--cs-surface-player);
+  border-radius: 24px;
+  padding: 16px 16px 18px;
+  box-shadow: var(--cs-shadow-medium);
+  border: 1px solid var(--cs-border-soft);
+  width: 100%;
+  max-width: 1180px;
+  margin: 10px auto 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cs-player-title {
+  margin: 0 0 4px;
+  font-size: 18px;
+  color: var(--cs-text-primary);
+}
+
+.cs-player-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: var(--cs-text-secondary);
+}
+
+.cs-player-subtitle-small {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+/* Video wrapper & controls */
+
+.cs-video-wrapper {
+  position: relative;
+  margin: 10px 0 16px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+  flex-shrink: 0;
+}
+
+.cs-theme-light .cs-video-wrapper {
+  background: #020617;
+}
+
+.cs-video-inner {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 */
+  min-height: 340px;
+}
+
+.cs-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  border: none;
+  background: #000;
+}
+
+/* controls overlay */
+
+.cs-player-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 6px 10px 8px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95),
+    rgba(0, 0, 0, 0.4),
+    transparent
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cs-seek-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.6);
+  outline: none;
+}
+
+.cs-seek-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  cursor: pointer;
+  border: 2px solid #f97373;
+}
+
+.cs-seek-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  cursor: pointer;
+  border: 2px solid #f97373;
+}
+
+.cs-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.cs-controls-left,
+.cs-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cs-controls-center {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.cs-time-display {
+  font-size: 12px;
+  color: #e5e7eb;
+}
+
+/* circular buttons */
+.cs-control-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+  background: rgba(15, 23, 42, 0.95);
+  color: #f9fafb;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-control-btn svg {
+  color: #e5e7eb;
+}
+
+.cs-control-btn-primary {
+  background: #f97373;
+  color: #111827;
+  font-weight: 600;
+}
+
+.cs-control-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* volume slider */
+
+.cs-volume-slider {
+  width: 90px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.6);
+  outline: none;
+}
+
+.cs-volume-slider::-webkit-slider-thumb,
+.cs-volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #38bdf8;
+  cursor: pointer;
+}
+
+/* quality dropdown */
+
+.cs-quality-select {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  font-size: 11px;
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+}
+
+/* player footer buttons */
+
+.cs-player-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.cs-player-footer-buttons {
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.cs-btn {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+}
+
+.cs-btn-large {
+  padding-inline: 18px;
+  padding-block: 8px;
+  font-size: 14px;
+}
+
+.cs-btn-primary {
+  background: var(--cs-accent);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(244, 75, 75, 0.6);
+}
+
+.cs-btn-secondary {
+  background: rgba(39, 39, 60, 0.9);
+  color: #e6e6ff;
+}
+
+/* FULLSCREEN */
+
+.cs-player-card-fullscreen {
+  border-radius: 0;
+  padding: 0;
+  background: #000;
+}
+
+.cs-player-card-fullscreen .cs-player-header,
+.cs-player-card-fullscreen .cs-player-footer {
+  display: none;
+}
+
+.cs-player-card-fullscreen .cs-video-wrapper {
+  margin: 0;
+  border-radius: 0;
+}
+
+.cs-player-card-fullscreen .cs-video-inner {
+  padding-top: 0;
+  min-height: 100vh;
+}
+
+.cs-player-card-fullscreen .cs-video {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  object-fit: contain;
+}
+
+.cs-player-card-fullscreen .cs-player-controls {
+  padding-bottom: 10px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .cs-player-card {
+    margin-inline: 0;
+  }
+}
