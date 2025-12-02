@@ -1,5 +1,5 @@
 // src/api/api.js
-const API_BASE = "http://localhost:4000";
+const API_BASE = "https://cinesphere-mj9d.onrender.com";
 
 /**
  * Browse a path via backend.
