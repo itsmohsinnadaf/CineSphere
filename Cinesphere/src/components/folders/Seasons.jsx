@@ -5,7 +5,8 @@ export default function Seasons({ seriesTitle, seasons, onSeasonClick }) {
   return (
     <section className="cs-left">
       <h2 className="cs-section-title">
-        {seriesTitle} <span className="cs-section-subtitle">Seasons</span>
+
+        
       </h2>
 
       <div className="cs-big-list">

@@ -338,6 +338,26 @@ export function useLibrary() {
     setView("seriesEpisodes");
   };
 
+  const backToSeriesRoot = () => {
+    setSelectedSeriesRoot(null);
+    setSeriesFolders([]);
+    setView("root");
+    setActiveNav("home");
+  };
+
+  const backToSeriesList = () => {
+    setSelectedSeries(null);
+    setSeasonFolders([]);
+    setView("seriesList");
+  };
+
+  const backToSeasons = () => {
+    setSelectedSeason(null);
+    setEpisodes([]);
+    setView("seriesSeasons"); 
+  };
+
+
   /* ---------- ROOT CARD & NAV CLICK HANDLERS ---------- */
 
   const handleRootCardClick = (rootFolder) => {
@@ -418,6 +438,10 @@ export function useLibrary() {
     backFromMoviePlayer,
     backFromEpisodePlayer,
     backToMovieGenres,
+    backToSeriesRoot,
+    backToSeriesList,
+    backToSeasons,
+
     resetAll,
   };
 }

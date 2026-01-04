@@ -3,9 +3,7 @@
 export default function SeriesList({ rootTitle, series, onSeriesClick }) {
   return (
     <section className="cs-left">
-      <h2 className="cs-section-title">
-        {rootTitle} <span className="cs-section-subtitle">Series</span>
-      </h2>
+      <h2 className="cs-section-title"></h2>
 
       <div className="cs-big-list">
         {series.map((s) => (

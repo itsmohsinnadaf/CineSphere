@@ -49,6 +49,9 @@ function App() {
     backFromMoviePlayer,
     backFromEpisodePlayer,
     backToMovieGenres,
+    backToSeriesRoot,
+    backToSeriesList,
+    backToSeasons,
     resetAll,
   } = useLibrary();
 
@@ -135,34 +138,62 @@ function App() {
 
     // Series root – list of series
     if (view === "seriesList" && selectedSeriesRoot) {
-      return (
+    return (
+      <section className="cs-left">
+        <div className="cs-page-header">
+          <BackButton onBack={backToSeriesRoot} />
+
+          <h2 className="cs-section-title">
+            {selectedSeriesRoot.title}
+          </h2>
+        </div>
+
         <SeriesList
           rootTitle={selectedSeriesRoot.title}
           series={seriesFolders}
           onSeriesClick={openSeriesFolder}
         />
-      );
-    }
+      </section>
+    );
+  }
+
 
     // Seasons
     if (view === "seriesSeasons" && selectedSeries) {
       return (
-        <Seasons
-          seriesTitle={selectedSeries.title}
-          seasons={seasonFolders}
-          onSeasonClick={openSeason}
-        />
+        <section className="cs-left">
+          <div className="cs-page-header">
+            <BackButton onBack={backToSeriesList} />
+
+            <h2 className="cs-section-title">
+              {selectedSeries.title}
+              <span className="cs-section-subtitle"> Seasons</span>
+            </h2>
+          </div>
+
+          <Seasons
+            seriesTitle={selectedSeries.title}
+            seasons={seasonFolders}
+            onSeasonClick={openSeason}
+          />
+        </section>
       );
     }
+
 
     // Episodes grid (same card design as movies)
     if (view === "seriesEpisodes" && selectedSeason) {
       return (
         <section className="cs-left">
-          <h2 className="cs-section-title" style={{ textAlign: "center" }}>
-            {selectedSeason.title}{" "}
-            <span className="cs-section-subtitle">Episodes</span>
-          </h2>
+          <div className="cs-page-header">
+            <BackButton onBack={backToSeasons} />
+
+            <h2 className="cs-section-title">
+              {selectedSeason.title}
+              <span className="cs-section-subtitle"> Episodes</span>
+            </h2>
+          </div>
+
           <div className="cs-item-grid cs-centered-row">
             {episodes.map((e, idx) => (
               <EpisodeCard
@@ -177,6 +208,7 @@ function App() {
         </section>
       );
     }
+
 
     // Episode player page
     if (
