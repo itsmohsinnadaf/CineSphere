@@ -95,6 +95,19 @@ body {
 
 /* HEADER / NAVBAR */
 
+.cs-page-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* Push title slightly to the right visually */
+.cs-page-header .cs-section-title {
+  margin: 0;
+}
+
+
 .cs-header {
   display: flex;
   align-items: center;

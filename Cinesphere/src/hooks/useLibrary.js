@@ -47,6 +47,7 @@ function isCloudImage(url) {
   return url.startsWith("http://") || url.startsWith("https://");
 }
 
+
 /**
  * view values:
  *  - "root"
@@ -196,6 +197,14 @@ export function useLibrary() {
       setLoading(false);
     }
   }
+
+  const backToMovieGenres = () => {
+  setSelectedGenre(null);
+  setSelectedMovie(null);
+  setMovieTitles([]);
+  setView("moviesGenres");
+};
+
 
   const handleMovieClick = (movie) => {
     setSelectedMovie(movie);
@@ -408,6 +417,7 @@ export function useLibrary() {
     handleEpisodeClick,
     backFromMoviePlayer,
     backFromEpisodePlayer,
+    backToMovieGenres,
     resetAll,
   };
 }

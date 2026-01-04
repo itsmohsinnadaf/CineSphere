@@ -1,5 +1,6 @@
 // src/components/folders/Seasons.jsx
 
+
 export default function Seasons({ seriesTitle, seasons, onSeasonClick }) {
   return (
     <section className="cs-left">

@@ -16,6 +16,9 @@ import MovieCard from "./components/cards/MovieCard";
 import EpisodeCard from "./components/cards/EpisodeCard";
 import VideoPlayer from "./components/player/VideoPlayer";
 
+import BackButton from "./components/common/BackButton";
+
+
 function App() {
   const {
     view,
@@ -45,6 +48,7 @@ function App() {
     handleEpisodeClick,
     backFromMoviePlayer,
     backFromEpisodePlayer,
+    backToMovieGenres,
     resetAll,
   } = useLibrary();
 
@@ -77,31 +81,42 @@ function App() {
           rootTitle={selectedMovieRoot.title}
           genres={movieGenres}
           onGenreClick={openMovieGenre}
+          onBack={resetAll}
         />
       );
     }
 
     // Movies – grid of movie cards (Image 1 style)
     if (view === "moviesTitles" && selectedGenre) {
-      return (
-        <section className="cs-left">
-          <h2 className="cs-section-title" style={{ textAlign: "center" }}>
-            {selectedGenre.title}{" "}
-            <span className="cs-section-subtitle">Movies</span>
-          </h2>
-          <div className="cs-item-grid cs-centered-row">
-            {movieTitles.map((m) => (
-              <MovieCard
-                key={m.id}
-                movie={m}
-                active={false}
-                onClick={() => handleMovieClick(m)}
-              />
-            ))}
-          </div>
-        </section>
-      );
-    }
+  return (
+    <section className="cs-left">
+      <div className="cs-page-header">
+        <BackButton onBack={backToMovieGenres} />
+
+        <h2 className="cs-section-title">
+          {selectedGenre.title}{" "}
+          <span className="cs-section-subtitle">Movies</span>
+        </h2>
+      </div>
+
+      <div className="cs-item-grid cs-centered-row">
+        {movieTitles.map((m) => (
+          <MovieCard
+            key={m.id}
+            movie={m}
+            active={false}
+            onClick={() => handleMovieClick(m)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+  
+
+  
+
 
     // Movie player page (Image 2 & Image 3)
     if (view === "moviePlayer" && selectedMovie && selectedGenre) {
