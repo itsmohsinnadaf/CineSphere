@@ -1,4 +1,6 @@
 // src/components/player/VideoPlayer.jsx
+
+import { IoArrowBack } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 
 const VolumeOnIcon = () => (
@@ -37,9 +39,10 @@ const VolumeOffIcon = () => (
   </svg>
 );
 
-export default function VideoPlayer({ video, metaLine, subLine }) {
+export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
+  const hideControlsTimer = useRef(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -49,6 +52,7 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedSourceIndex, setSelectedSourceIndex] = useState(0);
+  const [showControls, setShowControls] = useState(true);
 
   const sources =
     video.sources && video.sources.length
@@ -57,6 +61,33 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
 
   const currentSource = sources[selectedSourceIndex];
 
+  /* ---------------- CONTROL VISIBILITY ---------------- */
+
+  const showPlayerControls = () => {
+    setShowControls(true);
+
+    if (hideControlsTimer.current) {
+      clearTimeout(hideControlsTimer.current);
+    }
+
+    if (isPlaying) {
+      hideControlsTimer.current = setTimeout(() => {
+        setShowControls(false);
+      }, 2500);
+    }
+  };
+
+  useEffect(() => {
+    showPlayerControls();
+    return () => {
+      if (hideControlsTimer.current) {
+        clearTimeout(hideControlsTimer.current);
+      }
+    };
+  }, [isPlaying]);
+
+  /* ---------------- VIDEO STATE RESET ---------------- */
+
   useEffect(() => {
     setIsPlaying(false);
     setDuration(0);
@@ -64,13 +95,13 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
     setProgress(0);
   }, [video, selectedSourceIndex]);
 
+  /* ---------------- VIDEO EVENTS ---------------- */
+
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
 
-    const onLoadedMetadata = () => {
-      setDuration(el.duration || 0);
-    };
+    const onLoadedMetadata = () => setDuration(el.duration || 0);
 
     const onTimeUpdate = () => {
       const t = el.currentTime || 0;
@@ -93,9 +124,12 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
     };
   }, [currentSource]);
 
+  /* ---------------- CONTROLS ---------------- */
+
   const togglePlay = () => {
     const el = videoRef.current;
     if (!el) return;
+
     if (el.paused) {
       el.play();
       setIsPlaying(true);
@@ -113,10 +147,6 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
     el.currentTime = newTime;
     setProgress(pct);
     setCurrentTime(newTime);
-  };
-
-  const handleSeekChange = (e) => {
-    seek(e.target.value);
   };
 
   const skip = (seconds) => {
@@ -163,28 +193,15 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   };
 
-  const handleQualityChange = (e) => {
-    const index = Number(e.target.value);
-    setSelectedSourceIndex(index);
-  };
-
   const toggleFullscreen = async () => {
     const container = containerRef.current;
     if (!container) return;
 
     if (!document.fullscreenElement) {
-      try {
-        await container.requestFullscreen();
-        setIsFullscreen(true);
-      } catch (err) {
-        console.error("Fullscreen error:", err);
-      }
+      await container.requestFullscreen();
+      setIsFullscreen(true);
     } else {
-      try {
-        await document.exitFullscreen();
-      } catch (err) {
-        console.error("Exit fullscreen error:", err);
-      }
+      await document.exitFullscreen();
       setIsFullscreen(false);
     }
   };
@@ -209,6 +226,8 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
     }
   };
 
+  /* ---------------- RENDER ---------------- */
+
   return (
     <section className="cs-player-page">
       <div
@@ -219,20 +238,43 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
         }
       >
         <div className="cs-player-header">
-          <div>
-            <h2 className="cs-player-title">{video.title}</h2>
-            {metaLine && (
-              <p className="cs-player-subtitle">{metaLine}</p>
-            )}
-            {subLine && (
-              <p className="cs-player-subtitle cs-player-subtitle-small">
-                {subLine}
-              </p>
-            )}
-          </div>
-        </div>
+  <div className="cs-player-header-left">
 
-        <div className="cs-video-wrapper">
+    {/* iOS-style Back Button */}
+    <button
+      className="cs-ios-back-btn"
+      onClick={onBack}
+      aria-label="Back"
+    >
+      <IoArrowBack size={18} />
+    </button>
+
+    {/* Title + meta */}
+    <div>
+      <h2 className="cs-player-title">{video.title}</h2>
+
+      {metaLine && (
+        <p className="cs-player-subtitle">{metaLine}</p>
+      )}
+
+      {subLine && (
+        <p className="cs-player-subtitle cs-player-subtitle-small">
+          {subLine}
+        </p>
+      )}
+    </div>
+
+  </div>
+</div>
+
+
+
+        <div
+          className="cs-video-wrapper"
+          onMouseMove={showPlayerControls}
+          onClick={showPlayerControls}
+          onTouchStart={showPlayerControls}
+        >
           <div className="cs-video-inner">
             <video
               key={currentSource.url}
@@ -245,38 +287,36 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
             </video>
           </div>
 
-          <div className="cs-player-controls">
+          <div
+            className={
+              "cs-player-controls " +
+              (showControls
+                ? "cs-player-controls-visible"
+                : "cs-player-controls-hidden")
+            }
+          >
             <input
               type="range"
               min="0"
               max="100"
               step="0.1"
               value={progress}
-              onChange={handleSeekChange}
+              onChange={(e) => seek(e.target.value)}
               className="cs-seek-slider"
             />
 
             <div className="cs-controls-row">
               <div className="cs-controls-left">
-                <button
-                  type="button"
-                  className="cs-control-btn"
-                  onClick={() => skip(-10)}
-                >
+                <button className="cs-control-btn" onClick={() => skip(-10)}>
                   ⏮
                 </button>
                 <button
-                  type="button"
                   className="cs-control-btn cs-control-btn-primary"
                   onClick={togglePlay}
                 >
                   {isPlaying ? "⏸" : "▶"}
                 </button>
-                <button
-                  type="button"
-                  className="cs-control-btn"
-                  onClick={() => skip(10)}
-                >
+                <button className="cs-control-btn" onClick={() => skip(10)}>
                   ⏭
                 </button>
               </div>
@@ -288,11 +328,7 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
               </div>
 
               <div className="cs-controls-right">
-                <button
-                  type="button"
-                  className="cs-control-btn"
-                  onClick={toggleMute}
-                >
+                <button className="cs-control-btn" onClick={toggleMute}>
                   {isMuted || volume === 0 ? (
                     <VolumeOffIcon />
                   ) : (
@@ -310,23 +346,7 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
                   className="cs-volume-slider"
                 />
 
-                <select
-                  className="cs-quality-select"
-                  value={selectedSourceIndex}
-                  onChange={handleQualityChange}
-                >
-                  {sources.map((src, idx) => (
-                    <option key={src.label + idx} value={idx}>
-                      {src.label}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  type="button"
-                  className="cs-control-btn"
-                  onClick={toggleFullscreen}
-                >
+                <button className="cs-control-btn" onClick={toggleFullscreen}>
                   {isFullscreen ? "🡼" : "⛶"}
                 </button>
               </div>
@@ -337,14 +357,12 @@ export default function VideoPlayer({ video, metaLine, subLine }) {
         {!isFullscreen && (
           <div className="cs-player-footer cs-player-footer-buttons">
             <button
-              type="button"
               className="cs-btn cs-btn-primary cs-btn-large"
               onClick={handleDownload}
             >
               ⬇ Download
             </button>
             <button
-              type="button"
               className="cs-btn cs-btn-secondary cs-btn-large"
               onClick={handleCopyLink}
             >
