@@ -1,11 +1,13 @@
 /* src/styles/player.css */
 
-/* Player page wrapper – full-width center like your screenshot */
+/* Player page wrapper */
 .cs-player-page {
   width: 100%;
   display: flex;
   justify-content: center;
 }
+
+/* Player card */
 
 .cs-player-card {
   background: var(--cs-surface-player);
@@ -20,12 +22,19 @@
   flex-direction: column;
 }
 
+/* Header */
+
 .cs-player-header {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 10px;
+}
+
+.cs-player-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .cs-player-title {
@@ -45,7 +54,7 @@
   font-size: 11px;
 }
 
-/* Video wrapper & controls */
+/* Video wrapper */
 
 .cs-video-wrapper {
   position: relative;
@@ -53,7 +62,6 @@
   border-radius: 18px;
   overflow: hidden;
   background: #000;
-  flex-shrink: 0;
 }
 
 .cs-theme-light .cs-video-wrapper {
@@ -62,7 +70,7 @@
 
 .cs-video-inner {
   position: relative;
-  padding-top: 56.25%; /* 16:9 */
+  padding-top: 56.25%;
   min-height: 340px;
 }
 
@@ -71,59 +79,68 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  outline: none;
-  border: none;
   background: #000;
+  border: none;
+  outline: none;
 }
 
-/* controls overlay */
+/* Controls overlay */
 
 .cs-player-controls {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+
   padding: 6px 10px 8px;
+
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.95),
     rgba(0, 0, 0, 0.4),
     transparent
   );
+
   display: flex;
   flex-direction: column;
   gap: 6px;
+
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
+
+.cs-player-controls-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.cs-player-controls-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+}
+
+/* Seek slider */
 
 .cs-seek-slider {
   width: 100%;
-  -webkit-appearance: none;
-  appearance: none;
   height: 4px;
   border-radius: 999px;
   background: rgba(148, 163, 184, 0.6);
-  outline: none;
+  appearance: none;
 }
 
 .cs-seek-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
   appearance: none;
   width: 12px;
   height: 12px;
   border-radius: 999px;
   background: #ffffff;
-  cursor: pointer;
   border: 2px solid #f97373;
+  cursor: pointer;
 }
 
-.cs-seek-slider::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  background: #ffffff;
-  cursor: pointer;
-  border: 2px solid #f97373;
-}
+/* Controls row */
 
 .cs-controls-row {
   display: flex;
@@ -151,7 +168,8 @@
   color: #e5e7eb;
 }
 
-/* circular buttons */
+/* Buttons */
+
 .cs-control-btn {
   border: none;
   border-radius: 999px;
@@ -160,30 +178,10 @@
   background: rgba(15, 23, 42, 0.95);
   color: #f9fafb;
   cursor: pointer;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-.cs-player-controls {
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-.cs-player-controls-visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.cs-player-controls-hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(8px);
-}
-
-
-.cs-control-btn svg {
-  color: #e5e7eb;
 }
 
 .cs-control-btn-primary {
@@ -192,43 +190,24 @@
   font-weight: 600;
 }
 
-.cs-control-btn:hover {
-  filter: brightness(1.1);
-}
-
-/* volume slider */
+/* Volume slider */
 
 .cs-volume-slider {
-  width: 90px;
-  -webkit-appearance: none;
-  appearance: none;
+  width: 80px;
   height: 4px;
   border-radius: 999px;
   background: rgba(148, 163, 184, 0.6);
-  outline: none;
+  appearance: none;
 }
 
-.cs-volume-slider::-webkit-slider-thumb,
-.cs-volume-slider::-moz-range-thumb {
+.cs-volume-slider::-webkit-slider-thumb {
   width: 10px;
   height: 10px;
   border-radius: 999px;
   background: #38bdf8;
-  cursor: pointer;
 }
 
-/* quality dropdown */
-
-.cs-quality-select {
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  font-size: 11px;
-  background: rgba(15, 23, 42, 0.95);
-  color: #e5e7eb;
-}
-
-/* player footer buttons */
+/* Footer buttons */
 
 .cs-player-footer {
   display: flex;
@@ -248,11 +227,10 @@
   font-size: 13px;
   border: none;
   cursor: pointer;
-  text-decoration: none;
+
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.18s ease;
 }
 
 .cs-btn-large {
@@ -270,6 +248,31 @@
 .cs-btn-secondary {
   background: rgba(39, 39, 60, 0.9);
   color: #e6e6ff;
+}
+
+/* Back button */
+
+.cs-ios-back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: none;
+  background: #ef4444;
+  color: #ffffff;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.45);
+}
+
+.cs-ios-back-btn:hover {
+  background: #ffffff;
+  color: #ef4444;
 }
 
 /* FULLSCREEN */
@@ -299,69 +302,61 @@
   position: relative;
   width: 100%;
   height: 100vh;
-  background: #000;
   object-fit: contain;
 }
 
-.cs-player-card-fullscreen .cs-player-controls {
-  padding-bottom: 10px;
-}
+/* ---------------- MOBILE FIX ---------------- */
 
-/* RESPONSIVE */
+@media (max-width: 600px) {
 
-@media (max-width: 900px) {
   .cs-player-card {
-    margin-inline: 0;
+    padding: 12px;
   }
+
+  .cs-video-inner {
+    min-height: 220px;
+  }
+
+  .cs-player-controls {
+    padding: 6px 8px 10px;
+  }
+
+  .cs-controls-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .cs-controls-left {
+    flex: 1;
+  }
+
+  .cs-controls-right {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .cs-controls-center {
+    width: 100%;
+    order: 3;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .cs-time-display {
+    font-size: 11px;
+  }
+
+  .cs-volume-slider {
+    width: 55px;
+  }
+
+  .cs-control-btn {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .cs-player-title {
+    font-size: 16px;
+  }
+
 }
-
-/* Player back button */
-
-.cs-player-header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.cs-player-back-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  border: none;
-  background: #ef4444; /* red */
-  color: #fff;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.cs-player-back-btn:hover {
-  background: #ffffff;
-  color: #ef4444;
-  box-shadow: 0 0 0 2px #ef4444 inset;
-}
-
-.cs-ios-back-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  border: none;
-  background: #ef4444;
-  color: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.45);
-}
-
-.cs-ios-back-btn:hover {
-  background: #ffffff;
-  color: #ef4444;
-}
-
