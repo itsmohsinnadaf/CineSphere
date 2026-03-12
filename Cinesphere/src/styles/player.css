@@ -122,16 +122,35 @@
   width: 100%;
   height: 4px;
   border-radius: 999px;
-  background: rgba(148,163,184,.6);
   appearance: none;
+  outline: none;
+
+  background: linear-gradient(
+    to right,
+    #f97373 0%,
+    #f97373 var(--progress),
+    rgba(148,163,184,0.6) var(--progress),
+    rgba(148,163,184,0.6) 100%
+  );
 }
+
+/* thumb */
 
 .cs-seek-slider::-webkit-slider-thumb {
   appearance: none;
   width: 12px;
   height: 12px;
   border-radius: 999px;
-  background: #fff;
+  background: #ffffff;
+  border: 2px solid #f97373;
+  cursor: pointer;
+}
+
+.cs-seek-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #ffffff;
   border: 2px solid #f97373;
   cursor: pointer;
 }
