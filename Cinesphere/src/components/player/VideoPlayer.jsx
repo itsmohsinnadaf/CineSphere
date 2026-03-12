@@ -303,6 +303,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
               value={progress}
               onChange={(e) => seek(e.target.value)}
               className="cs-seek-slider"
+              style={{ "--progress": `${progress}%` }}
             />
 
             <div className="cs-controls-row">
