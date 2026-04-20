@@ -286,3 +286,291 @@
     opacity: 0.3;
   }
 }
+
+/* ===== MOBILE RESPONSIVE DESIGN ===== */
+
+/* Large tablets and small laptops (landscape phones) */
+@media (max-width: 1024px) {
+  .cs-loading-content {
+    gap: 20px;
+    padding: 0 20px;
+  }
+
+  .cs-loading-logo-icon {
+    font-size: 52px;
+  }
+
+  .cs-loading-logo-text {
+    font-size: 38px;
+  }
+
+  .cs-loading-subtitle {
+    font-size: 15px;
+  }
+
+  .cs-loading-text {
+    font-size: 17px;
+  }
+
+  .cs-loading-spinner {
+    width: 55px;
+    height: 55px;
+  }
+}
+
+/* Tablets and large phones */
+@media (max-width: 768px) {
+  .cs-loading-screen {
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .cs-loading-content {
+    gap: 18px;
+    padding: 30px 25px;
+    border-radius: 20px;
+    max-width: 90vw;
+  }
+
+  .cs-loading-logo {
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+
+  .cs-loading-logo-icon {
+    font-size: 48px;
+  }
+
+  .cs-loading-logo-text {
+    font-size: 34px;
+    letter-spacing: 0.08em;
+  }
+
+  .cs-loading-subtitle {
+    font-size: 14px;
+    letter-spacing: 0.08em;
+  }
+
+  .cs-loading-text {
+    font-size: 16px;
+    letter-spacing: 0.01em;
+  }
+
+  .cs-loading-dots {
+    gap: 6px;
+  }
+
+  .cs-loading-dots span {
+    width: 5px;
+    height: 5px;
+  }
+
+  .cs-loading-spinner {
+    width: 50px;
+    height: 50px;
+  }
+
+  .cs-loading-spinner-inner {
+    border-width: 2.5px;
+  }
+}
+
+/* Standard mobile phones (portrait) */
+@media (max-width: 480px) {
+  .cs-loading-screen {
+    padding: 15px;
+  }
+
+  .cs-loading-content {
+    gap: 16px;
+    padding: 25px 20px;
+    border-radius: 16px;
+    max-width: 95vw;
+  }
+
+  .cs-loading-logo {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .cs-loading-logo-icon {
+    font-size: 42px;
+  }
+
+  .cs-loading-logo-text {
+    font-size: 28px;
+    letter-spacing: 0.06em;
+  }
+
+  .cs-loading-subtitle {
+    font-size: 13px;
+    letter-spacing: 0.09em;
+    margin-top: 2px;
+  }
+
+  .cs-loading-message {
+    gap: 10px;
+    margin: 6px 0;
+  }
+
+  .cs-loading-text {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .cs-loading-dots {
+    gap: 5px;
+  }
+
+  .cs-loading-dots span {
+    width: 4px;
+    height: 4px;
+  }
+
+  .cs-loading-animation {
+    margin-top: 20px;
+  }
+
+  .cs-loading-spinner {
+    width: 45px;
+    height: 45px;
+  }
+
+  .cs-loading-spinner-inner {
+    border-width: 2px;
+  }
+
+  /* Adjust particle positions for mobile */
+  .cs-particle-1 {
+    width: 3px;
+    height: 3px;
+    top: 25%;
+    left: 15%;
+  }
+
+  .cs-particle-2 {
+    width: 4px;
+    height: 4px;
+    top: 70%;
+    right: 20%;
+  }
+
+  .cs-particle-3 {
+    width: 2px;
+    height: 2px;
+    top: 45%;
+    left: 85%;
+  }
+
+  .cs-particle-4 {
+    width: 5px;
+    height: 5px;
+    bottom: 35%;
+    left: 25%;
+  }
+
+  .cs-particle-5 {
+    width: 3px;
+    height: 3px;
+    top: 80%;
+    right: 30%;
+  }
+}
+
+/* Small mobile phones */
+@media (max-width: 360px) {
+  .cs-loading-screen {
+    padding: 10px;
+  }
+
+  .cs-loading-content {
+    gap: 14px;
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+
+  .cs-loading-logo {
+    gap: 10px;
+  }
+
+  .cs-loading-logo-icon {
+    font-size: 38px;
+  }
+
+  .cs-loading-logo-text {
+    font-size: 24px;
+    letter-spacing: 0.05em;
+  }
+
+  .cs-loading-subtitle {
+    font-size: 12px;
+  }
+
+  .cs-loading-text {
+    font-size: 14px;
+  }
+
+  .cs-loading-spinner {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Very small screens and landscape phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .cs-loading-content {
+    gap: 12px;
+    padding: 15px 20px;
+  }
+
+  .cs-loading-logo {
+    flex-direction: row;
+    gap: 12px;
+    margin-bottom: 2px;
+  }
+
+  .cs-loading-logo-icon {
+    font-size: 36px;
+  }
+
+  .cs-loading-logo-text {
+    font-size: 22px;
+  }
+
+  .cs-loading-subtitle {
+    font-size: 11px;
+  }
+
+  .cs-loading-text {
+    font-size: 13px;
+  }
+
+  .cs-loading-spinner {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .cs-loading-logo-icon {
+    filter: drop-shadow(0 0 25px rgba(244, 75, 75, 0.6));
+  }
+
+  .cs-loading-logo-text {
+    text-shadow: 0 0 35px rgba(244, 75, 75, 0.4);
+  }
+}
+
+/* Touch devices - ensure minimum touch targets */
+@media (hover: none) and (pointer: coarse) {
+  .cs-loading-content {
+    min-height: 44px; /* iOS minimum touch target */
+  }
+
+  .cs-loading-dots span {
+    min-width: 8px;
+    min-height: 8px;
+  }
+}
