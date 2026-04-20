@@ -20,12 +20,39 @@
 
 .cs-item-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
   border-color: var(--cs-accent-soft);
 }
 
 .cs-item-card-active {
   border-color: var(--cs-accent);
+}
+
+.cs-theme-light .cs-item-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.cs-theme-light .cs-item-card:hover {
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+}
+
+.cs-theme-light .cs-item-gradient {
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.82),
+    rgba(255, 255, 255, 0.08)
+  );
+}
+
+.cs-theme-light .cs-episode-chip {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111827;
+}
+
+.cs-theme-light .cs-item-play-badge {
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .cs-item-image-wrapper {
@@ -100,8 +127,31 @@
   text-decoration: none;
 }
 
+@media (max-width: 900px) {
+  .cs-item-grid {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 18px;
+  }
+}
+
 @media (max-width: 600px) {
   .cs-item-image-wrapper {
-    height: 200px;
+    height: 180px;
+  }
+
+  .cs-item-card {
+    border-radius: 18px;
+  }
+
+  .cs-item-meta {
+    padding: 12px;
+  }
+
+  .cs-item-title {
+    font-size: 15px;
+  }
+
+  .cs-item-details {
+    font-size: 12px;
   }
 }

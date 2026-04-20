@@ -102,9 +102,12 @@ body {
   margin-bottom: 20px;
 }
 
-/* Push title slightly to the right visually */
 .cs-page-header .cs-section-title {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.2;
 }
 
 
@@ -112,19 +115,25 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 5vw;
-  background: var(--cs-bg-header);
-  border-bottom: 1px solid var(--cs-border-soft);
+  padding: 16px 24px;
+  background: rgba(10, 14, 25, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
   position: sticky;
-  top: 0;
-  z-index: 20;
-  backdrop-filter: blur(14px);
+  top: 12px;
+  margin: 0px auto 0;
+  left: 0;
+  right: 0;
+  width: min(100% - 32px, 1200px);
+  z-index: 30;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
 }
 
 .cs-logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .cs-logo-icon {
@@ -145,27 +154,33 @@ body {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.cs-mobile-nav {
+  display: none;
 }
 
 .cs-nav-btn {
   border: none;
-  background: transparent;
-  color: var(--cs-text-muted);
-  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--cs-text-primary);
+  padding: 10px 18px;
   border-radius: 999px;
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
 }
 
 .cs-nav-btn:hover {
-  background: var(--cs-chip-bg);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--cs-text-primary);
 }
 
 .cs-nav-btn-active {
   background: var(--cs-accent);
   color: #ffffff;
+  box-shadow: 0 10px 30px rgba(244, 75, 75, 0.25);
 }
 
 /* theme toggle */
@@ -173,11 +188,11 @@ body {
 .cs-theme-toggle {
   margin-left: 12px;
   border-radius: 999px;
-  border: 1px solid var(--cs-border-soft);
-  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 14px;
   font-size: 13px;
-  background: var(--cs-chip-bg);
-  color: var(--cs-text-secondary);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--cs-text-primary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -186,7 +201,8 @@ body {
 }
 
 .cs-theme-toggle:hover {
-  border-color: var(--cs-border-strong);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
   transform: translateY(-1px);
 }
 
@@ -475,6 +491,47 @@ body {
   color: var(--cs-accent);
 }
 
+.cs-theme-light .cs-item-gradient,
+.cs-theme-light .cs-folder-overlay,
+.cs-theme-light .cs-hero-image-gradient,
+.cs-theme-light .cs-big-gradient {
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.82),
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+}
+
+.cs-theme-light .cs-hero-text {
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0.95),
+    rgba(243, 244, 246, 0.98)
+  );
+}
+
+.cs-theme-light .cs-folder-card,
+.cs-theme-light .cs-big-card,
+.cs-theme-light .cs-hero-card {
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.09);
+}
+
+.cs-theme-light .cs-header {
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+}
+
+@media (max-width: 600px) {
+  .cs-theme-light .cs-header {
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+  }
+
+  .cs-theme-light .cs-nav {
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  }
+}
+
+
 /* FOOTER */
 
 .cs-footer {
@@ -496,13 +553,19 @@ body {
   .cs-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 10px;
   }
 
   .cs-nav {
     width: 100%;
     justify-content: flex-start;
     flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cs-nav-btn,
+  .cs-theme-toggle {
+    font-size: 13px;
   }
 
   .cs-hero-card {
@@ -524,11 +587,135 @@ body {
   .cs-big-image {
     height: 190px;
   }
+
+  .cs-hero-title {
+    font-size: 26px;
+  }
+
+  .cs-hero-subtitle {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 600px) {
+  .cs-app {
+    padding-bottom: 120px;
+  }
+
+  .cs-main {
+    padding-inline: 3vw;
+  }
+
+  .cs-header {
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+    border-bottom: 1px solid var(--cs-border-soft);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0;
+    width: 100%;
+    background: var(--cs-bg-header);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(14px);
+    border-top: none;
+    z-index: 24;
+    display: flex;
+  }
+
+  .cs-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cs-logo-icon {
+    font-size: 24px;
+  }
+
+  .cs-logo-text {
+    font-size: 18px;
+  }
+
+  .cs-header .cs-nav {
+    display: none;
+  }
+
+  .cs-mobile-nav {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    width: calc(100% - 32px);
+    background: rgb(10 10 20 / 0%);
+    box-shadow: 0 5px 48px rgb(117 133 241 / 54%);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--cs-border-soft);
+    border-radius: 24px;
+    padding: 10px 16px;
+    justify-content: space-around;
+    gap: 8px;
+    flex-wrap: nowrap;
+    align-items: center;
+    z-index: 26;
+    display: flex;
+  }
+
+  .cs-mobile-nav .cs-nav-btn,
+  .cs-mobile-nav .cs-theme-toggle {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cs-mobile-nav .cs-nav-btn {
+    background: rgb(22 22 48 / 48%);
+    padding: 10px 14px;
+    font-size: 12px;
+    border-radius: 999px;
+  }
+
+  .cs-mobile-nav .cs-nav-btn-active {
+    background: var(--cs-accent);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(244, 75, 75, 0.25);
+  }
+
+  .cs-mobile-nav .cs-theme-toggle {
+    margin-left: 0;
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 999px;
+  }
+
+  .cs-hero-card {
+    border-radius: 28px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .cs-hero-image {
+    height: 160px;
+  }
+
+  .cs-hero-title {
+    font-size: 24px;
+  }
+
+  .cs-hero-subtitle {
+    font-size: 14px;
+  }
+
+  .cs-item-grid {
+    gap: 14px;
+  }
+
   .cs-folder-image-wrapper,
   .cs-folder-large {
-    height: 120px;
+    height: 140px;
+  }
+
+  .cs-footer {
+    font-size: 11px;
+    display: none;
   }
 }
