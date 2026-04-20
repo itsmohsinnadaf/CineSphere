@@ -518,7 +518,28 @@ body {
 }
 
 .cs-theme-light .cs-header {
+  background: var(--cs-bg-header);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+}
+
+.cs-theme-light .cs-nav-btn {
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.cs-theme-light .cs-nav-btn:hover {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.cs-theme-light .cs-theme-toggle {
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.cs-theme-light .cs-theme-toggle:hover {
+  background: rgba(15, 23, 42, 0.08);
+  border-color: rgba(15, 23, 42, 0.18);
 }
 
 @media (max-width: 600px) {
