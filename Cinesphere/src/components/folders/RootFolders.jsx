@@ -5,7 +5,7 @@ export default function RootFolders({ folders, loading, error, onRootClick }) {
   if (loading && !folders.length) {
     return <LoadingScreen />;
   }
-
+  
   if (error && !folders.length) {
     return (
       <section className="cs-left">
