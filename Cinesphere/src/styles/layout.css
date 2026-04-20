@@ -124,7 +124,7 @@ body {
   margin: 0px auto 0;
   left: 0;
   right: 0;
-  width: min(100% - 32px, 1200px);
+  width: 95%;
   z-index: 30;
   backdrop-filter: blur(20px);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
