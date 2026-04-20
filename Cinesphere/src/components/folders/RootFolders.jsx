@@ -1,13 +1,9 @@
 // src/components/folders/RootFolders.jsx
+import LoadingScreen from "../common/LoadingScreen";
 
 export default function RootFolders({ folders, loading, error, onRootClick }) {
   if (loading && !folders.length) {
-    return (
-      <section className="cs-left">
-        <h2 className="cs-section-title">Library</h2>
-        <p className="cs-section-subtitle">Loading from OneDrive...</p>
-      </section>
-    );
+    return <LoadingScreen />;
   }
 
   if (error && !folders.length) {
