@@ -1,5 +1,6 @@
 // src/components/folders/MovieGenres.jsx
 import BackButton from "../common/BackButton";
+import AnimateIn from "../common/AnimateIn";
 
 export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack }) {
   return (
@@ -14,39 +15,40 @@ export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack })
       </div>
 
         <div className="cs-big-list">
-          {genres.map((g) => (
-            <div
-              key={g.id}
-              className="cs-big-card"
-              onClick={() => onGenreClick(g)}
-            >
-              <div className="cs-big-image-wrap">
-                {g.image && (
-                  <img
-                    src={g.image}
-                    alt={g.title}
-                    className="cs-big-image"
-                  />
-                )}
-                <div className="cs-big-gradient" />
-              </div>
+          {genres.map((g, idx) => (
+            <AnimateIn key={g.id} variant="cinematic" delay={idx * 200} duration={0.7} threshold={0.08}>
+              <div
+                className="cs-big-card"
+                onClick={() => onGenreClick(g)}
+              >
+                <div className="cs-big-image-wrap">
+                  {g.image && (
+                    <img
+                      src={g.image}
+                      alt={g.title}
+                      className="cs-big-image"
+                    />
+                  )}
+                  <div className="cs-big-gradient" />
+                </div>
 
-              <div className="cs-big-text">
-                <h3 className="cs-big-title">{g.title}</h3>
-                <p className="cs-big-subtitle">Movie category</p>
+                <div className="cs-big-text">
+                  <h3 className="cs-big-title">{g.title}</h3>
+                  <p className="cs-big-subtitle">Movie category</p>
 
-                {g.downloadUrl && (
-                  <a
-                    href={g.downloadUrl}
-                    className="cs-big-download"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    ⬇ Download folder
-                  </a>
-                )}
+                  {g.downloadUrl && (
+                    <a
+                      href={g.downloadUrl}
+                      className="cs-big-download"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      ⬇ Download folder
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
+            </AnimateIn>
           ))}
         </div>
       </section>

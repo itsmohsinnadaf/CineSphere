@@ -1,0 +1,503 @@
+/* src/styles/animations.css  —  CineSphere motion layer */
+
+/* ======================================================
+   KEYFRAMES
+   ====================================================== */
+
+/* Fade in + slide up — the workhorse entrance */
+@keyframes cs-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in + slide down — header entrance */
+@keyframes cs-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in + scale — for hero cards */
+@keyframes cs-fade-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Subtle float — for hero images */
+@keyframes cs-float {
+  0%, 100% { transform: translateY(0) scale(1.04); }
+  50%      { transform: translateY(-6px) scale(1.04); }
+}
+
+/* Shimmer sweep — for play badges and accent highlights */
+@keyframes cs-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Glow pulse — accent ring on active/focus elements */
+@keyframes cs-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 75, 75, 0.45); }
+  50%      { box-shadow: 0 0 18px 4px rgba(244, 75, 75, 0.25); }
+}
+
+/* Spin for loader refresh */
+@keyframes cs-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Slide in from left — for back-button entrance */
+@keyframes cs-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide in from right */
+@keyframes cs-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Bounce in — for badges */
+@keyframes cs-bounce-in {
+  0%   { opacity: 0; transform: scale(0.3); }
+  50%  { opacity: 1; transform: scale(1.08); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Background gradient shift — subtle ambient effect */
+@keyframes cs-gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ======================================================
+   HEADER ENTRANCE
+   ====================================================== */
+
+.cs-header {
+  animation: cs-fade-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cs-mobile-nav {
+  animation: cs-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+/* Logo icon subtle pulse on hover */
+.cs-logo:hover .cs-logo-icon {
+  animation: cs-bounce-in 0.5s ease;
+}
+
+/* Nav button ripple / press feedback */
+.cs-nav-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-nav-btn:active {
+  transform: scale(0.94);
+}
+
+.cs-nav-btn-active {
+  animation: cs-glow-pulse 2.5s ease-in-out infinite;
+}
+
+
+/* ======================================================
+   PAGE / VIEW TRANSITION
+   ====================================================== */
+
+/* Wrapper class for animated view transitions */
+.cs-view-enter {
+  animation: cs-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Section titles */
+.cs-section-title {
+  animation: cs-slide-left 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+/* Page header row (back button + title) */
+.cs-page-header {
+  animation: cs-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+
+/* ======================================================
+   HERO CARDS (Root Folders)
+   ====================================================== */
+
+.cs-hero-card {
+  animation: cs-fade-scale 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.35s ease;
+}
+
+/* Stagger: 1st, 2nd, 3rd card etc */
+.cs-hero-card:nth-child(1) { animation-delay: 0.08s; }
+.cs-hero-card:nth-child(2) { animation-delay: 0.18s; }
+.cs-hero-card:nth-child(3) { animation-delay: 0.28s; }
+.cs-hero-card:nth-child(4) { animation-delay: 0.38s; }
+
+/* Hero image parallax-style hover zoom */
+.cs-hero-image {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.6s ease;
+}
+
+.cs-hero-card:hover .cs-hero-image {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
+
+/* Hero text slide in from right on hover */
+.cs-hero-text {
+  transition: background 0.5s ease;
+}
+
+
+/* ======================================================
+   BIG FOLDER CARDS (Genres / Series / Seasons)
+   ====================================================== */
+
+.cs-big-card {
+  animation: cs-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.35s ease;
+}
+
+.cs-big-card:nth-child(1) { animation-delay: 0.06s; }
+.cs-big-card:nth-child(2) { animation-delay: 0.14s; }
+.cs-big-card:nth-child(3) { animation-delay: 0.22s; }
+.cs-big-card:nth-child(4) { animation-delay: 0.30s; }
+.cs-big-card:nth-child(5) { animation-delay: 0.38s; }
+
+/* Image zoom on hover */
+.cs-big-image {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.6s ease;
+}
+
+.cs-big-card:hover .cs-big-image {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
+
+/* Title slide on hover */
+.cs-big-title {
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.cs-big-card:hover .cs-big-title {
+  color: var(--cs-accent);
+  transform: translateX(4px);
+}
+
+
+/* ======================================================
+   ITEM CARDS (Movie / Episode grid)
+   ====================================================== */
+
+.cs-item-card {
+  animation: cs-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.32s ease;
+}
+
+/* Stagger movie/episode cards */
+.cs-item-card:nth-child(1)  { animation-delay: 0.04s; }
+.cs-item-card:nth-child(2)  { animation-delay: 0.08s; }
+.cs-item-card:nth-child(3)  { animation-delay: 0.12s; }
+.cs-item-card:nth-child(4)  { animation-delay: 0.16s; }
+.cs-item-card:nth-child(5)  { animation-delay: 0.20s; }
+.cs-item-card:nth-child(6)  { animation-delay: 0.24s; }
+.cs-item-card:nth-child(7)  { animation-delay: 0.28s; }
+.cs-item-card:nth-child(8)  { animation-delay: 0.32s; }
+.cs-item-card:nth-child(9)  { animation-delay: 0.36s; }
+.cs-item-card:nth-child(10) { animation-delay: 0.40s; }
+
+/* Image zoom on hover */
+.cs-item-image {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.5s ease;
+}
+
+.cs-item-card:hover .cs-item-image {
+  transform: scale(1.12);
+  filter: brightness(1.08) saturate(1.15);
+}
+
+/* Play badge shimmer */
+.cs-item-play-badge {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  background: linear-gradient(
+    110deg,
+    #ef4444 0%,
+    #ef4444 35%,
+    #f87171 50%,
+    #ef4444 65%,
+    #ef4444 100%
+  );
+  background-size: 200% 100%;
+}
+
+.cs-item-card:hover .cs-item-play-badge {
+  animation: cs-shimmer 1.8s ease-in-out infinite;
+  transform: scale(1.06);
+  box-shadow: 0 10px 28px rgba(248, 113, 113, 0.75);
+}
+
+/* Episode chip bounce */
+.cs-episode-chip {
+  animation: cs-bounce-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+  transition: transform 0.2s ease;
+}
+
+.cs-item-card:hover .cs-episode-chip {
+  transform: scale(1.08);
+}
+
+/* Title text shift on hover */
+.cs-item-title {
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.cs-item-card:hover .cs-item-title {
+  color: var(--cs-accent);
+  transform: translateX(3px);
+}
+
+
+/* ======================================================
+   FOLDER CARDS (Genres grid)
+   ====================================================== */
+
+.cs-folder-card {
+  animation: cs-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.32s ease;
+}
+
+.cs-folder-card:nth-child(1) { animation-delay: 0.05s; }
+.cs-folder-card:nth-child(2) { animation-delay: 0.12s; }
+.cs-folder-card:nth-child(3) { animation-delay: 0.19s; }
+.cs-folder-card:nth-child(4) { animation-delay: 0.26s; }
+
+/* Folder image zoom */
+.cs-folder-image {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.5s ease;
+}
+
+.cs-folder-card:hover .cs-folder-image {
+  transform: scale(1.12);
+  filter: brightness(1.1) saturate(1.2);
+}
+
+/* Folder icon bounce on hover */
+.cs-folder-icon {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-folder-card:hover .cs-folder-icon {
+  transform: scale(1.2) rotate(-8deg);
+}
+
+
+/* ======================================================
+   BACK BUTTON
+   ====================================================== */
+
+.cs-back-circle {
+  animation: cs-slide-left 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-back-circle:hover {
+  transform: scale(1.1) rotate(-4deg);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.5);
+}
+
+.cs-back-circle:active {
+  transform: scale(0.92);
+}
+
+
+/* ======================================================
+   PLAYER
+   ====================================================== */
+
+.cs-player-card {
+  animation: cs-fade-scale 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cs-player-header {
+  animation: cs-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+.cs-video-wrapper {
+  animation: cs-fade-scale 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+.cs-player-footer {
+  animation: cs-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+
+/* Control buttons */
+.cs-control-btn {
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cs-control-btn:hover {
+  transform: scale(1.12);
+}
+
+.cs-control-btn:active {
+  transform: scale(0.9);
+}
+
+/* Primary play button glow */
+.cs-control-btn-primary {
+  animation: cs-glow-pulse 2.5s ease-in-out infinite;
+}
+
+.cs-control-btn-primary:hover {
+  box-shadow: 0 0 22px 6px rgba(249, 115, 115, 0.4);
+}
+
+
+/* ======================================================
+   BUTTONS (General)
+   ====================================================== */
+
+.cs-btn {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.22s ease,
+              background 0.22s ease;
+}
+
+.cs-btn:hover {
+  transform: translateY(-2px);
+}
+
+.cs-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.cs-btn-primary:hover {
+  box-shadow: 0 12px 28px rgba(244, 75, 75, 0.5);
+}
+
+.cs-download-pill {
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.cs-download-pill:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 16px rgba(244, 75, 75, 0.3);
+}
+
+.cs-download-link {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.cs-download-link:hover {
+  transform: translateX(3px);
+  color: var(--cs-accent-soft);
+}
+
+
+/* ======================================================
+   FOOTER
+   ====================================================== */
+
+.cs-footer {
+  animation: cs-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+
+/* ======================================================
+   THEME TOGGLE
+   ====================================================== */
+
+.cs-theme-toggle {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-theme-toggle:active {
+  transform: scale(0.9) rotate(15deg);
+}
+
+
+/* ======================================================
+   SCROLL-TRIGGERED REVEAL  (IntersectionObserver class)
+   ====================================================== */
+
+.cs-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-reveal.cs-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay variants for stagger */
+.cs-reveal-delay-1 { transition-delay: 0.08s; }
+.cs-reveal-delay-2 { transition-delay: 0.16s; }
+.cs-reveal-delay-3 { transition-delay: 0.24s; }
+.cs-reveal-delay-4 { transition-delay: 0.32s; }
+
+
+/* ======================================================
+   REDUCED MOTION (a11y)
+   ====================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

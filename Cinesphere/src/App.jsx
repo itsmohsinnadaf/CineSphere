@@ -6,6 +6,7 @@ import { useLibrary } from "./hooks/useLibrary";
 
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
+import LoadingScreen from "./components/common/LoadingScreen";
 
 import RootFolders from "./components/folders/RootFolders";
 import MovieGenres from "./components/folders/MovieGenres";
@@ -17,6 +18,9 @@ import EpisodeCard from "./components/cards/EpisodeCard";
 import VideoPlayer from "./components/player/VideoPlayer";
 
 import BackButton from "./components/common/BackButton";
+import AnimateIn from "./components/common/AnimateIn";
+import CursorGlow from "./components/common/CursorGlow";
+import FloatingParticles from "./components/common/FloatingParticles";
 
 
 function App() {
@@ -103,13 +107,14 @@ function App() {
       </div>
 
       <div className="cs-item-grid cs-centered-row">
-        {movieTitles.map((m) => (
-          <MovieCard
-            key={m.id}
-            movie={m}
-            active={false}
-            onClick={() => handleMovieClick(m)}
-          />
+        {movieTitles.map((m, idx) => (
+          <AnimateIn key={m.id} variant="fade-up" delay={idx * 60}>
+            <MovieCard
+              movie={m}
+              active={false}
+              onClick={() => handleMovieClick(m)}
+            />
+          </AnimateIn>
         ))}
       </div>
     </section>
@@ -196,13 +201,14 @@ function App() {
 
           <div className="cs-item-grid cs-centered-row">
             {episodes.map((e, idx) => (
-              <EpisodeCard
-                key={e.id}
-                episode={e}
-                index={idx}
-                active={false}
-                onClick={() => handleEpisodeClick(e)}
-              />
+              <AnimateIn key={e.id} variant="fade-up" delay={idx * 60}>
+                <EpisodeCard
+                  episode={e}
+                  index={idx}
+                  active={false}
+                  onClick={() => handleEpisodeClick(e)}
+                />
+              </AnimateIn>
             ))}
           </div>
         </section>
@@ -234,6 +240,9 @@ function App() {
 
   return (
     <div className={`cs-app cs-theme-${theme}`}>
+      <CursorGlow />
+      <FloatingParticles />
+
       <Header
         activeNav={activeNav}
         onNavClick={handleNavClick}
@@ -242,7 +251,14 @@ function App() {
         onLogoClick={resetAll}
       />
 
-      <main className="cs-main">{renderContent()}</main>
+      {/* Loading screen rendered outside animated wrapper so it's always visible */}
+      {loading && view === "root" && !rootFolders.length && <LoadingScreen />}
+
+      <main className="cs-main">
+        <div key={view} className="cs-view-enter">
+          {renderContent()}
+        </div>
+      </main>
 
       <Footer />
     </div>

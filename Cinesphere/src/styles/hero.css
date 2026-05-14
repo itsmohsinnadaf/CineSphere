@@ -1,0 +1,828 @@
+/* src/styles/hero.css  —  Hero page enhancements */
+
+/* ======================================================
+   FEATURED SLIDER  — cinematic full-bleed design
+   ====================================================== */
+
+/* Outer wrapper — overflow:visible so strip thumbs can lift freely */
+.cs-featured-wrapper {
+  position: relative;
+  width: calc(100% + 10vw);
+  margin-left: -5vw;
+  margin-right: -5vw;
+  margin-bottom: 40px;
+  /* Cancel cs-main padding so it sits exactly under the header */
+  margin-top: -20px;
+  background: transparent;
+}
+
+/* Inner cinematic area — overflow:hidden clips the BG image only */
+.cs-featured-slider {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  background: transparent;
+  /* Thick gradient mask fading out the bottom so it blends seamlessly with the page background */
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+}
+
+/* Skeleton shimmer while fetching */
+.cs-featured-wrapper.cs-fs-skeleton {
+  height: 680px;
+  background: linear-gradient(90deg, #0d0d1a 25%, #181828 50%, #0d0d1a 75%);
+  background-size: 200% 100%;
+  animation: cs-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes cs-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Background panels ── */
+.cs-fs-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center top;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 7s ease-out;
+  will-change: opacity, transform;
+}
+
+.cs-fs-bg-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Left gradient (darkens left side for text readability) ── */
+.cs-fs-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(100deg,
+      rgba(5, 5, 14, 0.92) 0%,
+      rgba(5, 5, 14, 0.72) 28%,
+      rgba(5, 5, 14, 0.25) 52%,
+      transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Bottom gradient (darkens bottom for strip readability) ── */
+.cs-fs-overlay-bottom {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top,
+      rgba(5, 5, 9, 0.95) 0%,
+      rgba(5, 5, 9, 0.6) 25%,
+      transparent 50%);
+  pointer-events: none;
+}
+
+.cs-theme-light .cs-fs-overlay {
+  background: linear-gradient(100deg,
+      rgba(240, 240, 248, 0.93) 0%,
+      rgba(240, 240, 248, 0.68) 28%,
+      rgba(240, 240, 248, 0.20) 52%,
+      transparent 70%);
+}
+
+.cs-theme-light .cs-fs-overlay-bottom {
+  background: linear-gradient(to top,
+      rgba(240, 240, 248, 0.97) 0%,
+      rgba(240, 240, 248, 0.65) 22%,
+      transparent 46%);
+}
+
+/* ── Main content block (bottom-left inside the inner slider) ── */
+.cs-fs-content {
+  position: absolute;
+  bottom: 145px;
+  left: calc(5vw + 24px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 520px;
+}
+
+/* Slide-in animation on transition */
+@keyframes cs-fs-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cs-fs-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+.cs-fs-content-enter {
+  animation: cs-fs-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cs-fs-content-exit {
+  animation: cs-fs-exit 0.25s ease both;
+}
+
+/* ── Kind badge ── */
+.cs-fs-kind-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(244, 75, 75, 0.15);
+  border: 1px solid rgba(244, 75, 75, 0.35);
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  width: fit-content;
+  backdrop-filter: blur(6px);
+}
+
+.cs-theme-light .cs-fs-kind-badge {
+  background: rgba(225, 29, 72, 0.08);
+  border-color: rgba(225, 29, 72, 0.25);
+  color: #e11d48;
+}
+
+/* ── Title ── */
+.cs-fs-title {
+  margin: 0;
+  font-size: clamp(32px, 4.5vw, 60px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 32px rgba(0, 0, 0, 0.7);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cs-theme-light .cs-fs-title {
+  color: var(--cs-text-primary);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* ── Watch Now button ── */
+.cs-fs-watch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 28px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #fff;
+  background: linear-gradient(135deg, #f44b4b 0%, #c2185b 100%);
+  box-shadow: 0 8px 28px rgba(244, 75, 75, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+  width: fit-content;
+}
+
+.cs-fs-watch-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 14px 40px rgba(244, 75, 75, 0.65), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cs-fs-watch-btn:active {
+  transform: scale(0.97);
+}
+
+.cs-fs-play-icon {
+  font-size: 12px;
+}
+
+/* ── Thumbnail strip ── */
+.cs-fs-strip-wrap {
+  width: 100%;
+  background: transparent;
+  padding: 0 calc(5vw + 24px);
+  margin-top: -40px;
+  /* Pull it up slightly into the faded area */
+  position: relative;
+  z-index: 5;
+}
+
+.cs-fs-strip {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* Move padding inside the scrolling container so lifted cards aren't clipped */
+  padding-top: 24px;
+  padding-bottom: 16px;
+}
+
+.cs-fs-strip::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Individual thumbnail ── */
+.cs-fs-thumb {
+  flex-shrink: 0;
+  width: 150px;
+  border: none;
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: #111;
+  opacity: 0.5;
+  transform: translateY(0) scale(0.96);
+  transition: opacity 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+}
+
+.cs-fs-thumb:hover {
+  opacity: 0.85;
+  transform: translateY(-5px) scale(0.99);
+}
+
+/* Active: lifted, bright, red glow */
+.cs-fs-thumb-active {
+  opacity: 1;
+  transform: translateY(-10px) scale(1.06);
+  outline-color: var(--cs-accent);
+  box-shadow: 0 14px 36px rgba(244, 75, 75, 0.5),
+    0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.cs-fs-thumb img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* Dark scrim over inactive thumbs */
+.cs-fs-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 14, 0.35);
+  transition: background 0.3s ease;
+}
+
+.cs-fs-thumb-active .cs-fs-thumb-overlay {
+  background: rgba(5, 5, 14, 0.0);
+}
+
+/* Title under thumb */
+.cs-fs-thumb-title {
+  display: block;
+  padding: 7px 8px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  background: rgba(5, 5, 14, 0.9);
+}
+
+.cs-fs-thumb-active .cs-fs-thumb-title {
+  color: #fff;
+}
+
+.cs-theme-light .cs-fs-thumb-title {
+  background: rgba(240, 240, 248, 0.9);
+  color: var(--cs-text-secondary);
+}
+
+.cs-theme-light .cs-fs-thumb-active .cs-fs-thumb-title {
+  color: var(--cs-text-primary);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .cs-featured-slider {
+    height: 440px;
+  }
+
+  .cs-featured-wrapper {
+    width: calc(100% + 8vw);
+    margin-left: -4vw;
+    margin-right: -4vw;
+    margin-top: -20px;
+  }
+
+  .cs-fs-content {
+    left: calc(4vw + 16px);
+    bottom: 52px;
+  }
+
+  .cs-fs-strip-wrap {
+    padding: 0 calc(4vw + 16px);
+  }
+
+  .cs-fs-strip {
+    padding-top: 20px;
+    padding-bottom: 14px;
+  }
+
+  .cs-fs-thumb {
+    width: 130px;
+  }
+
+  .cs-fs-thumb img {
+    height: 140px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cs-featured-slider {
+    height: 360px;
+  }
+
+  .cs-featured-wrapper {
+    width: calc(100% + 6vw);
+    margin-left: -3vw;
+    margin-right: -3vw;
+    margin-top: -20px;
+  }
+
+  .cs-fs-content {
+    left: 3vw;
+    bottom: 48px;
+    max-width: 90vw;
+    gap: 12px;
+  }
+
+  .cs-fs-strip-wrap {
+    padding: 0 3vw;
+  }
+
+  .cs-fs-strip {
+    padding-top: 18px;
+    padding-bottom: 12px;
+  }
+
+  .cs-fs-thumb {
+    width: 100px;
+  }
+
+  .cs-fs-thumb img {
+    height: 110px;
+  }
+
+  .cs-fs-thumb-title {
+    font-size: 9px;
+    padding: 4px 4px 5px;
+  }
+
+  .cs-fs-watch-btn {
+    padding: 11px 22px;
+    font-size: 13px;
+  }
+
+  .cs-fs-overlay {
+    background: linear-gradient(to right,
+        rgba(5, 5, 14, 0.95) 0%,
+        rgba(5, 5, 14, 0.6) 50%,
+        transparent 100%);
+  }
+}
+
+
+/* ======================================================
+   CURSOR GLOW
+   ====================================================== */
+
+.cs-cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 320px;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      rgba(244, 75, 75, 0.12) 0%,
+      rgba(244, 75, 75, 0.06) 30%,
+      rgba(139, 92, 246, 0.04) 55%,
+      transparent 70%);
+  mix-blend-mode: screen;
+  filter: blur(2px);
+  will-change: transform;
+  /* offset so the glow is centered on cursor */
+  margin-left: -160px;
+  margin-top: -160px;
+  transition: opacity 0.3s ease;
+}
+
+/* Hide cursor glow on touch devices */
+@media (hover: none) {
+  .cs-cursor-glow {
+    display: none;
+  }
+}
+
+/* Light theme: softer, tinted glow */
+.cs-theme-light .cs-cursor-glow {
+  background: radial-gradient(circle,
+      rgba(225, 29, 72, 0.08) 0%,
+      rgba(225, 29, 72, 0.04) 30%,
+      rgba(99, 102, 241, 0.03) 55%,
+      transparent 70%);
+}
+
+
+/* ======================================================
+   FLOATING PARTICLES
+   ====================================================== */
+
+.cs-floating-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.cs-fp {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244, 75, 75, 0.6), rgba(139, 92, 246, 0.3));
+  animation: cs-particle-drift linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes cs-particle-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  50% {
+    transform: translate(40px, -80px) scale(1.3);
+    opacity: 0.6;
+  }
+
+  90% {
+    opacity: 0.1;
+  }
+
+  100% {
+    transform: translate(-30px, -160px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Light theme particles */
+.cs-theme-light .cs-fp {
+  background: radial-gradient(circle, rgba(225, 29, 72, 0.35), rgba(99, 102, 241, 0.2));
+}
+
+
+/* ======================================================
+   HERO WELCOME SECTION
+   ====================================================== */
+
+.cs-hero-welcome {
+  text-align: center;
+  padding: 40px 20px 10px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.cs-welcome-heading {
+  margin: 0;
+  line-height: 1.05;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cs-welcome-line1 {
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cs-text-secondary);
+  display: block;
+}
+
+.cs-welcome-line2 {
+  font-size: 72px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  display: block;
+  background: linear-gradient(135deg,
+      #f44b4b 0%,
+      #ff6b6b 25%,
+      #c084fc 50%,
+      #f44b4b 75%,
+      #ff6b6b 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: cs-gradient-text 6s ease-in-out infinite;
+  filter: drop-shadow(0 4px 24px rgba(244, 75, 75, 0.3));
+}
+
+@keyframes cs-gradient-text {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.cs-welcome-tagline {
+  margin: 16px 0 0;
+  font-size: 16px;
+  color: var(--cs-text-muted);
+  letter-spacing: 0.04em;
+  font-weight: 300;
+}
+
+.cs-welcome-divider {
+  width: 60px;
+  height: 3px;
+  margin: 24px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--cs-accent), #c084fc);
+  opacity: 0.6;
+}
+
+/* Light theme welcome */
+.cs-theme-light .cs-welcome-line2 {
+  filter: drop-shadow(0 4px 24px rgba(225, 29, 72, 0.25));
+}
+
+
+/* ======================================================
+   ANIMATED GRADIENT BORDER (Hero Cards)
+   ====================================================== */
+
+.cs-hero-card {
+  position: relative;
+  border: none !important;
+}
+
+/* Rotating gradient border */
+.cs-hero-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 38px;
+  padding: 2px;
+  background: linear-gradient(var(--cs-border-angle, 0deg),
+      #f44b4b,
+      #8b5cf6,
+      #06b6d4,
+      #f44b4b);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: cs-border-rotate 6s linear infinite;
+  opacity: 0.4;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cs-hero-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes cs-border-rotate {
+  to {
+    --cs-border-angle: 360deg;
+  }
+}
+
+/* Register the custom property for animation */
+@property --cs-border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+
+/* ======================================================
+   SPOTLIGHT GLOW (behind hero cards on hover)
+   ====================================================== */
+
+.cs-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  border-radius: 60px;
+  background: radial-gradient(ellipse at center,
+      rgba(244, 75, 75, 0.15) 0%,
+      rgba(139, 92, 246, 0.08) 40%,
+      transparent 70%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  filter: blur(20px);
+}
+
+.cs-hero-card:hover::after {
+  opacity: 1;
+}
+
+.cs-theme-light .cs-hero-card::after {
+  background: radial-gradient(ellipse at center,
+      rgba(225, 29, 72, 0.1) 0%,
+      rgba(99, 102, 241, 0.06) 40%,
+      transparent 70%);
+}
+
+
+/* ======================================================
+   QUICK ACTION BUTTONS (on hero cards)
+   ====================================================== */
+
+.cs-hero-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.cs-hero-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-hero-action-primary {
+  background: linear-gradient(135deg, #f44b4b, #e11d48);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(244, 75, 75, 0.4);
+}
+
+.cs-hero-action-primary:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 14px 36px rgba(244, 75, 75, 0.55);
+}
+
+.cs-hero-action-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cs-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.cs-hero-action-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.cs-theme-light .cs-hero-action-secondary {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: var(--cs-text-primary);
+}
+
+.cs-theme-light .cs-hero-action-secondary:hover {
+  background: rgba(15, 23, 42, 0.08);
+  border-color: rgba(15, 23, 42, 0.2);
+}
+
+
+/* ======================================================
+   HERO SUBTITLE CHIP
+   ====================================================== */
+
+.cs-hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(244, 75, 75, 0.12);
+  color: var(--cs-accent);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+  border: 1px solid rgba(244, 75, 75, 0.2);
+}
+
+.cs-theme-light .cs-hero-chip {
+  background: rgba(225, 29, 72, 0.08);
+  border-color: rgba(225, 29, 72, 0.15);
+}
+
+
+/* ======================================================
+   RESPONSIVE
+   ====================================================== */
+
+@media (max-width: 900px) {
+  .cs-welcome-line1 {
+    font-size: 22px;
+  }
+
+  .cs-welcome-line2 {
+    font-size: 52px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cs-hero-welcome {
+    padding: 24px 16px 6px;
+  }
+
+  .cs-welcome-line1 {
+    font-size: 16px;
+    letter-spacing: 0.08em;
+  }
+
+  .cs-welcome-line2 {
+    font-size: 40px;
+  }
+
+  .cs-welcome-tagline {
+    font-size: 13px;
+  }
+
+  .cs-hero-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cs-hero-action-btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Smaller cursor glow on mobile (if somehow visible) */
+  .cs-cursor-glow {
+    width: 200px;
+    height: 200px;
+    margin-left: -100px;
+    margin-top: -100px;
+  }
+
+  /* Reduce particles on mobile for perf */
+  .cs-fp:nth-child(n+7) {
+    display: none;
+  }
+}

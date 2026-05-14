@@ -1,5 +1,5 @@
 // src/components/folders/Seasons.jsx
-
+import AnimateIn from "../common/AnimateIn";
 
 export default function Seasons({ seriesTitle, seasons, onSeasonClick }) {
   return (
@@ -10,52 +10,53 @@ export default function Seasons({ seriesTitle, seasons, onSeasonClick }) {
       </h2>
 
       <div className="cs-big-list">
-        {seasons.map((s) => (
-          <div
-            key={s.id}
-            className="cs-big-card"
-            onClick={() => onSeasonClick(s)}
-          >
-            {/* LEFT IMAGE SIDE */}
-            <div className="cs-big-image-wrap">
-              {s.image && (
-                <img src={s.image} alt={s.title} className="cs-big-image" />
-              )}
-              <div className="cs-big-gradient" />
-            </div>
+        {seasons.map((s, idx) => (
+          <AnimateIn key={s.id} variant="cinematic" delay={idx * 200} duration={0.7} threshold={0.08}>
+            <div
+              className="cs-big-card"
+              onClick={() => onSeasonClick(s)}
+            >
+              {/* LEFT IMAGE SIDE */}
+              <div className="cs-big-image-wrap">
+                {s.image && (
+                  <img src={s.image} alt={s.title} className="cs-big-image" />
+                )}
+                <div className="cs-big-gradient" />
+              </div>
 
-            {/* RIGHT TEXT + DOWNLOAD BUTTON */}
-            <div className="cs-big-text">
-              <h3 className="cs-big-title">{s.title}</h3>
-              <p className="cs-big-subtitle">Season</p>
+              {/* RIGHT TEXT + DOWNLOAD BUTTON */}
+              <div className="cs-big-text">
+                <h3 className="cs-big-title">{s.title}</h3>
+                <p className="cs-big-subtitle">Season</p>
 
-              {s.path && (
-                <button
-                  className="cs-btn cs-btn-primary cs-btn-large"
-                  style={{
-                    marginTop: "24px",
-                    alignSelf: "flex-end",
-                  }}
-                  onClick={async (e) => {
-                    // don’t trigger card click when pressing download
-                    e.stopPropagation();
-                    try {
-                      const api = await import("../../api/api");
-                      api.downloadFolder(
-                        s.path,
-                        (s.name || s.title || "season").replace(/\s+/g, "-")
-                      );
-                    } catch (err) {
-                      console.error(err);
-                      alert("Download failed");
-                    }
-                  }}
-                >
-                  ⬇ Download
-                </button>
-              )}
+                {s.path && (
+                  <button
+                    className="cs-btn cs-btn-primary cs-btn-large"
+                    style={{
+                      marginTop: "24px",
+                      alignSelf: "flex-end",
+                    }}
+                    onClick={async (e) => {
+                      // don't trigger card click when pressing download
+                      e.stopPropagation();
+                      try {
+                        const api = await import("../../api/api");
+                        api.downloadFolder(
+                          s.path,
+                          (s.name || s.title || "season").replace(/\s+/g, "-")
+                        );
+                      } catch (err) {
+                        console.error(err);
+                        alert("Download failed");
+                      }
+                    }}
+                  >
+                    ⬇ Download
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          </AnimateIn>
         ))}
       </div>
     </section>
