@@ -1,43 +1,23 @@
 // src/components/player/VideoPlayer.jsx
 
-import { IoArrowBack } from "react-icons/io5";
+import {
+  IoArrowBack,
+  IoDownload,
+  IoCopyOutline,
+} from "react-icons/io5";
+import {
+  MdFastRewind,
+  MdPlayArrow,
+  MdPause,
+  MdFastForward,
+  MdVolumeUp,
+  MdVolumeOff,
+  MdFullscreen,
+  MdFullscreenExit,
+  MdClosedCaption,
+  MdSettings,
+} from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
-
-const VolumeOnIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <path d="M11 5L6 9H3V15H6L11 19V5Z" fill="currentColor" />
-    <path
-      d="M15.5 8.5C16.88 9.88 16.88 14.12 15.5 15.5"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const VolumeOffIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <path d="M11 5L6 9H3V15H6L11 19V5Z" fill="currentColor" />
-    <line
-      x1="17"
-      y1="9"
-      x2="21"
-      y2="15"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <line
-      x1="21"
-      y1="9"
-      x2="17"
-      y2="15"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
 
 export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
   const videoRef = useRef(null);
@@ -45,9 +25,11 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
   const hideControlsTimer = useRef(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [buffered, setBuffered] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -93,6 +75,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
     setDuration(0);
     setCurrentTime(0);
     setProgress(0);
+    setBuffered(0);
   }, [video, selectedSourceIndex]);
 
   /* ---------------- VIDEO EVENTS ---------------- */
@@ -111,16 +94,33 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
       }
     };
 
+    const onProgressEvent = () => {
+      if (el.buffered.length > 0) {
+        const bufferedEnd = el.buffered.end(el.buffered.length - 1);
+        if (el.duration > 0) {
+          setBuffered((bufferedEnd / el.duration) * 100);
+        }
+      }
+    };
+
     const onEnded = () => setIsPlaying(false);
+    const onWaiting = () => setIsBuffering(true);
+    const onPlaying = () => setIsBuffering(false);
 
     el.addEventListener("loadedmetadata", onLoadedMetadata);
     el.addEventListener("timeupdate", onTimeUpdate);
+    el.addEventListener("progress", onProgressEvent);
     el.addEventListener("ended", onEnded);
+    el.addEventListener("waiting", onWaiting);
+    el.addEventListener("playing", onPlaying);
 
     return () => {
       el.removeEventListener("loadedmetadata", onLoadedMetadata);
       el.removeEventListener("timeupdate", onTimeUpdate);
+      el.removeEventListener("progress", onProgressEvent);
       el.removeEventListener("ended", onEnded);
+      el.removeEventListener("waiting", onWaiting);
+      el.removeEventListener("playing", onPlaying);
     };
   }, [currentSource]);
 
@@ -285,6 +285,12 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
               <source src={currentSource.url} />
               Your browser does not support the video tag.
             </video>
+
+            {isBuffering && (
+              <div className="cs-video-buffering">
+                <div className="cs-spinner"></div>
+              </div>
+            )}
           </div>
 
           <div
@@ -295,62 +301,60 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
                 : "cs-player-controls-hidden")
             }
           >
-            <input
-              type="range"
-              min="0"
-              max="100"
-              step="0.1"
-              value={progress}
-              onChange={(e) => seek(e.target.value)}
-              className="cs-seek-slider"
-              style={{ "--progress": `${progress}%` }}
-            />
-
             <div className="cs-controls-row">
-              <div className="cs-controls-left">
-                <button className="cs-control-btn" onClick={() => skip(-10)}>
-                  ⏮
-                </button>
-                <button
-                  className="cs-control-btn cs-control-btn-primary"
-                  onClick={togglePlay}
-                >
-                  {isPlaying ? "⏸" : "▶"}
-                </button>
-                <button className="cs-control-btn" onClick={() => skip(10)}>
-                  ⏭
-                </button>
-              </div>
+              <button className="cs-control-btn" onClick={() => skip(-10)}>
+                <MdFastRewind size={24} />
+              </button>
+              <button className="cs-control-btn" onClick={togglePlay}>
+                {isPlaying ? <MdPause size={24} /> : <MdPlayArrow size={24} />}
+              </button>
+              <button className="cs-control-btn" onClick={() => skip(10)}>
+                <MdFastForward size={24} />
+              </button>
 
-              <div className="cs-controls-center">
-                <span className="cs-time-display">
-                  {formatTime(currentTime)} / {formatTime(duration)}
-                </span>
-              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="0.1"
+                value={progress}
+                onChange={(e) => seek(e.target.value)}
+                className="cs-seek-slider"
+                style={{ "--progress": `${progress}%`, "--buffered": `${Math.max(progress, buffered)}%` }}
+              />
 
-              <div className="cs-controls-right">
-                <button className="cs-control-btn" onClick={toggleMute}>
-                  {isMuted || volume === 0 ? (
-                    <VolumeOffIcon />
-                  ) : (
-                    <VolumeOnIcon />
-                  )}
-                </button>
+              <span className="cs-time-display">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </span>
 
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={volume}
-                  onChange={handleVolumeChange}
-                  className="cs-volume-slider"
-                />
+              <button className="cs-control-btn" onClick={toggleMute}>
+                {isMuted || volume === 0 ? (
+                  <MdVolumeOff size={24} />
+                ) : (
+                  <MdVolumeUp size={24} />
+                )}
+              </button>
 
-                <button className="cs-control-btn" onClick={toggleFullscreen}>
-                  {isFullscreen ? "🡼" : "⛶"}
-                </button>
-              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={volume}
+                onChange={handleVolumeChange}
+                className="cs-volume-slider"
+                style={{ "--volume": `${volume * 100}%` }}
+              />
+
+              <button className="cs-control-btn">
+                <MdClosedCaption size={24} />
+              </button>
+              <button className="cs-control-btn">
+                <MdSettings size={24} />
+              </button>
+              <button className="cs-control-btn" onClick={toggleFullscreen}>
+                {isFullscreen ? <MdFullscreenExit size={24} /> : <MdFullscreen size={24} />}
+              </button>
             </div>
           </div>
         </div>
@@ -361,13 +365,13 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack }) {
               className="cs-btn cs-btn-primary cs-btn-large"
               onClick={handleDownload}
             >
-              ⬇ Download
+              <IoDownload size={18} /> Download
             </button>
             <button
               className="cs-btn cs-btn-secondary cs-btn-large"
               onClick={handleCopyLink}
             >
-              ⧉ Copy direct link
+              <IoCopyOutline size={18} /> Copy direct link
             </button>
           </div>
         )}
