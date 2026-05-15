@@ -4,28 +4,41 @@
    FEATURED SLIDER  — cinematic full-bleed design
    ====================================================== */
 
-/* Outer wrapper — overflow:visible so strip thumbs can lift freely */
+/* Outer wrapper */
 .cs-featured-wrapper {
   position: relative;
   width: calc(100% + 10vw);
   margin-left: -5vw;
   margin-right: -5vw;
   margin-bottom: 40px;
-  /* Cancel cs-main padding so it sits exactly under the header */
   margin-top: -20px;
-  background: transparent;
+  background: #02020a; /* always-dark base */
 }
 
-/* Inner cinematic area — overflow:hidden clips the BG image only */
+/* In light mode — fill the gap above the slider (behind the nav) with dark */
+.cs-theme-light .cs-featured-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -400px;        /* reaches up well beyond the sticky nav */
+  left: 0;
+  right: 0;
+  height: 400px;
+  background: #02020a;
+  box-shadow: 0 0 0 100vw #02020a; /* fills any horizontal overflow too */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Inner cinematic area */
 .cs-featured-slider {
   position: relative;
   width: 100%;
   height: 480px;
   overflow: hidden;
-  background: transparent;
-  /* Thick gradient mask fading out the bottom so it blends seamlessly with the page background */
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+  background: #02020a;
+  /* Mask fades bottom into the dark wrapper */
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
 }
 
 /* Skeleton shimmer while fetching */
@@ -37,13 +50,8 @@
 }
 
 @keyframes cs-skeleton-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-
-  100% {
-    background-position: -200% 0;
-  }
+  0%  { background-position: 200% 0; }
+  100%{ background-position: -200% 0; }
 }
 
 /* ── Background panels ── */
@@ -64,44 +72,80 @@
   transform: scale(1);
 }
 
-/* ── Left gradient (darkens left side for text readability) ── */
+/* ── Left + top gradient ── */
 .cs-fs-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(100deg,
-      rgba(5, 5, 14, 0.92) 0%,
-      rgba(5, 5, 14, 0.72) 28%,
-      rgba(5, 5, 14, 0.25) 52%,
-      transparent 70%);
+  background:
+    linear-gradient(100deg,
+      rgba(2, 2, 12, 0.98) 0%,
+      rgba(5, 3, 18, 0.85) 28%,
+      rgba(20, 5, 30, 0.40) 55%,
+      transparent 72%),
+    linear-gradient(to bottom,
+      rgba(2, 2, 12, 0.70) 0%,
+      rgba(2, 2, 12, 0.20) 35%,
+      transparent 55%);
   pointer-events: none;
 }
 
-/* ── Bottom gradient (darkens bottom for strip readability) ── */
+/* ── Bottom gradient (dark with crimson tint) ── */
 .cs-fs-overlay-bottom {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(to top,
-      rgba(5, 5, 9, 0.95) 0%,
-      rgba(5, 5, 9, 0.6) 25%,
-      transparent 50%);
+  background:
+    linear-gradient(to top,
+      rgba(2, 2, 12, 1.0) 0%,
+      rgba(8, 2, 18, 0.88) 18%,
+      rgba(25, 5, 35, 0.50) 35%,
+      rgba(60, 8, 40, 0.18) 52%,
+      transparent 68%),
+    radial-gradient(ellipse at 50% 110%,
+      rgba(120, 10, 60, 0.35) 0%,
+      rgba(60, 5, 30, 0.15) 40%,
+      transparent 70%);
   pointer-events: none;
 }
 
+/* ── Cinematic color overlay ── */
+.cs-fs-overlay-color {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 80%,
+      rgba(140, 10, 80, 0.30) 0%,
+      transparent 55%),
+    radial-gradient(ellipse at 80% 20%,
+      rgba(30, 10, 120, 0.22) 0%,
+      transparent 55%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* ── Light mode — slider stays fully cinema-dark ── */
 .cs-theme-light .cs-fs-overlay {
-  background: linear-gradient(100deg,
-      rgba(240, 240, 248, 0.93) 0%,
-      rgba(240, 240, 248, 0.68) 28%,
-      rgba(240, 240, 248, 0.20) 52%,
-      transparent 70%);
+  background:
+    linear-gradient(100deg,
+      rgba(2, 2, 12, 0.98) 0%,
+      rgba(5, 3, 18, 0.85) 28%,
+      rgba(20, 5, 30, 0.40) 55%,
+      transparent 72%),
+    linear-gradient(to bottom,
+      rgba(2, 2, 12, 0.70) 0%,
+      transparent 50%);
 }
 
 .cs-theme-light .cs-fs-overlay-bottom {
-  background: linear-gradient(to top,
-      rgba(240, 240, 248, 0.97) 0%,
-      rgba(240, 240, 248, 0.65) 22%,
-      transparent 46%);
+  background:
+    linear-gradient(to top,
+      rgba(2, 2, 12, 1.0) 0%,
+      rgba(8, 2, 18, 0.88) 18%,
+      rgba(25, 5, 35, 0.50) 35%,
+      rgba(60, 8, 40, 0.15) 52%,
+      transparent 68%);
 }
 
 /* ── Main content block (bottom-left inside the inner slider) ── */
@@ -188,9 +232,17 @@
   overflow: hidden;
 }
 
+/* Light mode: title stays white because slider is always dark */
 .cs-theme-light .cs-fs-title {
-  color: var(--cs-text-primary);
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  color: #ffffff;
+  text-shadow: 0 4px 32px rgba(0, 0, 0, 0.7);
+}
+
+/* Light mode: kind badge stays same bright style */
+.cs-theme-light .cs-fs-kind-badge {
+  background: rgba(244, 75, 75, 0.18);
+  border-color: rgba(244, 75, 75, 0.40);
+  color: #f87171;
 }
 
 /* ── Watch Now button ── */
@@ -228,10 +280,11 @@
 /* ── Thumbnail strip ── */
 .cs-fs-strip-wrap {
   width: 100%;
-  background: transparent;
-  padding: 0 calc(5vw + 24px);
+  background: linear-gradient(to bottom,
+    rgba(2, 2, 12, 0.95) 0%,
+    rgba(2, 2, 12, 0.88) 100%);
+  padding: 0 calc(5vw + 24px) 20px;
   margin-top: -40px;
-  /* Pull it up slightly into the faded area */
   position: relative;
   z-index: 5;
 }
@@ -322,13 +375,19 @@
   color: #fff;
 }
 
+/* Light mode: thumbs stay dark (strip is always cinema-dark) */
 .cs-theme-light .cs-fs-thumb-title {
-  background: rgba(240, 240, 248, 0.9);
-  color: var(--cs-text-secondary);
+  background: rgba(5, 5, 14, 0.92);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .cs-theme-light .cs-fs-thumb-active .cs-fs-thumb-title {
-  color: var(--cs-text-primary);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.cs-theme-light .cs-fs-thumb {
+  background: #0d0d1a;
 }
 
 /* ── Responsive ── */
@@ -423,48 +482,125 @@
 
 
 /* ======================================================
-   CURSOR GLOW
+   CUSTOM CURSOR
    ====================================================== */
 
+/* Hide native cursor globally */
+*, *::before, *::after { cursor: none !important; }
+
+/* Ambient glow orb */
 .cs-cursor-glow {
   position: fixed;
   top: 0;
   left: 0;
-  width: 320px;
-  height: 320px;
+  width: 280px;
+  height: 280px;
+  pointer-events: none;
+  z-index: 9990;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(244, 63, 94, 0.14) 0%,
+    rgba(139, 92, 246, 0.08) 40%,
+    transparent 70%);
+  mix-blend-mode: screen;
+  filter: blur(4px);
+  will-change: transform;
+  transition: width 0.4s ease, height 0.4s ease, opacity 0.3s ease;
+}
+.cs-cursor-glow--hover {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle,
+    rgba(244, 63, 94, 0.22) 0%,
+    rgba(139, 92, 246, 0.12) 40%,
+    transparent 70%);
+}
+
+/* Lagging magnetic ring */
+.cs-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  pointer-events: none;
+  z-index: 9997;
+  border-radius: 50%;
+  border: 1.5px solid rgba(244, 63, 94, 0.7);
+  background: transparent;
+  will-change: transform;
+  transition:
+    width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease,
+    border-width 0.3s ease,
+    background 0.3s ease,
+    opacity 0.3s ease;
+}
+.cs-cursor-ring--hover {
+  width: 52px;
+  height: 52px;
+  border-color: rgba(244, 63, 94, 1);
+  border-width: 2px;
+  background: rgba(244, 63, 94, 0.06);
+}
+.cs-cursor-ring--click {
+  width: 22px;
+  height: 22px;
+  border-color: #fff;
+  background: rgba(244, 63, 94, 0.2);
+}
+
+/* Precise inner dot */
+.cs-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 7px;
   pointer-events: none;
   z-index: 9999;
   border-radius: 50%;
-  background: radial-gradient(circle,
-      rgba(244, 75, 75, 0.12) 0%,
-      rgba(244, 75, 75, 0.06) 30%,
-      rgba(139, 92, 246, 0.04) 55%,
-      transparent 70%);
-  mix-blend-mode: screen;
-  filter: blur(2px);
+  background: #f43f5e;
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.9), 0 0 20px rgba(244, 63, 94, 0.4);
   will-change: transform;
-  /* offset so the glow is centered on cursor */
-  margin-left: -160px;
-  margin-top: -160px;
-  transition: opacity 0.3s ease;
+  transition:
+    width 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.25s ease;
+}
+.cs-cursor-dot--hover {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+}
+.cs-cursor-dot--click {
+  width: 4px;
+  height: 4px;
+  background: #f43f5e;
 }
 
-/* Hide cursor glow on touch devices */
+/* Touch / low-pointer devices — restore default cursor */
 @media (hover: none) {
-  .cs-cursor-glow {
-    display: none;
-  }
+  *, *::before, *::after { cursor: auto !important; }
+  .cs-cursor-dot, .cs-cursor-ring, .cs-cursor-glow { display: none; }
 }
 
-/* Light theme: softer, tinted glow */
+/* Light theme: slightly tinted ring */
+.cs-theme-light .cs-cursor-ring {
+  border-color: rgba(244, 63, 94, 0.55);
+}
+.cs-theme-light .cs-cursor-dot {
+  background: #f43f5e;
+}
 .cs-theme-light .cs-cursor-glow {
   background: radial-gradient(circle,
-      rgba(225, 29, 72, 0.08) 0%,
-      rgba(225, 29, 72, 0.04) 30%,
-      rgba(99, 102, 241, 0.03) 55%,
-      transparent 70%);
+    rgba(244, 63, 94, 0.10) 0%,
+    rgba(99, 102, 241, 0.06) 40%,
+    transparent 70%);
+  mix-blend-mode: multiply;
 }
-
 
 /* ======================================================
    FLOATING PARTICLES
@@ -513,7 +649,8 @@
 
 /* Light theme particles */
 .cs-theme-light .cs-fp {
-  background: radial-gradient(circle, rgba(225, 29, 72, 0.35), rgba(99, 102, 241, 0.2));
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.45), rgba(99, 102, 241, 0.3));
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.1);
 }
 
 

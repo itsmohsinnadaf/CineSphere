@@ -252,8 +252,24 @@
 }
 
 .cs-btn-secondary {
-  background: rgba(39,39,60,.9);
+  background: rgba(39, 39, 60, 0.9);
   color: #e6e6ff;
+}
+
+.cs-theme-light .cs-btn-secondary {
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--cs-text-primary);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.cs-theme-light .cs-btn-secondary:hover {
+  background: rgba(15, 23, 42, 0.1);
+}
+
+.cs-theme-light .cs-player-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-color: var(--cs-border-soft);
 }
 
 /* Back button */

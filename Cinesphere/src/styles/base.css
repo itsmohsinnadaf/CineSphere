@@ -66,27 +66,30 @@ body,
 
 /* LIGHT THEME */
 .cs-theme-light {
-  --cs-bg-main: radial-gradient(circle at top, #f9fafb 0, #e5e7eb 40%, #d1d5db 100%);
-  --cs-bg-header: linear-gradient(to right, #f9fafb, #e5e7eb);
-  --cs-bg-footer: #f3f4f6;
-  --cs-surface-1: linear-gradient(135deg, #ffffff, #f3f4f6);
-  --cs-surface-2: linear-gradient(135deg, #ffffff, #f3f4f6);
-  --cs-surface-player: linear-gradient(135deg, #ffffff, #f3f4f6);
-  --cs-border-soft: rgba(15, 23, 42, 0.08);
-  --cs-border-strong: rgba(15, 23, 42, 0.18);
-  --cs-text-primary: #111827;
-  --cs-text-secondary: #4b5563;
-  --cs-text-muted: #6b7280;
-  --cs-accent: #e11d48;
-  --cs-accent-soft: rgba(225, 29, 72, 0.75);
-  --cs-chip-bg: rgba(17, 24, 39, 0.03);
-  --cs-nav-bg: rgba(249, 250, 251, 0.96);
+  --cs-bg-main: radial-gradient(circle at top left, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  --cs-bg-header: rgba(255, 255, 255, 0.8);
+  --cs-bg-footer: #f8fafc;
+  --cs-surface-1: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --cs-surface-2: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --cs-surface-player: linear-gradient(160deg, #ffffff, #f1f5f9);
+  --cs-border-soft: rgba(15, 23, 42, 0.05);
+  --cs-border-strong: rgba(15, 23, 42, 0.1);
+  --cs-text-primary: #0f172a;
+  --cs-text-secondary: #475569;
+  --cs-text-muted: #64748b;
+  --cs-accent: #f43f5e;
+  --cs-accent-soft: rgba(244, 63, 94, 0.1);
+  --cs-chip-bg: rgba(15, 23, 42, 0.04);
+  --cs-nav-bg: rgba(255, 255, 255, 0.85);
+  --cs-shadow-heavy: 0 20px 40px rgba(15, 23, 42, 0.1);
+  --cs-shadow-medium: 0 10px 25px rgba(15, 23, 42, 0.06);
 }
 
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  background: #000;
+  background: var(--cs-bg-main);
+  transition: background 0.4s ease;
 }
 
 /* App wrapper */

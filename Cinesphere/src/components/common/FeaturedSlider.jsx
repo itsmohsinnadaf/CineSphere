@@ -121,6 +121,7 @@ export default function FeaturedSlider({ onWatchNow }) {
             style={{ backgroundImage: `url(${s.image})` }}
           />
         ))}
+        <div className="cs-fs-overlay-color" />
         <div className="cs-fs-overlay" />
         <div className="cs-fs-overlay-bottom" />
 

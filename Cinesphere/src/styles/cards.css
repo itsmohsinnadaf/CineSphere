@@ -30,30 +30,37 @@
 }
 
 .cs-theme-light .cs-item-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(15, 23, 42, 0.08);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  border-color: var(--cs-border-soft);
+  box-shadow: var(--cs-shadow-medium);
+  backdrop-filter: blur(10px);
 }
 
 .cs-theme-light .cs-item-card:hover {
-  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+  box-shadow: var(--cs-shadow-heavy);
+  border-color: var(--cs-accent);
 }
 
 .cs-theme-light .cs-item-gradient {
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0.82),
-    rgba(255, 255, 255, 0.08)
-  );
+  background:
+    linear-gradient(
+      to top,
+      rgba(3, 3, 15, 0.94) 0%,
+      rgba(30, 5, 40, 0.55) 40%,
+      rgba(60, 10, 40, 0.15) 65%,
+      transparent 100%
+    );
 }
 
 .cs-theme-light .cs-episode-chip {
-  background: rgba(255, 255, 255, 0.9);
-  color: #111827;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--cs-text-primary);
+  border: 1px solid rgba(15, 23, 42, 0.05);
 }
 
 .cs-theme-light .cs-item-play-badge {
-  border-color: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.3);
 }
 
 .cs-item-image-wrapper {
@@ -74,11 +81,19 @@
 .cs-item-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.95),
-    rgba(0, 0, 0, 0.1)
-  );
+  background:
+    linear-gradient(
+      to top,
+      rgba(3, 3, 15, 0.97) 0%,
+      rgba(30, 5, 40, 0.65) 40%,
+      rgba(60, 10, 40, 0.20) 65%,
+      transparent 100%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(120, 10, 80, 0.15) 0%,
+      transparent 55%
+    );
   transition: opacity 0.4s ease;
 }
 

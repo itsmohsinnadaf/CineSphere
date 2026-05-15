@@ -80,7 +80,8 @@ body,
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  background: #000;
+  background: var(--cs-bg-main);
+  transition: background 0.3s ease;
 }
 
 .cs-app {
@@ -283,12 +284,20 @@ body {
 .cs-hero-image-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.85),
-    rgba(0, 0, 0, 0.35),
-    transparent
-  );
+  background:
+    linear-gradient(
+      to right,
+      rgba(3, 3, 15, 0.92) 0%,
+      rgba(10, 4, 30, 0.70) 35%,
+      rgba(60, 10, 40, 0.25) 65%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(180, 20, 50, 0.45) 0%,
+      rgba(80, 10, 60, 0.20) 40%,
+      transparent 70%
+    );
 }
 
 .cs-hero-text {
@@ -369,12 +378,20 @@ body {
 .cs-big-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.9),
-    rgba(0, 0, 0, 0.4),
-    transparent
-  );
+  background:
+    linear-gradient(
+      to right,
+      rgba(3, 3, 15, 0.95) 0%,
+      rgba(10, 4, 30, 0.75) 35%,
+      rgba(60, 10, 40, 0.30) 65%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(180, 20, 50, 0.50) 0%,
+      rgba(80, 10, 60, 0.25) 40%,
+      transparent 70%
+    );
 }
 
 .cs-big-text {
@@ -465,11 +482,19 @@ body {
 .cs-folder-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.85),
-    rgba(0, 0, 0, 0.1)
-  );
+  background:
+    linear-gradient(
+      to top,
+      rgba(3, 3, 15, 0.96) 0%,
+      rgba(30, 5, 40, 0.60) 45%,
+      rgba(60, 10, 40, 0.20) 70%,
+      transparent 100%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(120, 10, 80, 0.18) 0%,
+      transparent 60%
+    );
 }
 
 .cs-folder-icon {
@@ -509,71 +534,75 @@ body {
   background: rgba(0, 0, 0, 0.25);
 }
 
+/* LIGHT MODE OVERRIDES */
+
 .cs-theme-light .cs-download-pill {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
   border-color: var(--cs-accent-soft);
   color: var(--cs-accent);
 }
 
-.cs-theme-light .cs-item-gradient,
-.cs-theme-light .cs-folder-overlay,
-.cs-theme-light .cs-hero-image-gradient,
-.cs-theme-light .cs-big-gradient {
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.82),
-    rgba(255, 255, 255, 0.45),
-    transparent
-  );
-}
+/* Image overlays keep their cinematic dark gradient in all themes */
+
 
 .cs-theme-light .cs-hero-text {
-  background: radial-gradient(
-    circle at top left,
-    rgba(255, 255, 255, 0.95),
-    rgba(243, 244, 246, 0.98)
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 250, 252, 0.95)
   );
+  backdrop-filter: blur(10px);
 }
 
 .cs-theme-light .cs-folder-card,
 .cs-theme-light .cs-big-card,
 .cs-theme-light .cs-hero-card {
-  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.09);
+  box-shadow: var(--cs-shadow-medium);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.cs-theme-light .cs-folder-card:hover,
+.cs-theme-light .cs-big-card:hover,
+.cs-theme-light .cs-hero-card:hover {
+  box-shadow: var(--cs-shadow-heavy);
+  border-color: var(--cs-accent);
 }
 
 .cs-theme-light .cs-header {
-  background: var(--cs-bg-header);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(25px) saturate(1.8);
 }
 
 .cs-theme-light .cs-nav-btn {
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.03);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  color: var(--cs-text-secondary);
 }
 
 .cs-theme-light .cs-nav-btn:hover {
-  background: rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--cs-text-primary);
+}
+
+.cs-theme-light .cs-nav-btn-active {
+  background: var(--cs-accent);
+  color: #ffffff;
+  border-color: var(--cs-accent);
 }
 
 .cs-theme-light .cs-theme-toggle {
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.03);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  color: var(--cs-text-secondary);
 }
 
 .cs-theme-light .cs-theme-toggle:hover {
-  background: rgba(15, 23, 42, 0.08);
-  border-color: rgba(15, 23, 42, 0.18);
-}
-
-@media (max-width: 600px) {
-  .cs-theme-light .cs-header {
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
-  }
-
-  .cs-theme-light .cs-nav {
-    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
-  }
+  background: rgba(15, 23, 42, 0.06);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: var(--cs-text-primary);
 }
 
 

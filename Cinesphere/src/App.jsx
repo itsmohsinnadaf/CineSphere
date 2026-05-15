@@ -19,7 +19,7 @@ import VideoPlayer from "./components/player/VideoPlayer";
 
 import BackButton from "./components/common/BackButton";
 import AnimateIn from "./components/common/AnimateIn";
-import CursorGlow from "./components/common/CursorGlow";
+import CustomCursor from "./components/common/CustomCursor";
 import FloatingParticles from "./components/common/FloatingParticles";
 
 
@@ -240,7 +240,7 @@ function App() {
 
   return (
     <div className={`cs-app cs-theme-${theme}`}>
-      <CursorGlow />
+      <CustomCursor />
       <FloatingParticles />
 
       <Header
