@@ -28,6 +28,8 @@ async function fetchSlides(path, type, fallbackMap, kind, limit = 3) {
       image: resolveImage(i, fallbackMap),
       path: i.path,
       kind,
+      type: i.type,
+      videoUrl: i.videoUrl || null,
     }));
   } catch { return []; }
 }
@@ -92,7 +94,10 @@ export default function FeaturedSlider({ onWatchNow }) {
     const strip = stripRef.current;
     if (!strip) return;
     const thumb = strip.children[active];
-    if (thumb) thumb.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    if (thumb) {
+      const scrollLeft = thumb.offsetLeft - strip.offsetLeft - (strip.clientWidth / 2) + (thumb.clientWidth / 2);
+      strip.scrollTo({ left: scrollLeft, behavior: "smooth" });
+    }
   }, [active]);
 
   const goTo = (idx) => {

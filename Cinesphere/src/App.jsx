@@ -59,6 +59,7 @@ function App() {
     backToSeriesRoot,
     backToSeriesList,
     backToSeasons,
+    jumpToSeries,
     resetAll,
   } = useLibrary();
 
@@ -66,6 +67,8 @@ function App() {
   const [searchOpen, setSearchOpen] = useState(false);
   // Direct video play — bypasses useLibrary genre context (used by ContinueWatching & Search)
   const [directVideo, setDirectVideo] = useState(null);
+  // Direct card display - shows a single card after search
+  const [directCard, setDirectCard] = useState(null);
 
   useEffect(() => {
     loadRootFolders();
@@ -103,6 +106,27 @@ function App() {
     setSearchOpen(false);
   }, []);
 
+  // Called when user picks a result from Search
+  const handleSearchItem = useCallback((item) => {
+    setSearchOpen(false);
+    
+    if (item.type === "folder" || item.kind === "Series") {
+      setDirectVideo(null);
+      setDirectCard(null);
+      jumpToSeries(item);
+    } else {
+      setDirectCard({
+        id: item.id || item.path,
+        title: item.title,
+        path: item.path,
+        videoUrl: item.videoUrl,
+        image: item.image,
+        type: item.type || item.kind || "Movie",
+        sources: [{ label: "Original", url: item.videoUrl }],
+      });
+    }
+  }, [jumpToSeries]);
+
   const renderContent = () => {
     // Direct play (Continue Watching / Search) — takes priority over view state
     if (directVideo) {
@@ -117,6 +141,29 @@ function App() {
       );
     }
 
+    // Direct card display (Search)
+    if (directCard) {
+      return (
+        <section className="cs-left">
+          <div className="cs-page-header">
+            <BackButton onBack={() => setDirectCard(null)} />
+            <h2 className="cs-section-title">
+              Search Result
+            </h2>
+          </div>
+          <div className="cs-item-grid cs-centered-row">
+            <AnimateIn variant="fade-up" delay={0}>
+              <MovieCard
+                movie={directCard}
+                active={false}
+                onClick={() => setDirectVideo(directCard)}
+              />
+            </AnimateIn>
+          </div>
+        </section>
+      );
+    }
+
     // ROOT – Movies / Series cards + Continue Watching
     if (view === "root") {
       return (
@@ -127,6 +174,7 @@ function App() {
             error={error}
             onRootClick={handleRootCardClick}
             continueWatchingSlot={<ContinueWatching onPlay={handlePlayItem} />}
+            onWatchNow={handleSearchItem}
           />
         </>
       );
@@ -283,15 +331,23 @@ function App() {
       <SearchOverlay
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
-        onPlay={handlePlayItem}
+        onPlay={handleSearchItem}
       />
 
       <Header
         activeNav={activeNav}
-        onNavClick={handleNavClick}
+        onNavClick={(nav) => {
+          setDirectVideo(null);
+          setDirectCard(null);
+          handleNavClick(nav);
+        }}
         theme={theme}
         onToggleTheme={toggleTheme}
-        onLogoClick={resetAll}
+        onLogoClick={() => {
+          setDirectVideo(null);
+          setDirectCard(null);
+          resetAll();
+        }}
         onSearchOpen={() => setSearchOpen(true)}
       />
 

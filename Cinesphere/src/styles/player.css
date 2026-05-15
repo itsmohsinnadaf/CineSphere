@@ -1,979 +1,1065 @@
  /* src/styles/player.css */
 
-/* Player page wrapper */
-.cs-player-page {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-/* Player card */
-
-.cs-player-card {
-  background: var(--cs-surface-player);
-  border-radius: 24px;
-  padding: 16px 16px 18px;
-  box-shadow: var(--cs-shadow-medium);
-  border: 1px solid var(--cs-border-soft);
-  width: 100%;
-  max-width: 1180px;
-  margin: 10px auto 0;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Header */
-
-.cs-player-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.cs-player-header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.cs-player-title {
-  margin: 0 0 4px;
-  font-size: 18px;
-  color: var(--cs-text-primary);
-}
-
-.cs-player-subtitle {
-  margin: 0;
-  font-size: 12px;
-  color: var(--cs-text-secondary);
-}
-
-.cs-player-subtitle-small {
-  margin-top: 4px;
-  font-size: 11px;
-}
-
-/* Video wrapper */
-
-.cs-video-wrapper {
-  position: relative;
-  margin: 10px 0 16px;
-  border-radius: 18px;
-  overflow: hidden;
-  background: #000;
-}
-
-.cs-theme-light .cs-video-wrapper {
-  background: #020617;
-}
-
-.cs-video-inner {
-  position: relative;
-  padding-top: 56.25%;
-  min-height: 340px;
-}
-
-.cs-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: #000;
-  border: none;
-  outline: none;
-}
-
-/* Controls overlay — vertical column layout */
-
-.cs-player-controls {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0 20px 16px;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.92),
-    rgba(0,0,0,0.55) 60%,
-    transparent
-  );
-  display: flex;
-  transition: opacity .35s ease, transform .35s ease;
-}
-
-.cs-player-controls-visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.cs-player-controls-hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(6px);
-}
-
-/* Vertical column inside controls */
-.cs-controls-col {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 100%;
-}
-
-/* ── Seek wrap (holds bar + chapter ticks + tooltip) ── */
-.cs-seek-wrap {
-  position: relative;
-  width: 100%;
-  padding: 8px 0 2px;
-  cursor: pointer;
-}
-
-.cs-seek-slider {
-  width: 100%;
-  height: 4px;
-  border-radius: 999px;
-  appearance: none;
-  outline: none;
-  display: block;
-  background: linear-gradient(
-    to right,
-    #f97373 0%,
-    #f97373 var(--progress),
-    rgba(255,255,255,0.35) var(--progress),
-    rgba(255,255,255,0.35) var(--buffered),
-    rgba(255,255,255,0.15) var(--buffered),
-    rgba(255,255,255,0.15) 100%
-  );
-  transition: height 0.15s ease;
-}
-
-.cs-seek-wrap:hover .cs-seek-slider {
-  height: 6px;
-}
-
-.cs-seek-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  background: #f97373;
-  border: 2px solid #fff;
-  cursor: pointer;
-  box-shadow: 0 0 6px rgba(249,115,115,0.6);
-  transition: transform 0.15s ease;
-}
-
-.cs-seek-wrap:hover .cs-seek-slider::-webkit-slider-thumb {
-  transform: scale(1.25);
-}
-
-.cs-seek-slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  background: #f97373;
-  border: 2px solid #fff;
-  cursor: pointer;
-}
-
-
-/* Seek hover tooltip */
-.cs-seek-tooltip {
-  position: absolute;
-  bottom: 22px;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-  pointer-events: none;
-  backdrop-filter: blur(4px);
-}
-
-/* ── Controls row (left + right) ── */
-.cs-controls-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  width: 100%;
-}
-
-.cs-controls-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: nowrap;
-}
-
-.cs-controls-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.cs-control-btn {
-  border: none;
-  background: transparent;
-  padding: 0;
-  color: rgba(255,255,255,0.85);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s ease, transform 0.15s ease;
-  flex-shrink: 0;
-}
-
-.cs-control-btn:hover {
-  color: #f97373;
-  transform: scale(1.12);
-}
-
-/* Active state (e.g. CC on) */
-.cs-control-btn-active {
-  color: #f97373 !important;
-}
-
-/* Settings menu (wider) */
-.cs-settings-menu {
-  min-width: 180px;
-}
-
-/* ── Seek indicator (Netflix-style double-click ripple) ── */
-.cs-seek-indicator {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 35%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  pointer-events: none;
-  animation: cs-seek-flash 0.65s ease forwards;
-  z-index: 5;
-}
-
-.cs-seek-indicator-left  { left: 0;  border-radius: 0 100% 100% 0 / 0 50% 50% 0; background: radial-gradient(ellipse at left, rgba(255,255,255,0.12) 0%, transparent 70%); }
-.cs-seek-indicator-right { right: 0; border-radius: 100% 0 0 100% / 50% 0 0 50%; background: radial-gradient(ellipse at right, rgba(255,255,255,0.12) 0%, transparent 70%); }
-
-@keyframes cs-seek-flash {
-  0%   { opacity: 1; }
-  60%  { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.cs-seek-ripple {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  animation: cs-seek-ripple-anim 0.65s ease forwards;
-}
-
-@keyframes cs-seek-ripple-anim {
-  0%   { background: rgba(255,255,255,0.08); }
-  100% { background: transparent; }
-}
-
-.cs-seek-indicator-icon {
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-}
-
-.cs-seek-indicator-text {
-  font-size: 13px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
-  letter-spacing: 0.03em;
-}
-
-/* ── Centre play/pause flash ── */
-.cs-center-flash {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 88px;
-  height: 88px;
-  background: rgba(0, 0, 0, 0.38);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.92);
-  pointer-events: none;
-  z-index: 6;
-  animation: cs-center-flash-anim 0.65s ease forwards;
-}
-
-@keyframes cs-center-flash-anim {
-  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.75); }
-  15%  { opacity: 1; transform: translate(-50%, -50%) scale(1);    }
-  60%  { opacity: 1; transform: translate(-50%, -50%) scale(1);    }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.18); }
-}
-
-.cs-play-btn {
-  width: 40px;
-  height: 40px;
-  background: rgba(249,115,115,0.15);
-  border-radius: 50%;
-  border: 1.5px solid rgba(249,115,115,0.35);
-  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
-}
-
-.cs-play-btn:hover {
-  background: rgba(249,115,115,0.28);
-  transform: scale(1.1);
-}
-
-/* Volume slider */
-.cs-volume-slider {
-  width: 70px;
-  height: 4px;
-  border-radius: 999px;
-  appearance: none;
-  cursor: pointer;
-  background: linear-gradient(
-    to right,
-    #f97373 0%,
-    #f97373 var(--volume),
-    rgba(255,255,255,0.2) var(--volume),
-    rgba(255,255,255,0.2) 100%
-  );
-}
-
-.cs-volume-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: #fff;
-  cursor: pointer;
-}
-
-.cs-time-display {
-  font-size: 12px;
-  color: rgba(255,255,255,0.8);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-  font-weight: 500;
-}
-
-/* ── Speed selector ── */
-.cs-speed-wrap {
-  position: relative;
-}
-
-.cs-speed-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.cs-speed-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.85);
-  min-width: 26px;
-  text-align: left;
-}
-
-.cs-speed-menu {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  right: 0;
-  background: rgba(14, 14, 28, 0.96);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
-  overflow: hidden;
-  min-width: 130px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.7);
-  backdrop-filter: blur(12px);
-  z-index: 20;
-  animation: cs-search-slide-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.cs-speed-menu-title {
-  margin: 0;
-  padding: 10px 14px 6px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-
-.cs-speed-option {
-  display: block;
-  width: 100%;
-  padding: 9px 14px;
-  border: none;
-  background: transparent;
-  color: rgba(255,255,255,0.75);
-  font-size: 13px;
-  font-weight: 500;
-  font-family: 'Outfit', sans-serif;
-  text-align: left;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.cs-speed-option:hover {
-  background: rgba(249,115,115,0.12);
-  color: #fff;
-}
-
-.cs-speed-option-active {
-  color: #f97373;
-  font-weight: 700;
-  background: rgba(249,115,115,0.08);
-}
-
-/* ── Keyboard shortcut hints ── */
-.cs-player-shortcuts-hint {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-left: auto;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.cs-player-shortcuts-hint span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.3);
-}
-
-.cs-player-shortcuts-hint kbd {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 4px;
-  padding: 1px 5px;
-  font-size: 10px;
-  font-family: 'Outfit', monospace;
-  color: rgba(255,255,255,0.45);
-  line-height: 1.5;
-}
-
-/* Footer buttons */
-
-.cs-player-footer {
-  display: flex;
-  gap: 8px;
-  margin-top: auto;
-}
-
-.cs-player-footer-buttons {
-  justify-content: center;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.cs-btn {
-  border-radius: 999px;
-  padding: 6px 14px;
-  font-size: 13px;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.cs-btn-large {
-  padding-inline: 18px;
-  padding-block: 8px;
-  font-size: 14px;
-}
-
-.cs-btn-primary {
-  background: var(--cs-accent);
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(244,75,75,.6);
-}
-
-.cs-btn-secondary {
-  background: rgba(39, 39, 60, 0.9);
-  color: #e6e6ff;
-}
-
-.cs-theme-light .cs-btn-secondary {
-  background: rgba(15, 23, 42, 0.05);
-  color: var(--cs-text-primary);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-}
-
-.cs-theme-light .cs-btn-secondary:hover {
-  background: rgba(15, 23, 42, 0.1);
-}
-
-.cs-theme-light .cs-player-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
-  border-color: var(--cs-border-soft);
-}
-
-/* Back button */
-
-.cs-ios-back-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  border: none;
-  background: #ef4444;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all .2s ease;
-  box-shadow: 0 6px 14px rgba(239,68,68,.45);
-}
-
-/* FULLSCREEN */
-
-.cs-player-card-fullscreen {
-  border-radius: 0;
-  padding: 0;
-  background: #000;
-}
-
-.cs-player-card-fullscreen .cs-player-header,
-.cs-player-card-fullscreen .cs-player-footer {
-  display: none;
-}
-
-.cs-player-card-fullscreen .cs-video-wrapper {
-  margin: 0;
-  border-radius: 0;
-}
-
-.cs-player-card-fullscreen .cs-video-inner {
-  padding-top: 0;
-  min-height: 100vh;
-}
-
-.cs-player-card-fullscreen .cs-video {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  object-fit: contain;
-}
-
-/* ═══════════════════════════════════════════════════
+ /* Player page wrapper */
+ .cs-player-page {
+   width: 100%;
+   display: flex;
+   justify-content: center;
+ }
+
+ /* Player card */
+
+ .cs-player-card {
+   background: var(--cs-surface-player);
+   border-radius: 24px;
+   padding: 16px 16px 18px;
+   box-shadow: var(--cs-shadow-medium);
+   border: 1px solid var(--cs-border-soft);
+   width: 100%;
+   max-width: 1180px;
+   margin: 10px auto 0;
+   display: flex;
+   flex-direction: column;
+ }
+
+ /* Header */
+
+ .cs-player-header {
+   display: flex;
+   align-items: flex-start;
+   gap: 12px;
+   margin-bottom: 10px;
+ }
+
+ .cs-player-header-left {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+ }
+
+ .cs-player-title {
+   margin: 0 0 4px;
+   font-size: 18px;
+   color: var(--cs-text-primary);
+ }
+
+ .cs-player-subtitle {
+   margin: 0;
+   font-size: 12px;
+   color: var(--cs-text-secondary);
+ }
+
+ .cs-player-subtitle-small {
+   margin-top: 4px;
+   font-size: 11px;
+ }
+
+ /* Video wrapper */
+
+ .cs-video-wrapper {
+   position: relative;
+   margin: 10px 0 16px;
+   border-radius: 18px;
+   overflow: hidden;
+   background: #000;
+ }
+
+ .cs-theme-light .cs-video-wrapper {
+   background: #020617;
+ }
+
+ .cs-video-inner {
+   position: relative;
+   padding-top: 56.25%;
+   min-height: 340px;
+ }
+
+ .cs-video {
+   position: absolute;
+   inset: 0;
+   width: 100%;
+   height: 100%;
+   background: #000;
+   border: none;
+   outline: none;
+ }
+
+ /* Controls overlay — vertical column layout */
+
+ .cs-player-controls {
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   padding: 0 20px 16px;
+   background: linear-gradient(to top,
+       rgba(0, 0, 0, 0.92),
+       rgba(0, 0, 0, 0.55) 60%,
+       transparent);
+   display: flex;
+   transition: opacity .35s ease, transform .35s ease;
+ }
+
+ .cs-player-controls-visible {
+   opacity: 1;
+   pointer-events: auto;
+   transform: translateY(0);
+ }
+
+ .cs-player-controls-hidden {
+   opacity: 0;
+   pointer-events: none;
+   transform: translateY(6px);
+ }
+
+ /* Vertical column inside controls */
+ .cs-controls-col {
+   display: flex;
+   flex-direction: column;
+   gap: 6px;
+   width: 100%;
+ }
+
+ /* ── Seek wrap (holds bar + chapter ticks + tooltip) ── */
+ .cs-seek-wrap {
+   position: relative;
+   width: 100%;
+   padding: 8px 0 2px;
+   cursor: pointer;
+ }
+
+ .cs-seek-slider {
+   width: 100%;
+   height: 4px;
+   border-radius: 999px;
+   appearance: none;
+   outline: none;
+   display: block;
+   background: linear-gradient(to right,
+       #f97373 0%,
+       #f97373 var(--progress),
+       rgba(255, 255, 255, 0.35) var(--progress),
+       rgba(255, 255, 255, 0.35) var(--buffered),
+       rgba(255, 255, 255, 0.15) var(--buffered),
+       rgba(255, 255, 255, 0.15) 100%);
+   transition: height 0.15s ease;
+ }
+
+ .cs-seek-wrap:hover .cs-seek-slider {
+   height: 6px;
+ }
+
+ .cs-seek-slider::-webkit-slider-thumb {
+   appearance: none;
+   width: 14px;
+   height: 14px;
+   border-radius: 999px;
+   background: #f97373;
+   border: 2px solid #fff;
+   cursor: pointer;
+   box-shadow: 0 0 6px rgba(249, 115, 115, 0.6);
+   transition: transform 0.15s ease;
+ }
+
+ .cs-seek-wrap:hover .cs-seek-slider::-webkit-slider-thumb {
+   transform: scale(1.25);
+ }
+
+ .cs-seek-slider::-moz-range-thumb {
+   width: 14px;
+   height: 14px;
+   border-radius: 999px;
+   background: #f97373;
+   border: 2px solid #fff;
+   cursor: pointer;
+ }
+
+
+ /* Seek hover tooltip */
+ .cs-seek-tooltip {
+   position: absolute;
+   bottom: 22px;
+   transform: translateX(-50%);
+   background: rgba(0, 0, 0, 0.85);
+   border: 1px solid rgba(255, 255, 255, 0.12);
+   color: #fff;
+   font-size: 11px;
+   font-weight: 600;
+   padding: 3px 8px;
+   border-radius: 6px;
+   white-space: nowrap;
+   pointer-events: none;
+   backdrop-filter: blur(4px);
+ }
+
+ /* ── Controls row (left + right) ── */
+ .cs-controls-row {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 8px;
+   width: 100%;
+ }
+
+ .cs-controls-left {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   flex-wrap: nowrap;
+ }
+
+ .cs-controls-right {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   flex-shrink: 0;
+ }
+
+ .cs-control-btn {
+   border: none;
+   background: transparent;
+   padding: 0;
+   color: rgba(255, 255, 255, 0.85);
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: color 0.2s ease, transform 0.15s ease;
+   flex-shrink: 0;
+ }
+
+ .cs-control-btn:hover {
+   color: #f97373;
+   transform: scale(1.12);
+ }
+
+ /* Active state (e.g. CC on) */
+ .cs-control-btn-active {
+   color: #f97373 !important;
+ }
+
+ /* Settings menu (wider) */
+ .cs-settings-menu {
+   min-width: 180px;
+ }
+
+ /* ── Seek indicator (Netflix-style double-click ripple) ── */
+ .cs-seek-indicator {
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   width: 35%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 6px;
+   pointer-events: none;
+   animation: cs-seek-flash 0.65s ease forwards;
+   z-index: 5;
+ }
+
+ .cs-seek-indicator-left {
+   left: 0;
+   border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+   background: radial-gradient(ellipse at left, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+ }
+
+ .cs-seek-indicator-right {
+   right: 0;
+   border-radius: 100% 0 0 100% / 50% 0 0 50%;
+   background: radial-gradient(ellipse at right, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+ }
+
+ @keyframes cs-seek-flash {
+   0% {
+     opacity: 1;
+   }
+
+   60% {
+     opacity: 1;
+   }
+
+   100% {
+     opacity: 0;
+   }
+ }
+
+ .cs-seek-ripple {
+   position: absolute;
+   inset: 0;
+   border-radius: inherit;
+   animation: cs-seek-ripple-anim 0.65s ease forwards;
+ }
+
+ @keyframes cs-seek-ripple-anim {
+   0% {
+     background: rgba(255, 255, 255, 0.08);
+   }
+
+   100% {
+     background: transparent;
+   }
+ }
+
+ .cs-seek-indicator-icon {
+   color: #fff;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+ }
+
+ .cs-seek-indicator-text {
+   font-size: 13px;
+   font-weight: 700;
+   color: rgba(255, 255, 255, 0.9);
+   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+   letter-spacing: 0.03em;
+ }
+
+ /* ── Centre play/pause flash ── */
+ .cs-center-flash {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 88px;
+   height: 88px;
+   background: rgba(0, 0, 0, 0.38);
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   color: rgba(255, 255, 255, 0.92);
+   pointer-events: none;
+   z-index: 6;
+   animation: cs-center-flash-anim 0.65s ease forwards;
+ }
+
+ @keyframes cs-center-flash-anim {
+   0% {
+     opacity: 0;
+     transform: translate(-50%, -50%) scale(0.75);
+   }
+
+   15% {
+     opacity: 1;
+     transform: translate(-50%, -50%) scale(1);
+   }
+
+   60% {
+     opacity: 1;
+     transform: translate(-50%, -50%) scale(1);
+   }
+
+   100% {
+     opacity: 0;
+     transform: translate(-50%, -50%) scale(1.18);
+   }
+ }
+
+ .cs-play-btn {
+   width: 40px;
+   height: 40px;
+   background: rgba(249, 115, 115, 0.15);
+   border-radius: 50%;
+   border: 1.5px solid rgba(249, 115, 115, 0.35);
+   transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+ }
+
+ .cs-play-btn:hover {
+   background: rgba(249, 115, 115, 0.28);
+   transform: scale(1.1);
+ }
+
+ /* Volume slider */
+ .cs-volume-slider {
+   width: 70px;
+   height: 4px;
+   border-radius: 999px;
+   appearance: none;
+   cursor: pointer;
+   background: linear-gradient(to right,
+       #f97373 0%,
+       #f97373 var(--volume),
+       rgba(255, 255, 255, 0.2) var(--volume),
+       rgba(255, 255, 255, 0.2) 100%);
+ }
+
+ .cs-volume-slider::-webkit-slider-thumb {
+   appearance: none;
+   width: 11px;
+   height: 11px;
+   border-radius: 50%;
+   background: #fff;
+   cursor: pointer;
+ }
+
+ .cs-time-display {
+   font-size: 12px;
+   color: rgba(255, 255, 255, 0.8);
+   white-space: nowrap;
+   font-variant-numeric: tabular-nums;
+   font-weight: 500;
+ }
+
+ /* ── Speed selector ── */
+ .cs-speed-wrap {
+   position: relative;
+ }
+
+ .cs-speed-btn {
+   display: flex;
+   align-items: center;
+   gap: 4px;
+ }
+
+ .cs-speed-label {
+   font-size: 12px;
+   font-weight: 700;
+   color: rgba(255, 255, 255, 0.85);
+   min-width: 26px;
+   text-align: left;
+ }
+
+ .cs-speed-menu {
+   position: absolute;
+   bottom: calc(100% + 10px);
+   right: 0;
+   background: rgba(14, 14, 28, 0.96);
+   border: 1px solid rgba(255, 255, 255, 0.08);
+   border-radius: 14px;
+   overflow: hidden;
+   min-width: 130px;
+   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+   backdrop-filter: blur(12px);
+   z-index: 20;
+   animation: cs-search-slide-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+ }
+
+ .cs-speed-menu-title {
+   margin: 0;
+   padding: 10px 14px 6px;
+   font-size: 10px;
+   font-weight: 700;
+   letter-spacing: 0.08em;
+   text-transform: uppercase;
+   color: rgba(255, 255, 255, 0.35);
+   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+ }
+
+ .cs-speed-option {
+   display: block;
+   width: 100%;
+   padding: 9px 14px;
+   border: none;
+   background: transparent;
+   color: rgba(255, 255, 255, 0.75);
+   font-size: 13px;
+   font-weight: 500;
+   font-family: 'Outfit', sans-serif;
+   text-align: left;
+   transition: background 0.15s ease, color 0.15s ease;
+ }
+
+ .cs-speed-option:hover {
+   background: rgba(249, 115, 115, 0.12);
+   color: #fff;
+ }
+
+ .cs-speed-option-active {
+   color: #f97373;
+   font-weight: 700;
+   background: rgba(249, 115, 115, 0.08);
+ }
+
+ /* ── Keyboard shortcut hints ── */
+ .cs-player-shortcuts-hint {
+   display: flex;
+   align-items: center;
+   gap: 14px;
+   margin-left: auto;
+   flex-wrap: wrap;
+   justify-content: flex-end;
+ }
+
+ .cs-player-shortcuts-hint span {
+   display: flex;
+   align-items: center;
+   gap: 4px;
+   font-size: 11px;
+   color: rgba(255, 255, 255, 0.3);
+ }
+
+ .cs-player-shortcuts-hint kbd {
+   background: rgba(255, 255, 255, 0.07);
+   border: 1px solid rgba(255, 255, 255, 0.12);
+   border-radius: 4px;
+   padding: 1px 5px;
+   font-size: 10px;
+   font-family: 'Outfit', monospace;
+   color: rgba(255, 255, 255, 0.45);
+   line-height: 1.5;
+ }
+
+ /* Footer buttons */
+
+ .cs-player-footer {
+   display: flex;
+   gap: 8px;
+   margin-top: auto;
+ }
+
+ .cs-player-footer-buttons {
+   justify-content: center;
+   gap: 10px;
+   margin-top: 6px;
+ }
+
+ .cs-btn {
+   border-radius: 999px;
+   padding: 6px 14px;
+   font-size: 13px;
+   border: none;
+   cursor: pointer;
+   display: inline-flex;
+   align-items: center;
+   gap: 6px;
+ }
+
+ .cs-btn-large {
+   padding-inline: 18px;
+   padding-block: 8px;
+   font-size: 14px;
+ }
+
+ .cs-btn-primary {
+   background: var(--cs-accent);
+   color: #fff;
+   box-shadow: 0 8px 18px rgba(244, 75, 75, .6);
+ }
+
+ .cs-btn-secondary {
+   background: rgba(39, 39, 60, 0.9);
+   color: #e6e6ff;
+ }
+
+ .cs-theme-light .cs-btn-secondary {
+   background: rgba(15, 23, 42, 0.05);
+   color: var(--cs-text-primary);
+   border: 1px solid rgba(15, 23, 42, 0.08);
+ }
+
+ .cs-theme-light .cs-btn-secondary:hover {
+   background: rgba(15, 23, 42, 0.1);
+ }
+
+ .cs-theme-light .cs-player-card {
+   background: rgba(255, 255, 255, 0.9);
+   backdrop-filter: blur(20px);
+   border-color: var(--cs-border-soft);
+ }
+
+ /* Back button */
+
+ .cs-ios-back-btn {
+   width: 36px;
+   height: 36px;
+   border-radius: 999px;
+   border: none;
+   background: #ef4444;
+   color: #fff;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   transition: all .2s ease;
+   box-shadow: 0 6px 14px rgba(239, 68, 68, .45);
+ }
+
+ /* FULLSCREEN */
+
+ .cs-player-card-fullscreen {
+   border-radius: 0;
+   padding: 0;
+   background: #000;
+ }
+
+ /* Allow native cursor in fullscreen because custom cursor is behind the backdrop */
+ .cs-player-card-fullscreen,
+ .cs-player-card-fullscreen *:not(button):not(input):not(a):not(.cs-control-btn):not(.cs-seek-slider):not(.cs-seek-wrap) {
+   cursor: auto !important;
+ }
+
+ .cs-player-card-fullscreen button,
+ .cs-player-card-fullscreen a,
+ .cs-player-card-fullscreen input,
+ .cs-player-card-fullscreen .cs-control-btn,
+ .cs-player-card-fullscreen .cs-seek-wrap,
+ .cs-player-card-fullscreen .cs-seek-slider {
+   cursor: pointer !important;
+ }
+
+ /* Hide the cursor in fullscreen when controls auto-hide */
+ .cs-player-card-fullscreen.cs-player-hide-cursor,
+ .cs-player-card-fullscreen.cs-player-hide-cursor * {
+   cursor: none !important;
+ }
+
+ .cs-player-card-fullscreen .cs-player-header,
+ .cs-player-card-fullscreen .cs-player-footer {
+   display: none;
+ }
+
+ .cs-player-card-fullscreen .cs-video-wrapper {
+   margin: 0;
+   border-radius: 0;
+ }
+
+ .cs-player-card-fullscreen .cs-video-inner {
+   padding-top: 0;
+   min-height: 100vh;
+ }
+
+ .cs-player-card-fullscreen .cs-video {
+   position: relative;
+   width: 100%;
+   height: 100vh;
+   object-fit: contain;
+ }
+
+ /* ═══════════════════════════════════════════════════
    MOBILE PLAYER — full redesign for touch screens
    ═══════════════════════════════════════════════════ */
 
-@media (max-width: 600px) {
+ @media (max-width: 600px) {
 
-  /* ── Page / card shell ── */
-  .cs-player-page {
-    display: block;
-  }
+   /* ── Page / card shell ── */
+   .cs-player-page {
+     display: block;
+   }
 
-  .cs-player-card {
-    border-radius: 0;
-    padding: 0;
-    margin: 0;
-    background: #000;
-    border: none;
-    box-shadow: none;
-    min-height: auto;
-    display: flex;
-    flex-direction: column;
-  }
+   .cs-player-card {
+     border-radius: 24px;
+     padding: 0;
+     margin: 0;
+     background: #000;
+     border: none;
+     box-shadow: none;
+     min-height: auto;
+     display: flex;
+     flex-direction: column;
+   }
 
-  /* ── Top bar (back + title) ── */
-  .cs-player-header {
-    position: relative;
-    padding: 16px 14px 12px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 0;
-  }
+   /* ── Top bar (back + title) ── */
+   .cs-player-header {
+     position: relative;
+     padding: 16px 14px 12px;
+     background: transparent;
+     display: flex;
+     align-items: center;
+     gap: 10px;
+     margin-bottom: 0;
+   }
 
-  .cs-player-header-left {
-    gap: 8px;
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-  }
+   .cs-player-header-left {
+     gap: 8px;
+     flex: 1;
+     min-width: 0;
+     overflow: hidden;
+   }
 
-  /* Target the div holding the titles inside header-left */
-  .cs-player-header-left > div {
-    min-width: 0;
-    overflow: hidden;
-  }
+   /* Target the div holding the titles inside header-left */
+   .cs-player-header-left>div {
+     min-width: 0;
+     overflow: hidden;
+   }
 
-  .cs-player-title {
-    font-size: 15px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-    color: #fff;
-  }
+   .cs-player-title {
+     font-size: 15px;
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     margin: 0;
+     color: #fff;
+   }
 
-  .cs-player-subtitle, .cs-player-subtitle-small {
-    font-size: 11px;
-    color: rgba(255,255,255,0.6);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+   .cs-player-subtitle,
+   .cs-player-subtitle-small {
+     font-size: 11px;
+     color: rgba(255, 255, 255, 0.6);
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+   }
 
-  /* Hide keyboard hint on mobile */
-  .cs-player-shortcuts-hint {
-    display: none;
-  }
+   /* Hide keyboard hint on mobile */
+   .cs-player-shortcuts-hint {
+     display: none;
+   }
 
-  /* ── Video fills width, 16:9 natural height ── */
-  .cs-video-wrapper {
-    position: relative;
-    margin: 0;
-    border-radius: 0;
-    background: #000;
-    flex: none;
-  }
+   /* ── Video fills width, 16:9 natural height ── */
+   .cs-video-wrapper {
+     position: relative;
+     margin: 10px 14px;
+     border-radius: 24px;
+     background: #000;
+     flex: none;
+   }
 
-  .cs-video-inner {
-    padding-top: 0;
-    height: 45vh;
-    min-height: 380px;
-    max-height: 65vh;
-  }
+   .cs-video-inner {
+     padding-top: 0;
+     height: 45vh;
+     min-height: 380px;
+     max-height: 65vh;
+   }
 
-  /* ── Controls overlay — full-bleed, bottom-anchored ── */
-  .cs-player-controls {
-    padding: 0;
-    background: linear-gradient(
-      to top,
-      rgba(0,0,0,0.95) 0%,
-      rgba(0,0,0,0.6) 55%,
-      transparent 100%
-    );
-    flex-direction: column;
-    justify-content: flex-end;
-  }
+   /* ── Controls overlay — full-bleed, bottom-anchored ── */
+   .cs-player-controls {
+     padding: 0;
+     background: linear-gradient(to top,
+         rgba(0, 0, 0, 0.95) 0%,
+         rgba(0, 0, 0, 0.6) 55%,
+         transparent 100%);
+     flex-direction: column;
+     justify-content: flex-end;
+   }
 
-  .cs-controls-col {
-    gap: 0;
-    padding: 0 14px 14px;
-  }
+   .cs-controls-col {
+     gap: 0;
+     padding: 0 14px 14px;
+   }
 
-  /* ── Progress bar — thicker, easier to scrub ── */
-  .cs-seek-wrap {
-    padding: 10px 0 6px;
-    touch-action: none;
-  }
+   /* ── Progress bar — thicker, easier to scrub ── */
+   .cs-seek-wrap {
+     padding: 10px 0 6px;
+     touch-action: none;
+   }
 
-  .cs-seek-slider {
-    height: 5px;
-  }
+   .cs-seek-slider {
+     height: 5px;
+   }
 
-  .cs-seek-wrap:hover .cs-seek-slider,
-  .cs-seek-wrap:active .cs-seek-slider {
-    height: 7px;
-  }
+   .cs-seek-wrap:hover .cs-seek-slider,
+   .cs-seek-wrap:active .cs-seek-slider {
+     height: 7px;
+   }
 
-  .cs-seek-slider::-webkit-slider-thumb {
-    width: 18px;
-    height: 18px;
-  }
+   .cs-seek-slider::-webkit-slider-thumb {
+     width: 18px;
+     height: 18px;
+   }
 
-  /* ── Controls row: single row on mobile for bottom tools ── */
-  .cs-controls-row {
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-between;
-  }
+   /* ── Controls row: single row on mobile for bottom tools ── */
+   .cs-controls-row {
+     flex-direction: row;
+     gap: 10px;
+     align-items: center;
+     justify-content: space-between;
+   }
 
-  /* Bottom Left (Mute, Speed, Time) */
-  .cs-controls-left {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    width: auto;
-  }
+   /* Bottom Left (Mute, Speed, Time) */
+   .cs-controls-left {
+     display: flex;
+     flex-direction: row;
+     align-items: center;
+     gap: 8px;
+     width: auto;
+   }
 
-  /* Time display */
-  .cs-time-display {
-    font-size: 11px;
-    white-space: nowrap;
-    margin-left: 8px;
-  }
+   /* Time display */
+   .cs-time-display {
+     font-size: 11px;
+     white-space: nowrap;
+     margin-left: 8px;
+   }
 
-  /* Hide volume slider on mobile — mute button stays */
-  .cs-volume-slider {
-    display: none;
-  }
+   /* Hide volume slider on mobile — mute button stays */
+   .cs-volume-slider {
+     display: none;
+   }
 
-  /* Bottom Right (Fullscreen) */
-  .cs-controls-right {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-  }
+   /* Bottom Right (Fullscreen) */
+   .cs-controls-right {
+     display: flex;
+     justify-content: flex-end;
+     gap: 12px;
+   }
 
-  /* All control buttons — large touch targets (48 × 48) */
-  .cs-control-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s ease, transform 0.1s ease;
-  }
+   /* All control buttons — large touch targets (48 × 48) */
+   .cs-control-btn {
+     width: 48px;
+     height: 48px;
+     border-radius: 50%;
+     background: rgba(255, 255, 255, 0.06);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     transition: background 0.15s ease, transform 0.1s ease;
+   }
 
-  .cs-control-btn:active {
-    background: rgba(249,115,115,0.22);
-    transform: scale(0.92);
-  }
+   .cs-control-btn:active {
+     background: rgba(249, 115, 115, 0.22);
+     transform: scale(0.92);
+   }
 
-  /* Play button extra emphasis */
-  .cs-play-btn {
-    width: 58px;
-    height: 58px;
-    background: rgba(249,115,115,0.2);
-    border: 2px solid rgba(249,115,115,0.5);
-  }
+   /* Play button extra emphasis */
+   .cs-play-btn {
+     width: 58px;
+     height: 58px;
+     background: rgba(249, 115, 115, 0.2);
+     border: 2px solid rgba(249, 115, 115, 0.5);
+   }
 
-  .cs-play-btn:active {
-    background: rgba(249,115,115,0.35);
-  }
+   .cs-play-btn:active {
+     background: rgba(249, 115, 115, 0.35);
+   }
 
-  /* Speed label alongside icon */
-  .cs-speed-label {
-    font-size: 11px;
-  }
+   /* Speed label alongside icon */
+   .cs-speed-label {
+     font-size: 11px;
+   }
 
-  /* ── Speed / CC / Settings menus — slide up from bottom ── */
-  .cs-speed-menu {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: auto;
-    border-radius: 20px 20px 0 0;
-    min-width: unset;
-    width: 100%;
-    max-height: 50dvh;
-    overflow-y: auto;
-    z-index: 99;
-    box-shadow: 0 -12px 40px rgba(0,0,0,0.85);
-    animation: cs-slide-up 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
-    padding-bottom: env(safe-area-inset-bottom, 12px);
-  }
+   /* ── Speed / CC / Settings menus — slide up from bottom ── */
+   .cs-speed-menu {
+     position: fixed;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     top: auto;
+     border-radius: 20px 20px 0 0;
+     min-width: unset;
+     width: 100%;
+     max-height: 50dvh;
+     overflow-y: auto;
+     z-index: 99;
+     box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.85);
+     animation: cs-slide-up 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+     padding-bottom: env(safe-area-inset-bottom, 12px);
+   }
 
-  @keyframes cs-slide-up {
-    from { transform: translateY(100%); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
-  }
+   @keyframes cs-slide-up {
+     from {
+       transform: translateY(100%);
+       opacity: 0;
+     }
 
-  .cs-speed-option {
-    padding: 14px 20px;
-    font-size: 15px;
-  }
+     to {
+       transform: translateY(0);
+       opacity: 1;
+     }
+   }
 
-  .cs-speed-menu-title {
-    padding: 14px 20px 8px;
-    font-size: 11px;
-  }
+   .cs-speed-option {
+     padding: 14px 20px;
+     font-size: 15px;
+   }
 
-  /* ── Footer (download / copy) ── */
-  .cs-player-footer {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    padding: 14px 14px env(safe-area-inset-bottom, 14px);
-    background: #0a0a14;
-  }
+   .cs-speed-menu-title {
+     padding: 14px 20px 8px;
+     font-size: 11px;
+   }
 
-  .cs-btn-large {
-    flex: 1;
-    justify-content: center;
-    min-width: 130px;
-  }
+   /* ── Footer (download / copy) ── */
+   .cs-player-footer {
+     flex-direction: row;
+     flex-wrap: wrap;
+     gap: 10px;
+     justify-content: center;
+     padding: 14px 14px env(safe-area-inset-bottom, 14px);
+     background: #0a0a14;
+   }
 
-  /* ── Seek indicator ripple — full half screen ── */
-  .cs-seek-indicator {
-    width: 50%;
-  }
+   .cs-btn-large {
+     flex: 1;
+     justify-content: center;
+     min-width: 130px;
+   }
 
-  /* ── Centre play/pause flash — bigger on mobile ── */
-  .cs-center-flash {
-    width: 72px;
-    height: 72px;
-  }
+   /* ── Seek indicator ripple — full half screen ── */
+   .cs-seek-indicator {
+     width: 50%;
+   }
 
-  /* ── Fullscreen: make video truly full-screen ── */
-  .cs-player-card-fullscreen {
-    min-height: 100dvh;
-  }
+   /* ── Centre play/pause flash — bigger on mobile ── */
+   .cs-center-flash {
+     width: 72px;
+     height: 72px;
+   }
 
-  .cs-player-card-fullscreen .cs-video-inner {
-    min-height: 100dvh;
-    padding-top: 0;
-  }
+   .cs-seek-slider::-webkit-slider-thumb {
+     width: 18px;
+     height: 18px;
+     border: 3px solid #fff;
+   }
 
-  .cs-player-card-fullscreen .cs-video {
-    height: 100dvh;
-  }
+   .cs-seek-slider::-moz-range-thumb {
+     width: 18px;
+     height: 18px;
+     border: 3px solid #fff;
+   }
 
-  /* ── Center Controls (Play, Rewind, Forward) ── */
-  .cs-mobile-center-controls {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    z-index: 15;
-    transition: opacity 0.35s ease, transform 0.35s ease;
-  }
+   /* ── Fullscreen: make video truly full-screen ── */
+   .cs-player-card-fullscreen {
+     min-height: 100dvh;
+   }
 
-  .cs-mobile-center-controls.cs-player-controls-hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
+   .cs-player-card-fullscreen .cs-video-inner {
+     min-height: 100dvh;
+     padding-top: 0;
+   }
 
-  .cs-mobile-center-controls.cs-player-controls-visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
+   .cs-player-card-fullscreen .cs-video {
+     height: 100dvh;
+   }
 
-  /* Make center play button stand out */
-  .cs-mobile-center-controls .cs-play-btn {
-    width: 64px;
-    height: 64px;
-    background: rgba(249,115,115,0.25);
-    border: 2px solid rgba(249,115,115,0.6);
-  }
+   /* ── Center Controls (Play, Rewind, Forward) ── */
+   .cs-mobile-center-controls {
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 28px;
+     z-index: 15;
+     transition: opacity 0.35s ease, transform 0.35s ease;
+   }
 
-  /* ── Top Controls inside Video Wrapper (PiP, CC, Settings) ── */
-  .cs-mobile-top-controls {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 14px 16px;
-    z-index: 15;
-    transition: opacity 0.35s ease;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
-  }
+   .cs-mobile-center-controls.cs-player-controls-hidden {
+     opacity: 0;
+     pointer-events: none;
+   }
 
-  .cs-mobile-top-controls.cs-player-controls-hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
+   .cs-mobile-center-controls.cs-player-controls-visible {
+     opacity: 1;
+     pointer-events: auto;
+   }
 
-  .cs-mobile-top-controls.cs-player-controls-visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
+   .cs-mobile-center-controls .cs-control-btn,
+   .cs-mobile-top-controls .cs-control-btn,
+   .cs-controls-row .cs-control-btn {
+     width: 46px;
+     height: 46px;
+     border-radius: 50%;
+     background: rgba(20, 20, 25, 0.65);
+     border: 1px solid rgba(255, 255, 255, 0.08);
+     backdrop-filter: blur(12px);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+   }
 
-  .cs-mobile-top-right {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
+   /* Make center play button stand out */
+   .cs-mobile-center-controls .cs-play-btn {
+     width: 74px !important;
+     height: 74px !important;
+     background: rgba(244, 75, 75, 0.25) !important;
+     border: 2px solid #f44b4b !important;
+   }
 
-}
+   /* ── Top Controls inside Video Wrapper (PiP, CC, Settings) ── */
+   .cs-mobile-top-controls {
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     display: flex;
+     justify-content: space-between;
+     align-items: flex-start;
+     padding: 16px;
+     z-index: 15;
+     transition: opacity 0.35s ease;
+     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+   }
 
-/* Buffering Spinner */
+   .cs-mobile-top-controls.cs-player-controls-hidden {
+     opacity: 0;
+     pointer-events: none;
+   }
 
-.cs-video-buffering {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
-  pointer-events: none;
-  z-index: 10;
-}
+   .cs-mobile-top-controls.cs-player-controls-visible {
+     opacity: 1;
+     pointer-events: auto;
+   }
 
-.cs-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #f97373;
-  border-radius: 50%;
-  animation: cs-spin 1s linear infinite;
-}
+   .cs-mobile-top-right {
+     display: flex;
+     gap: 12px;
+     align-items: center;
+   }
 
-@keyframes cs-spin {
-  to { transform: rotate(360deg); }
-}
+ }
+
+ /* Buffering Spinner */
+
+ .cs-video-buffering {
+   position: absolute;
+   inset: 0;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background: rgba(0, 0, 0, 0.4);
+   pointer-events: none;
+   z-index: 10;
+ }
+
+ .cs-spinner {
+   width: 48px;
+   height: 48px;
+   border: 4px solid rgba(255, 255, 255, 0.2);
+   border-top-color: #f97373;
+   border-radius: 50%;
+   animation: cs-spin 1s linear infinite;
+ }
+
+ @keyframes cs-spin {
+   to {
+     transform: rotate(360deg);
+   }
+ }
 
 
-/* ──────────────────────────────────────────────────
+ /* ──────────────────────────────────────────────────
    SCROLL TO TOP BUTTON
 ────────────────────────────────────────────────── */
 
-.cs-scroll-top {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  z-index: 900;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  background: linear-gradient(135deg, #f43f5e, #e11d48);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.45), 0 2px 8px rgba(0,0,0,0.3);
-  cursor: pointer;
-  animation: cs-fade-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+ .cs-scroll-top {
+   position: fixed;
+   bottom: 32px;
+   right: 32px;
+   z-index: 900;
+   width: 44px;
+   height: 44px;
+   border-radius: 50%;
+   border: none;
+   background: linear-gradient(135deg, #f43f5e, #e11d48);
+   color: #fff;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   box-shadow: 0 8px 24px rgba(244, 63, 94, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+   cursor: pointer;
+   animation: cs-fade-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+   transition: transform 0.2s ease, box-shadow 0.2s ease;
+ }
 
-.cs-scroll-top:hover {
-  transform: translateY(-4px) scale(1.08);
-  box-shadow: 0 14px 32px rgba(244, 63, 94, 0.6), 0 4px 12px rgba(0,0,0,0.3);
-}
+ .cs-scroll-top:hover {
+   transform: translateY(-4px) scale(1.08);
+   box-shadow: 0 14px 32px rgba(244, 63, 94, 0.6), 0 4px 12px rgba(0, 0, 0, 0.3);
+ }
 
-.cs-scroll-top:active {
-  transform: scale(0.95);
-}
+ .cs-scroll-top:active {
+   transform: scale(0.95);
+ }
 
-@media (max-width: 600px) {
-  .cs-scroll-top {
-    bottom: 80px;
-    right: 18px;
-    width: 38px;
-    height: 38px;
-  }
-}
+ @media (max-width: 600px) {
+   .cs-scroll-top {
+     bottom: 80px;
+     right: 18px;
+     width: 38px;
+     height: 38px;
+   }
+ }

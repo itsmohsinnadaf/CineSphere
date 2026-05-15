@@ -357,6 +357,16 @@ export function useLibrary() {
     setView("seriesSeasons"); 
   };
 
+  const jumpToSeries = async (seriesFolder) => {
+    setSelectedSeriesRoot({
+      id: "Series",
+      name: "Series",
+      title: "Series",
+      path: "Series"
+    });
+    setActiveNav("series");
+    await openSeriesFolder(seriesFolder);
+  };
 
   /* ---------- ROOT CARD & NAV CLICK HANDLERS ---------- */
 
@@ -441,6 +451,7 @@ export function useLibrary() {
     backToSeriesRoot,
     backToSeriesList,
     backToSeasons,
+    jumpToSeries,
 
     resetAll,
   };

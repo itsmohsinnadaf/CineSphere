@@ -43,13 +43,11 @@
 
 .cs-theme-light .cs-item-gradient {
   background:
-    linear-gradient(
-      to top,
-      rgba(3, 3, 15, 0.94) 0%,
-      rgba(30, 5, 40, 0.55) 40%,
-      rgba(60, 10, 40, 0.15) 65%,
-      transparent 100%
-    );
+    linear-gradient(to top,
+      rgba(0, 0, 0, 0.95) 0%,
+      rgba(0, 0, 0, 0.65) 40%,
+      rgba(20, 0, 0, 0.15) 65%,
+      transparent 100%);
 }
 
 .cs-theme-light .cs-episode-chip {
@@ -82,18 +80,11 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      to top,
-      rgba(3, 3, 15, 0.97) 0%,
-      rgba(30, 5, 40, 0.65) 40%,
-      rgba(60, 10, 40, 0.20) 65%,
-      transparent 100%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(120, 10, 80, 0.15) 0%,
-      transparent 55%
-    );
+    linear-gradient(to top,
+      rgba(0, 0, 0, 0.98) 0%,
+      rgba(0, 0, 0, 0.75) 40%,
+      rgba(20, 0, 0, 0.20) 65%,
+      transparent 100%);
   transition: opacity 0.4s ease;
 }
 

@@ -33,12 +33,12 @@
 .cs-featured-slider {
   position: relative;
   width: 100%;
-  height: 480px;
+  height: 62vh;
+  min-height: 520px;
   overflow: hidden;
-  background: #02020a;
-  /* Mask fades bottom into the dark wrapper */
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+  background: #000;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
 }
 
 /* Skeleton shimmer while fetching */
@@ -59,17 +59,21 @@
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center top;
+  background-position: center 20%;
   opacity: 0;
-  transform: scale(1.04);
-  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 7s ease-out;
+  transform: scale(1);
+  transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: opacity, transform;
 }
 
 .cs-fs-bg-active {
   opacity: 1;
-  transform: scale(1);
+  animation: cs-ken-burns 16s ease-out forwards;
+}
+
+@keyframes cs-ken-burns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
 }
 
 /* ── Left + top gradient ── */
@@ -78,34 +82,28 @@
   inset: 0;
   z-index: 1;
   background:
-    linear-gradient(100deg,
-      rgba(2, 2, 12, 0.98) 0%,
-      rgba(5, 3, 18, 0.85) 28%,
-      rgba(20, 5, 30, 0.40) 55%,
-      transparent 72%),
+    linear-gradient(90deg,
+      rgba(0, 0, 0, 0.95) 0%,
+      rgba(0, 0, 0, 0.70) 30%,
+      rgba(0, 0, 0, 0.15) 60%,
+      transparent 100%),
     linear-gradient(to bottom,
-      rgba(2, 2, 12, 0.70) 0%,
-      rgba(2, 2, 12, 0.20) 35%,
-      transparent 55%);
+      rgba(0, 0, 0, 0.8) 0%,
+      transparent 20%);
   pointer-events: none;
 }
 
-/* ── Bottom gradient (dark with crimson tint) ── */
+/* ── Bottom gradient ── */
 .cs-fs-overlay-bottom {
   position: absolute;
   inset: 0;
   z-index: 1;
   background:
     linear-gradient(to top,
-      rgba(2, 2, 12, 1.0) 0%,
-      rgba(8, 2, 18, 0.88) 18%,
-      rgba(25, 5, 35, 0.50) 35%,
-      rgba(60, 8, 40, 0.18) 52%,
-      transparent 68%),
-    radial-gradient(ellipse at 50% 110%,
-      rgba(120, 10, 60, 0.35) 0%,
-      rgba(60, 5, 30, 0.15) 40%,
-      transparent 70%);
+      rgba(0, 0, 0, 1.0) 0%,
+      rgba(0, 0, 0, 0.9) 15%,
+      rgba(0, 0, 0, 0.4) 35%,
+      transparent 60%);
   pointer-events: none;
 }
 
@@ -116,10 +114,10 @@
   z-index: 0;
   background:
     radial-gradient(ellipse at 20% 80%,
-      rgba(140, 10, 80, 0.30) 0%,
+      rgba(220, 20, 60, 0.35) 0%,
       transparent 55%),
     radial-gradient(ellipse at 80% 20%,
-      rgba(30, 10, 120, 0.22) 0%,
+      rgba(244, 75, 75, 0.25) 0%,
       transparent 55%);
   pointer-events: none;
   mix-blend-mode: screen;
@@ -128,48 +126,46 @@
 /* ── Light mode — slider stays fully cinema-dark ── */
 .cs-theme-light .cs-fs-overlay {
   background:
-    linear-gradient(100deg,
-      rgba(2, 2, 12, 0.98) 0%,
-      rgba(5, 3, 18, 0.85) 28%,
-      rgba(20, 5, 30, 0.40) 55%,
-      transparent 72%),
+    linear-gradient(90deg,
+      rgba(0, 0, 0, 0.98) 0%,
+      rgba(0, 0, 0, 0.80) 30%,
+      rgba(0, 0, 0, 0.30) 60%,
+      transparent 100%),
     linear-gradient(to bottom,
-      rgba(2, 2, 12, 0.70) 0%,
-      transparent 50%);
+      rgba(0, 0, 0, 0.7) 0%,
+      transparent 30%);
 }
 
 .cs-theme-light .cs-fs-overlay-bottom {
   background:
     linear-gradient(to top,
-      rgba(2, 2, 12, 1.0) 0%,
-      rgba(8, 2, 18, 0.88) 18%,
-      rgba(25, 5, 35, 0.50) 35%,
-      rgba(60, 8, 40, 0.15) 52%,
-      transparent 68%);
+      rgba(0, 0, 0, 1.0) 0%,
+      rgba(0, 0, 0, 0.9) 15%,
+      rgba(0, 0, 0, 0.4) 35%,
+      transparent 60%);
 }
 
-/* ── Main content block (bottom-left inside the inner slider) ── */
+/* ── Main content block ── */
 .cs-fs-content {
   position: absolute;
-  bottom: 145px;
-  left: calc(5vw + 24px);
+  bottom: 12%;
+  left: calc(6vw + 24px);
   z-index: 3;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 520px;
+  gap: 20px;
+  max-width: 600px;
 }
 
 /* Slide-in animation on transition */
 @keyframes cs-fs-enter {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px) scale(0.98);
   }
-
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -178,19 +174,18 @@
     opacity: 1;
     transform: translateY(0);
   }
-
   to {
     opacity: 0;
-    transform: translateY(-12px);
+    transform: translateY(-16px);
   }
 }
 
 .cs-fs-content-enter {
-  animation: cs-fs-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: cs-fs-enter 0.7s cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 
 .cs-fs-content-exit {
-  animation: cs-fs-exit 0.25s ease both;
+  animation: cs-fs-exit 0.3s ease both;
 }
 
 /* ── Kind badge ── */
@@ -198,17 +193,18 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 14px;
+  padding: 6px 16px;
   border-radius: 999px;
-  background: rgba(244, 75, 75, 0.15);
-  border: 1px solid rgba(244, 75, 75, 0.35);
-  color: #f87171;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   width: fit-content;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .cs-theme-light .cs-fs-kind-badge {
@@ -220,22 +216,24 @@
 /* ── Title ── */
 .cs-fs-title {
   margin: 0;
-  font-size: clamp(32px, 4.5vw, 60px);
+  font-size: clamp(38px, 5.5vw, 76px);
   font-weight: 900;
   color: #fff;
   line-height: 1.05;
-  letter-spacing: -0.02em;
-  text-shadow: 0 4px 32px rgba(0, 0, 0, 0.7);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  text-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0,0,0,0.8);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  font-family: 'Outfit', sans-serif;
 }
 
 /* Light mode: title stays white because slider is always dark */
 .cs-theme-light .cs-fs-title {
   color: #ffffff;
-  text-shadow: 0 4px 32px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0,0,0,0.8);
 }
 
 /* Light mode: kind badge stays same bright style */
@@ -249,24 +247,43 @@
 .cs-fs-watch-btn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 28px;
+  gap: 12px;
+  padding: 16px 36px;
   border-radius: 999px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
   font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: #fff;
-  background: linear-gradient(135deg, #f44b4b 0%, #c2185b 100%);
-  box-shadow: 0 8px 28px rgba(244, 75, 75, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   width: fit-content;
+  position: relative;
+  overflow: hidden;
+}
+
+.cs-fs-watch-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--cs-accent) 0%, #ff1f5a 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
 }
 
 .cs-fs-watch-btn:hover {
-  transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 14px 40px rgba(244, 75, 75, 0.65), 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 16px 48px rgba(244, 75, 75, 0.5), 0 4px 16px rgba(0,0,0,0.6);
+  border-color: transparent;
+}
+
+.cs-fs-watch-btn:hover::before {
+  opacity: 1;
 }
 
 .cs-fs-watch-btn:active {
@@ -280,24 +297,20 @@
 /* ── Thumbnail strip ── */
 .cs-fs-strip-wrap {
   width: 100%;
-  background: linear-gradient(to bottom,
-    rgba(2, 2, 12, 0.95) 0%,
-    rgba(2, 2, 12, 0.88) 100%);
-  padding: 0 calc(5vw + 24px) 20px;
-  margin-top: -40px;
+  background: transparent;
+  padding: 0 calc(6vw - 6px) 30px;
+  margin-top: -60px;
   position: relative;
   z-index: 5;
 }
 
 .cs-fs-strip {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  /* Move padding inside the scrolling container so lifted cards aren't clipped */
-  padding-top: 24px;
-  padding-bottom: 16px;
+  padding: 32px 30px 24px;
 }
 
 .cs-fs-strip::-webkit-scrollbar {
@@ -307,93 +320,91 @@
 /* ── Individual thumbnail ── */
 .cs-fs-thumb {
   flex-shrink: 0;
-  width: 150px;
-  border: none;
+  width: 170px;
+  border: 1px solid rgba(255,255,255,0.08);
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
-  background: #111;
-  opacity: 0.5;
-  transform: translateY(0) scale(0.96);
-  transition: opacity 0.35s ease,
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s ease;
-  outline: 2px solid transparent;
-  outline-offset: 3px;
+  background: #000;
+  transform: translateY(0) scale(0.92);
+  filter: grayscale(60%) brightness(0.6);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  outline: none;
 }
 
 .cs-fs-thumb:hover {
-  opacity: 0.85;
-  transform: translateY(-5px) scale(0.99);
+  filter: grayscale(20%) brightness(0.9);
+  transform: translateY(-8px) scale(0.96);
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
 }
 
-/* Active: lifted, bright, red glow */
+/* Active: lifted, bright, glowing border */
 .cs-fs-thumb-active {
-  opacity: 1;
-  transform: translateY(-10px) scale(1.06);
-  outline-color: var(--cs-accent);
-  box-shadow: 0 14px 36px rgba(244, 75, 75, 0.5),
-    0 4px 14px rgba(0, 0, 0, 0.6);
+  filter: grayscale(0%) brightness(1);
+  transform: translateY(-16px) scale(1.08);
+  border: 1px solid var(--cs-accent);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.8), 0 0 30px rgba(244, 75, 75, 0.4);
+  z-index: 10;
 }
 
 .cs-fs-thumb img {
   width: 100%;
-  height: 160px;
+  height: 220px;
   object-fit: cover;
   object-position: center top;
   display: block;
 }
 
-/* Dark scrim over inactive thumbs */
+/* Dark scrim removed for CSS filter approach */
 .cs-fs-thumb-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(5, 5, 14, 0.35);
-  transition: background 0.3s ease;
-}
-
-.cs-fs-thumb-active .cs-fs-thumb-overlay {
-  background: rgba(5, 5, 14, 0.0);
+  display: none;
 }
 
 /* Title under thumb */
 .cs-fs-thumb-title {
   display: block;
-  padding: 7px 8px 8px;
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.75);
+  padding: 12px 10px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
-  background: rgba(5, 5, 14, 0.9);
+  background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7) 60%, transparent);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  backdrop-filter: blur(8px);
 }
 
 .cs-fs-thumb-active .cs-fs-thumb-title {
   color: #fff;
+  background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.4) 60%, transparent);
 }
 
-/* Light mode: thumbs stay dark (strip is always cinema-dark) */
+/* Light mode: thumbs stay dark */
 .cs-theme-light .cs-fs-thumb-title {
-  background: rgba(5, 5, 14, 0.92);
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .cs-theme-light .cs-fs-thumb-active .cs-fs-thumb-title {
   color: #ffffff;
-  font-weight: 700;
 }
 
 .cs-theme-light .cs-fs-thumb {
-  background: #0d0d1a;
+  background: #000;
 }
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .cs-featured-slider {
-    height: 440px;
+    height: 55vh;
+    min-height: 440px;
   }
 
   .cs-featured-wrapper {
@@ -405,30 +416,31 @@
 
   .cs-fs-content {
     left: calc(4vw + 16px);
-    bottom: 52px;
+    bottom: 15%;
   }
 
   .cs-fs-strip-wrap {
-    padding: 0 calc(4vw + 16px);
+    padding: 0 calc(4vw - 4px) 24px;
+    margin-top: -40px;
   }
 
   .cs-fs-strip {
-    padding-top: 20px;
-    padding-bottom: 14px;
+    padding: 24px 20px 14px;
   }
 
   .cs-fs-thumb {
-    width: 130px;
+    width: 140px;
   }
 
   .cs-fs-thumb img {
-    height: 140px;
+    height: 180px;
   }
 }
 
 @media (max-width: 600px) {
   .cs-featured-slider {
-    height: 360px;
+    height: 50vh;
+    min-height: 380px;
   }
 
   .cs-featured-wrapper {
@@ -439,43 +451,43 @@
   }
 
   .cs-fs-content {
-    left: 3vw;
-    bottom: 48px;
+    left: 4vw;
+    bottom: 12%;
     max-width: 90vw;
     gap: 12px;
   }
 
   .cs-fs-strip-wrap {
-    padding: 0 3vw;
+    padding: 0 max(0px, calc(4vw - 16px)) 20px;
+    margin-top: -30px;
   }
 
   .cs-fs-strip {
-    padding-top: 18px;
-    padding-bottom: 12px;
+    padding: 20px 16px 12px;
   }
 
   .cs-fs-thumb {
-    width: 100px;
+    width: 120px;
   }
 
   .cs-fs-thumb img {
-    height: 110px;
+    height: 160px;
   }
 
   .cs-fs-thumb-title {
-    font-size: 9px;
-    padding: 4px 4px 5px;
+    font-size: 10px;
+    padding: 6px 6px 8px;
   }
 
   .cs-fs-watch-btn {
-    padding: 11px 22px;
-    font-size: 13px;
+    padding: 12px 24px;
+    font-size: 14px;
   }
 
   .cs-fs-overlay {
-    background: linear-gradient(to right,
-        rgba(5, 5, 14, 0.95) 0%,
-        rgba(5, 5, 14, 0.6) 50%,
+    background: linear-gradient(90deg,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(0, 0, 0, 0.6) 60%,
         transparent 100%);
   }
 }
@@ -748,7 +760,7 @@
   border: none !important;
 }
 
-/* Rotating gradient border */
+/* Red gradient border */
 .cs-hero-card::before {
   content: "";
   position: absolute;
@@ -757,8 +769,8 @@
   padding: 2px;
   background: linear-gradient(var(--cs-border-angle, 0deg),
       #f44b4b,
-      #8b5cf6,
-      #06b6d4,
+      #991b1b,
+      #ff1f5a,
       #f44b4b);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
@@ -766,7 +778,7 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: cs-border-rotate 6s linear infinite;
-  opacity: 0.4;
+  opacity: 0.6;
   transition: opacity 0.4s ease;
   z-index: 0;
   pointer-events: none;
@@ -800,8 +812,8 @@
   inset: -40px;
   border-radius: 60px;
   background: radial-gradient(ellipse at center,
-      rgba(244, 75, 75, 0.15) 0%,
-      rgba(139, 92, 246, 0.08) 40%,
+      rgba(244, 75, 75, 0.25) 0%,
+      rgba(220, 20, 60, 0.1) 40%,
       transparent 70%);
   z-index: -1;
   opacity: 0;
@@ -816,8 +828,8 @@
 
 .cs-theme-light .cs-hero-card::after {
   background: radial-gradient(ellipse at center,
-      rgba(225, 29, 72, 0.1) 0%,
-      rgba(99, 102, 241, 0.06) 40%,
+      rgba(225, 29, 72, 0.15) 0%,
+      rgba(244, 75, 75, 0.08) 40%,
       transparent 70%);
 }
 

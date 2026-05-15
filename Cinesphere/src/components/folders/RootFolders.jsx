@@ -2,7 +2,7 @@
 import AnimateIn from "../common/AnimateIn";
 import FeaturedSlider from "../common/FeaturedSlider";
 
-export default function RootFolders({ folders, loading, error, onRootClick, continueWatchingSlot }) {
+export default function RootFolders({ folders, loading, error, onRootClick, continueWatchingSlot, onWatchNow }) {
   // Loading screen is rendered at the App level (outside animated wrapper)
   if (loading && !folders.length) {
     return null;
@@ -17,20 +17,10 @@ export default function RootFolders({ folders, loading, error, onRootClick, cont
     );
   }
 
-  const handleWatchNow = (slide) => {
-    const isMovie = slide.path?.toLowerCase().startsWith("movies");
-    const target = folders.find((f) =>
-      isMovie
-        ? f.name.toLowerCase() === "movies"
-        : f.name.toLowerCase() === "series"
-    ) || folders[0];
-    if (target) onRootClick(target);
-  };
-
   return (
     <section className="cs-left">
       {/* Featured auto-sliding banner */}
-      <FeaturedSlider onWatchNow={handleWatchNow} />
+      <FeaturedSlider onWatchNow={onWatchNow} />
 
       {/* Continue Watching — sits between slider and library */}
       {continueWatchingSlot}

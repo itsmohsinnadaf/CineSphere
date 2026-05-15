@@ -41,13 +41,13 @@ const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 const DBL_CLICK_MS = 280; // window to detect double-click
 
 export default function VideoPlayer({ video, metaLine, subLine, onBack, context }) {
-  const videoRef        = useRef(null);
-  const containerRef    = useRef(null);
-  const hideTimer       = useRef(null);
+  const videoRef = useRef(null);
+  const containerRef = useRef(null);
+  const hideTimer = useRef(null);
   const saveIntervalRef = useRef(null);
-  const seekWrapRef     = useRef(null);
-  const clickTimerRef   = useRef(null);
-  const clickDataRef    = useRef({ count: 0, side: null });
+  const seekWrapRef = useRef(null);
+  const clickTimerRef = useRef(null);
+  const clickDataRef = useRef({ count: 0, side: null });
 
   /* ── Saved position ── */
   const savedEntry = getContinueWatching().find((i) => i.id === video.id);
@@ -55,17 +55,17 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const [resumeState, setResumeState] = useState(resumeTime > 0 ? "asking" : "done");
 
   /* ── Core state ── */
-  const [isPlaying,     setIsPlaying]     = useState(false);
-  const [isBuffering,   setIsBuffering]   = useState(false);
-  const [duration,      setDuration]      = useState(0);
-  const [currentTime,   setCurrentTime]   = useState(0);
-  const [progress,      setProgress]      = useState(0);
-  const [buffered,      setBuffered]      = useState(0);
-  const [volume,        setVolume]        = useState(1);
-  const [isMuted,       setIsMuted]       = useState(false);
-  const [isFullscreen,  setIsFullscreen]  = useState(false);
-  const [isPiP,         setIsPiP]         = useState(false);
-  const [showControls,  setShowControls]  = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [buffered, setBuffered] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPiP, setIsPiP] = useState(false);
+  const [showControls, setShowControls] = useState(true);
   const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 600px)').matches);
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     media.addEventListener('change', listener);
     return () => media.removeEventListener('change', listener);
   }, []);
-  const [hoverTime,     setHoverTime]     = useState(null);
+  const [hoverTime, setHoverTime] = useState(null);
   const [selectedSourceIndex] = useState(0);
 
   /* ── Speed ── */
@@ -82,13 +82,13 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
 
   /* ── CC / Text tracks ── */
-  const [textTracks,   setTextTracks]   = useState([]); // available tracks
-  const [activeCC,     setActiveCC]     = useState(-1); // -1 = off
-  const [showCCMenu,   setShowCCMenu]   = useState(false);
+  const [textTracks, setTextTracks] = useState([]); // available tracks
+  const [activeCC, setActiveCC] = useState(-1); // -1 = off
+  const [showCCMenu, setShowCCMenu] = useState(false);
 
   /* ── Audio tracks ── */
-  const [audioTracks,  setAudioTracks]  = useState([]);
-  const [activeAudio,  setActiveAudio]  = useState(0);
+  const [audioTracks, setAudioTracks] = useState([]);
+  const [activeAudio, setActiveAudio] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
 
   /* ── Seek indicator (Netflix-style ripple) ── */
@@ -169,28 +169,28 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
         setBuffered((el.buffered.end(el.buffered.length - 1) / el.duration) * 100);
       }
     };
-    const onEnded    = () => setIsPlaying(false);
-    const onWaiting  = () => setIsBuffering(true);
-    const onPlaying  = () => setIsBuffering(false);
+    const onEnded = () => setIsPlaying(false);
+    const onWaiting = () => setIsBuffering(true);
+    const onPlaying = () => setIsBuffering(false);
     const onPiPEnter = () => setIsPiP(true);
     const onPiPLeave = () => setIsPiP(false);
 
-    el.addEventListener("loadedmetadata",        onMeta);
-    el.addEventListener("timeupdate",            onTime);
-    el.addEventListener("progress",              onProg);
-    el.addEventListener("ended",                 onEnded);
-    el.addEventListener("waiting",               onWaiting);
-    el.addEventListener("playing",               onPlaying);
+    el.addEventListener("loadedmetadata", onMeta);
+    el.addEventListener("timeupdate", onTime);
+    el.addEventListener("progress", onProg);
+    el.addEventListener("ended", onEnded);
+    el.addEventListener("waiting", onWaiting);
+    el.addEventListener("playing", onPlaying);
     el.addEventListener("enterpictureinpicture", onPiPEnter);
     el.addEventListener("leavepictureinpicture", onPiPLeave);
 
     return () => {
-      el.removeEventListener("loadedmetadata",        onMeta);
-      el.removeEventListener("timeupdate",            onTime);
-      el.removeEventListener("progress",              onProg);
-      el.removeEventListener("ended",                 onEnded);
-      el.removeEventListener("waiting",               onWaiting);
-      el.removeEventListener("playing",               onPlaying);
+      el.removeEventListener("loadedmetadata", onMeta);
+      el.removeEventListener("timeupdate", onTime);
+      el.removeEventListener("progress", onProg);
+      el.removeEventListener("ended", onEnded);
+      el.removeEventListener("waiting", onWaiting);
+      el.removeEventListener("playing", onPlaying);
       el.removeEventListener("enterpictureinpicture", onPiPEnter);
       el.removeEventListener("leavepictureinpicture", onPiPLeave);
     };
@@ -220,7 +220,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     const el = videoRef.current;
     if (!el) return;
     if (el.paused) { el.play(); setIsPlaying(true); }
-    else           { el.pause(); setIsPlaying(false); }
+    else { el.pause(); setIsPlaying(false); }
   }, []);
 
   const seek = (value) => {
@@ -246,28 +246,28 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     if (!("mediaSession" in navigator)) return;
 
     navigator.mediaSession.metadata = new MediaMetadata({
-      title:  video.title  || "CineSphere",
-      artist: metaLine     || "CineSphere",
-      album:  subLine      || "",
+      title: video.title || "CineSphere",
+      artist: metaLine || "CineSphere",
+      album: subLine || "",
       artwork: video.image
         ? [
-            { src: video.image, sizes: "96x96",  type: "image/jpeg" },
-            { src: video.image, sizes: "512x512", type: "image/jpeg" },
-          ]
+          { src: video.image, sizes: "96x96", type: "image/jpeg" },
+          { src: video.image, sizes: "512x512", type: "image/jpeg" },
+        ]
         : [],
     });
 
     const ms = navigator.mediaSession;
-    ms.setActionHandler("play",         () => { videoRef.current?.play();  setIsPlaying(true);  });
-    ms.setActionHandler("pause",        () => { videoRef.current?.pause(); setIsPlaying(false); });
+    ms.setActionHandler("play", () => { videoRef.current?.play(); setIsPlaying(true); });
+    ms.setActionHandler("pause", () => { videoRef.current?.pause(); setIsPlaying(false); });
     ms.setActionHandler("seekbackward", (d) => skip(-(d?.seekOffset ?? 10)));
-    ms.setActionHandler("seekforward",  (d) => skip( d?.seekOffset ?? 10));
-    ms.setActionHandler("stop",         () => { videoRef.current?.pause(); setIsPlaying(false); onBack?.(); });
+    ms.setActionHandler("seekforward", (d) => skip(d?.seekOffset ?? 10));
+    ms.setActionHandler("stop", () => { videoRef.current?.pause(); setIsPlaying(false); onBack?.(); });
 
     return () => {
       navigator.mediaSession.metadata = null;
-      ["play","pause","seekbackward","seekforward","stop"].forEach((a) => {
-        try { navigator.mediaSession.setActionHandler(a, null); } catch (_) {}
+      ["play", "pause", "seekbackward", "seekforward", "stop"].forEach((a) => {
+        try { navigator.mediaSession.setActionHandler(a, null); } catch (_) { }
       });
     };
   }, [video, metaLine, subLine, skip, onBack]);
@@ -400,12 +400,12 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       switch (e.code) {
         case "Space": case "KeyK": e.preventDefault(); togglePlay(); showPlayerControls(); break;
-        case "KeyF":  e.preventDefault(); toggleFullscreen(); break;
-        case "KeyM":  e.preventDefault(); toggleMute(); break;
-        case "ArrowRight": e.preventDefault(); skip(10);  fireSeekIndicator("right"); showPlayerControls(); break;
-        case "ArrowLeft":  e.preventDefault(); skip(-10); fireSeekIndicator("left");  showPlayerControls(); break;
-        case "ArrowUp":    e.preventDefault(); changeVolume(Math.min(1, volume + 0.1)); break;
-        case "ArrowDown":  e.preventDefault(); changeVolume(Math.max(0, volume - 0.1)); break;
+        case "KeyF": e.preventDefault(); toggleFullscreen(); break;
+        case "KeyM": e.preventDefault(); toggleMute(); break;
+        case "ArrowRight": e.preventDefault(); skip(10); fireSeekIndicator("right"); showPlayerControls(); break;
+        case "ArrowLeft": e.preventDefault(); skip(-10); fireSeekIndicator("left"); showPlayerControls(); break;
+        case "ArrowUp": e.preventDefault(); changeVolume(Math.min(1, volume + 0.1)); break;
+        case "ArrowDown": e.preventDefault(); changeVolume(Math.max(0, volume - 0.1)); break;
         default: break;
       }
     };
@@ -418,7 +418,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     const bar = seekWrapRef.current;
     if (!bar || !duration) return;
     const rect = bar.getBoundingClientRect();
-    const pct  = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const pct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
     setHoverTime({ pct, time: (pct / 100) * duration });
   };
 
@@ -501,6 +501,32 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
               </button>
             ))
           )}
+
+          <hr className="cs-menu-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '8px 0' }} />
+          <p className="cs-speed-menu-title">
+            <MdSpeed size={13} style={{ verticalAlign: "middle", marginRight: 4 }} />
+            Playback Speed
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '0 8px 8px' }}>
+            {SPEEDS.map((s) => (
+              <button
+                key={s}
+                className={"cs-speed-pill " + (playbackSpeed === s ? "cs-speed-pill-active" : "")}
+                onClick={() => setSpeed(s)}
+                style={{
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  background: playbackSpeed === s ? '#f44b4b' : 'rgba(255,255,255,0.1)',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                {s === 1 ? "1x" : `${s}x`}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -548,7 +574,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
             </p>
             <div className="cs-resume-modal-actions">
               <button className="cs-resume-btn cs-resume-btn-secondary" onClick={handleRestart}>↺ Restart</button>
-              <button className="cs-resume-btn cs-resume-btn-primary"   onClick={handleContinue}>▶ Continue</button>
+              <button className="cs-resume-btn cs-resume-btn-primary" onClick={handleContinue}>▶ Continue</button>
             </div>
           </div>
         </div>
@@ -556,7 +582,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
 
       <div
         ref={containerRef}
-        className={"cs-player-card" + (isFullscreen ? " cs-player-card-fullscreen" : "")}
+        className={`cs-player-card${isFullscreen ? " cs-player-card-fullscreen" : ""}${!showControls && isFullscreen ? " cs-player-hide-cursor" : ""}`}
       >
         {/* Header — always visible, now sits above the video */}
         <div className={`cs-player-header ${isMobile ? "cs-player-header-mobile" : ""}`}>
@@ -567,10 +593,10 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
             <div>
               <h2 className="cs-player-title">{video.title}</h2>
               {metaLine && <p className="cs-player-subtitle">{metaLine}</p>}
-              {subLine  && <p className="cs-player-subtitle cs-player-subtitle-small">{subLine}</p>}
+              {subLine && <p className="cs-player-subtitle cs-player-subtitle-small">{subLine}</p>}
             </div>
           </div>
-          
+
           {!isMobile && (
             <div className="cs-player-shortcuts-hint">
               <span><kbd>Space</kbd> Play/Pause</span>
@@ -602,7 +628,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
               <div className="cs-center-flash">
                 {playPauseFlash === "play"
                   ? <MdPlayArrow size={72} />
-                  : <MdPause     size={72} />}
+                  : <MdPause size={72} />}
               </div>
             )}
 
@@ -612,7 +638,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
                 <div className="cs-seek-ripple" />
                 <span className="cs-seek-indicator-icon">
                   {seekIndicator.side === "left"
-                    ? <MdReplay10  size={48} />
+                    ? <MdReplay10 size={48} />
                     : <MdForward10 size={48} />}
                 </span>
                 <span className="cs-seek-indicator-text">
@@ -719,7 +745,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
                       aria-label="Volume"
                     />
                   )}
-                  {isMobile && speedButtonNode}
+                  {/* Removed speedButtonNode from mobile left controls */}
                   <span className="cs-time-display">
                     {formatTimeRaw(currentTime)} / {formatTimeRaw(duration)}
                   </span>
@@ -734,6 +760,15 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
                       {settingsButtonNode}
                       {pipButtonNode}
                     </>
+                  )}
+
+                  {isMobile && (
+                    <span
+                      style={{ color: '#fff', fontSize: '13px', fontWeight: '500', marginRight: '6px', cursor: 'pointer' }}
+                      onClick={(e) => { e.stopPropagation(); setShowSettings(true); }}
+                    >
+                      {playbackSpeed}x
+                    </span>
                   )}
 
                   {/* Fullscreen */}
