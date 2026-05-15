@@ -1,5 +1,5 @@
-// src/components/common/Header.jsx
 import ThemeToggle from "./ThemeToggle";
+import { MdSearch } from "react-icons/md";
 
 export default function Header({
   activeNav,
@@ -84,10 +84,10 @@ export default function Header({
           className="cs-nav-btn"
           onClick={onSearchOpen}
           aria-label="Search"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          🔍
+          <MdSearch size={24} />
         </button>
-        <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </nav>
     </>
   );

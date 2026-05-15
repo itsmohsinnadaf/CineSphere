@@ -445,7 +445,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     <div className="cs-speed-wrap">
       <button
         className={"cs-control-btn" + (ccActive ? " cs-control-btn-active" : "")}
-        onClick={() => { setShowCCMenu(p => !p); setShowSpeedMenu(false); setShowSettings(false); }}
+        onClick={(e) => { e.stopPropagation(); setShowCCMenu(p => !p); setShowSpeedMenu(false); setShowSettings(false); }}
         title="Subtitles / CC"
       >
         {ccActive ? <MdClosedCaption size={22} /> : <MdClosedCaptionDisabled size={22} />}
@@ -476,7 +476,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     <div className="cs-speed-wrap">
       <button
         className="cs-control-btn"
-        onClick={() => { setShowSettings(p => !p); setShowSpeedMenu(false); setShowCCMenu(false); }}
+        onClick={(e) => { e.stopPropagation(); setShowSettings(p => !p); setShowSpeedMenu(false); setShowCCMenu(false); }}
         title="Settings"
       >
         <MdSettings size={22} />
@@ -508,7 +508,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
 
   const speedButtonNode = (
     <div className="cs-speed-wrap">
-      <button className="cs-control-btn cs-speed-btn" onClick={() => { setShowSpeedMenu(p => !p); setShowCCMenu(false); setShowSettings(false); }} title="Speed">
+      <button className="cs-control-btn cs-speed-btn" onClick={(e) => { e.stopPropagation(); setShowSpeedMenu(p => !p); setShowCCMenu(false); setShowSettings(false); }} title="Speed">
         <MdSpeed size={22} />
         <span className="cs-speed-label">{playbackSpeed}×</span>
       </button>
@@ -526,7 +526,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   );
 
   const pipButtonNode = document.pictureInPictureEnabled && (
-    <button className="cs-control-btn" onClick={togglePiP} title="Picture in Picture">
+    <button className="cs-control-btn" onClick={(e) => { e.stopPropagation(); togglePiP(); }} title="Picture in Picture">
       {isPiP ? <MdPictureInPicture size={22} /> : <MdPictureInPictureAlt size={22} />}
     </button>
   );
@@ -706,7 +706,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
                       </button>
                     </>
                   )}
-                  <button className="cs-control-btn" onClick={toggleMute} title="Mute (M)">
+                  <button className="cs-control-btn" onClick={(e) => { e.stopPropagation(); toggleMute(); }} title="Mute (M)">
                     {isMuted || volume === 0 ? <MdVolumeOff size={22} /> : <MdVolumeUp size={22} />}
                   </button>
                   {!isMobile && (
@@ -737,7 +737,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
                   )}
 
                   {/* Fullscreen */}
-                  <button className="cs-control-btn" onClick={toggleFullscreen} title="Fullscreen (F)">
+                  <button className="cs-control-btn" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} title="Fullscreen (F)">
                     {isFullscreen ? <MdFullscreenExit size={26} /> : <MdFullscreen size={26} />}
                   </button>
                 </div>
