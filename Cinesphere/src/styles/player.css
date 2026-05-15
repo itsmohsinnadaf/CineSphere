@@ -84,18 +84,18 @@
   outline: none;
 }
 
-/* Controls overlay */
+/* Controls overlay — vertical column layout */
 
 .cs-player-controls {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 14px 20px;
+  padding: 0 20px 16px;
   background: linear-gradient(
     to top,
-    rgba(0,0,0,0.9),
-    rgba(0,0,0,0.5),
+    rgba(0,0,0,0.92),
+    rgba(0,0,0,0.55) 60%,
     transparent
   );
   display: flex;
@@ -111,39 +111,47 @@
 .cs-player-controls-hidden {
   opacity: 0;
   pointer-events: none;
-  transform: translateY(8px);
+  transform: translateY(6px);
 }
 
-/* Controls row */
-
-.cs-controls-row {
+/* Vertical column inside controls */
+.cs-controls-col {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 6px;
   width: 100%;
 }
 
-/* Seek slider */
+/* ── Seek wrap (holds bar + chapter ticks + tooltip) ── */
+.cs-seek-wrap {
+  position: relative;
+  width: 100%;
+  padding: 8px 0 2px;
+  cursor: pointer;
+}
 
 .cs-seek-slider {
-  flex: 1;
+  width: 100%;
   height: 4px;
   border-radius: 999px;
   appearance: none;
   outline: none;
-
+  display: block;
   background: linear-gradient(
     to right,
     #f97373 0%,
     #f97373 var(--progress),
-    #ffffff var(--progress),
-    #ffffff var(--buffered),
-    #333333 var(--buffered),
-    #333333 100%
+    rgba(255,255,255,0.35) var(--progress),
+    rgba(255,255,255,0.35) var(--buffered),
+    rgba(255,255,255,0.15) var(--buffered),
+    rgba(255,255,255,0.15) 100%
   );
+  transition: height 0.15s ease;
 }
 
-/* thumb */
+.cs-seek-wrap:hover .cs-seek-slider {
+  height: 6px;
+}
 
 .cs-seek-slider::-webkit-slider-thumb {
   appearance: none;
@@ -151,8 +159,14 @@
   height: 14px;
   border-radius: 999px;
   background: #f97373;
-  border: none;
+  border: 2px solid #fff;
   cursor: pointer;
+  box-shadow: 0 0 6px rgba(249,115,115,0.6);
+  transition: transform 0.15s ease;
+}
+
+.cs-seek-wrap:hover .cs-seek-slider::-webkit-slider-thumb {
+  transform: scale(1.25);
 }
 
 .cs-seek-slider::-moz-range-thumb {
@@ -160,58 +174,302 @@
   height: 14px;
   border-radius: 999px;
   background: #f97373;
-  border: none;
+  border: 2px solid #fff;
   cursor: pointer;
 }
 
-.cs-time-display {
-  font-size: 13px;
+
+/* Seek hover tooltip */
+.cs-seek-tooltip {
+  position: absolute;
+  bottom: 22px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255,255,255,0.12);
   color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
   white-space: nowrap;
-  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
 }
 
-/* Buttons */
+/* ── Controls row (left + right) ── */
+.cs-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.cs-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.cs-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
 
 .cs-control-btn {
   border: none;
   background: transparent;
   padding: 0;
-  color: #ffffff;
+  color: rgba(255,255,255,0.85);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
+  transition: color 0.2s ease, transform 0.15s ease;
+  flex-shrink: 0;
 }
 
 .cs-control-btn:hover {
   color: #f97373;
+  transform: scale(1.12);
+}
+
+/* Active state (e.g. CC on) */
+.cs-control-btn-active {
+  color: #f97373 !important;
+}
+
+/* Settings menu (wider) */
+.cs-settings-menu {
+  min-width: 180px;
+}
+
+/* ── Seek indicator (Netflix-style double-click ripple) ── */
+.cs-seek-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+  animation: cs-seek-flash 0.65s ease forwards;
+  z-index: 5;
+}
+
+.cs-seek-indicator-left  { left: 0;  border-radius: 0 100% 100% 0 / 0 50% 50% 0; background: radial-gradient(ellipse at left, rgba(255,255,255,0.12) 0%, transparent 70%); }
+.cs-seek-indicator-right { right: 0; border-radius: 100% 0 0 100% / 50% 0 0 50%; background: radial-gradient(ellipse at right, rgba(255,255,255,0.12) 0%, transparent 70%); }
+
+@keyframes cs-seek-flash {
+  0%   { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.cs-seek-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: cs-seek-ripple-anim 0.65s ease forwards;
+}
+
+@keyframes cs-seek-ripple-anim {
+  0%   { background: rgba(255,255,255,0.08); }
+  100% { background: transparent; }
+}
+
+.cs-seek-indicator-icon {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.cs-seek-indicator-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  letter-spacing: 0.03em;
+}
+
+/* ── Centre play/pause flash ── */
+.cs-center-flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 88px;
+  height: 88px;
+  background: rgba(0, 0, 0, 0.38);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.92);
+  pointer-events: none;
+  z-index: 6;
+  animation: cs-center-flash-anim 0.65s ease forwards;
+}
+
+@keyframes cs-center-flash-anim {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.75); }
+  15%  { opacity: 1; transform: translate(-50%, -50%) scale(1);    }
+  60%  { opacity: 1; transform: translate(-50%, -50%) scale(1);    }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.18); }
+}
+
+.cs-play-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(249,115,115,0.15);
+  border-radius: 50%;
+  border: 1.5px solid rgba(249,115,115,0.35);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.cs-play-btn:hover {
+  background: rgba(249,115,115,0.28);
+  transform: scale(1.1);
 }
 
 /* Volume slider */
-
 .cs-volume-slider {
-  width: 60px;
+  width: 70px;
   height: 4px;
   border-radius: 999px;
   appearance: none;
+  cursor: pointer;
   background: linear-gradient(
     to right,
     #f97373 0%,
     #f97373 var(--volume),
-    #333333 var(--volume),
-    #333333 100%
+    rgba(255,255,255,0.2) var(--volume),
+    rgba(255,255,255,0.2) 100%
   );
 }
 
 .cs-volume-slider::-webkit-slider-thumb {
   appearance: none;
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: #ffffff;
+  background: #fff;
   cursor: pointer;
+}
+
+.cs-time-display {
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* ── Speed selector ── */
+.cs-speed-wrap {
+  position: relative;
+}
+
+.cs-speed-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cs-speed-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  min-width: 26px;
+  text-align: left;
+}
+
+.cs-speed-menu {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  background: rgba(14, 14, 28, 0.96);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  min-width: 130px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+  z-index: 20;
+  animation: cs-search-slide-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cs-speed-menu-title {
+  margin: 0;
+  padding: 10px 14px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.cs-speed-option {
+  display: block;
+  width: 100%;
+  padding: 9px 14px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cs-speed-option:hover {
+  background: rgba(249,115,115,0.12);
+  color: #fff;
+}
+
+.cs-speed-option-active {
+  color: #f97373;
+  font-weight: 700;
+  background: rgba(249,115,115,0.08);
+}
+
+/* ── Keyboard shortcut hints ── */
+.cs-player-shortcuts-hint {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.cs-player-shortcuts-hint span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+}
+
+.cs-player-shortcuts-hint kbd {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-family: 'Outfit', monospace;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.5;
 }
 
 /* Footer buttons */
@@ -390,4 +648,47 @@
 
 @keyframes cs-spin {
   to { transform: rotate(360deg); }
+}
+
+
+/* ──────────────────────────────────────────────────
+   SCROLL TO TOP BUTTON
+────────────────────────────────────────────────── */
+
+.cs-scroll-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 900;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.45), 0 2px 8px rgba(0,0,0,0.3);
+  cursor: pointer;
+  animation: cs-fade-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cs-scroll-top:hover {
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 0 14px 32px rgba(244, 63, 94, 0.6), 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.cs-scroll-top:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 600px) {
+  .cs-scroll-top {
+    bottom: 80px;
+    right: 18px;
+    width: 38px;
+    height: 38px;
+  }
 }

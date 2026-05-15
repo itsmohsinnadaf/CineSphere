@@ -2,7 +2,7 @@
 import AnimateIn from "../common/AnimateIn";
 import FeaturedSlider from "../common/FeaturedSlider";
 
-export default function RootFolders({ folders, loading, error, onRootClick }) {
+export default function RootFolders({ folders, loading, error, onRootClick, continueWatchingSlot }) {
   // Loading screen is rendered at the App level (outside animated wrapper)
   if (loading && !folders.length) {
     return null;
@@ -31,6 +31,9 @@ export default function RootFolders({ folders, loading, error, onRootClick }) {
     <section className="cs-left">
       {/* Featured auto-sliding banner */}
       <FeaturedSlider onWatchNow={handleWatchNow} />
+
+      {/* Continue Watching — sits between slider and library */}
+      {continueWatchingSlot}
 
       <AnimateIn variant="slide-left" delay={200}>
         <h2 className="cs-section-title" style={{ marginTop: 10 }}>

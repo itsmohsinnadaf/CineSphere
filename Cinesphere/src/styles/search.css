@@ -1,0 +1,712 @@
+/* src/styles/search.css  —  Search overlay + Continue Watching + Resume banner */
+
+/* ======================================================
+   SEARCH OVERLAY
+   ====================================================== */
+
+.cs-search-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  background: rgba(5, 5, 18, 0.45);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: clamp(60px, 10vh, 120px);
+  animation: cs-search-fade-in 0.18s ease both;
+}
+
+@keyframes cs-search-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.cs-search-panel {
+  width: min(680px, 94vw);
+  background: rgba(22, 22, 40, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.60),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 0 80px rgba(244, 63, 94, 0.10);
+  overflow: hidden;
+  animation: cs-search-slide-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes cs-search-slide-in {
+  from { opacity: 0; transform: translateY(-24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Header row ── */
+.cs-search-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.cs-search-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.cs-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #f5f5ff;
+  caret-color: #f43f5e;
+  min-width: 0;
+}
+
+.cs-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cs-search-clear {
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.cs-search-clear:hover {
+  background: rgba(244, 63, 94, 0.2);
+  color: #f43f5e;
+}
+
+.cs-search-close-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.cs-search-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Hint / empty state ── */
+.cs-search-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 14px;
+  text-align: center;
+}
+
+.cs-search-hint-icon {
+  font-size: 36px;
+  opacity: 0.6;
+}
+
+.cs-search-shortcuts {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.cs-search-shortcuts span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Light theme overrides — panel stays dark for readability */
+.cs-theme-light .cs-search-panel {
+  background: rgba(18, 18, 36, 0.97);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.cs-theme-light .cs-search-input {
+  color: #f0f0ff;
+}
+
+/* Indexing spinner */
+.cs-search-indexing-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(244, 63, 94, 0.2);
+  border-top-color: #f43f5e;
+  border-radius: 50%;
+  animation: cs-spin 0.9s linear infinite;
+}
+
+/* ── Count row ── */
+.cs-search-count {
+  padding: 10px 20px 4px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.cs-search-count strong {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── Results list ── */
+.cs-search-results {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 63, 94, 0.3) transparent;
+}
+
+.cs-search-list {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px 16px;
+  gap: 4px;
+}
+
+.cs-search-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: #f5f5ff;
+  text-align: left;
+  transition: background 0.18s ease;
+  width: 100%;
+}
+
+.cs-search-item:hover {
+  background: rgba(244, 63, 94, 0.1);
+}
+
+.cs-search-thumb {
+  width: 52px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cs-search-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cs-search-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f5f5ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cs-search-badge {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 500;
+}
+
+.cs-search-play-icon {
+  font-size: 13px;
+  color: #f43f5e;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  transform: translateX(-4px);
+  flex-shrink: 0;
+}
+
+.cs-search-item:hover .cs-search-play-icon {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* ======================================================
+   SEARCH BAR IN NAV  (professional pill-input look)
+   ====================================================== */
+
+.cs-nav-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Width: feels like a real search field */
+  width: 220px;
+  padding: 8px 12px 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  transition:
+    border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease,
+    color 0.22s ease,
+    width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.cs-nav-search-bar:hover {
+  border-color: rgba(244, 63, 94, 0.45);
+  background: rgba(244, 63, 94, 0.06);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2),
+              0 0 0 3px rgba(244, 63, 94, 0.07);
+  color: rgba(255, 255, 255, 0.65);
+  width: 240px;
+}
+
+/* SVG search icon */
+.cs-nav-search-icon-svg {
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.cs-nav-search-bar:hover .cs-nav-search-icon-svg {
+  opacity: 0.9;
+  color: #f43f5e;
+}
+
+/* Placeholder text */
+.cs-nav-search-placeholder {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ── Light theme ── */
+.cs-theme-light .cs-nav-search-bar {
+  border-color: rgba(15, 23, 42, 0.10);
+  background: rgba(15, 23, 42, 0.03);
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.38);
+}
+
+.cs-theme-light .cs-nav-search-bar:hover {
+  border-color: rgba(244, 63, 94, 0.35);
+  background: rgba(244, 63, 94, 0.04);
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.04),
+              0 0 0 3px rgba(244, 63, 94, 0.05);
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.cs-theme-light .cs-nav-search-bar:hover .cs-nav-search-icon-svg {
+  color: #f43f5e;
+}
+
+
+/* ======================================================
+   CONTINUE WATCHING ROW
+   ====================================================== */
+
+.cs-cw-section {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding: 0 2px;
+}
+
+.cs-cw-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.cs-cw-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cs-text-primary);
+}
+
+.cs-cw-icon {
+  color: #f43f5e;
+  font-size: 16px;
+}
+
+.cs-cw-clear {
+  border: none;
+  background: rgba(244, 63, 94, 0.08);
+  color: rgba(244, 63, 94, 0.7);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.cs-cw-clear:hover {
+  background: rgba(244, 63, 94, 0.15);
+  color: #f43f5e;
+}
+
+.cs-cw-strip {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 63, 94, 0.3) transparent;
+}
+
+.cs-cw-strip::-webkit-scrollbar { height: 4px; }
+.cs-cw-strip::-webkit-scrollbar-track { background: transparent; }
+.cs-cw-strip::-webkit-scrollbar-thumb { background: rgba(244, 63, 94, 0.3); border-radius: 4px; }
+
+/* ── Individual card ── */
+.cs-cw-card {
+  flex-shrink: 0;
+  width: 170px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-cw-card:hover {
+  transform: translateY(-5px);
+}
+
+.cs-cw-thumb-wrap {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0d0d1a;
+}
+
+.cs-cw-thumb {
+  width: 100%;
+  height: 108px;
+  object-fit: cover;
+  display: block;
+  transition: filter 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scale(1.02);
+}
+
+.cs-cw-card:hover .cs-cw-thumb {
+  filter: brightness(0.7);
+  transform: scale(1.08);
+}
+
+/* Progress bar */
+.cs-cw-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cs-cw-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f43f5e, #e11d48);
+  border-radius: 0 3px 3px 0;
+  transition: width 0.4s ease;
+}
+
+/* Play overlay */
+.cs-cw-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.cs-cw-card:hover .cs-cw-play-overlay {
+  opacity: 1;
+}
+
+.cs-cw-play-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(244, 63, 94, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(244, 63, 94, 0.6);
+  padding-left: 3px;
+}
+
+/* Remove button */
+.cs-cw-remove {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 22px;
+  height: 22px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.cs-cw-card:hover .cs-cw-remove {
+  opacity: 1;
+}
+
+.cs-cw-remove:hover {
+  background: rgba(244, 63, 94, 0.8);
+  color: #fff;
+}
+
+/* Type badge */
+.cs-cw-type-badge {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+
+/* Info below thumb */
+.cs-cw-info {
+  padding: 8px 2px 4px;
+}
+
+.cs-cw-name {
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cs-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cs-cw-time {
+  margin: 0;
+  font-size: 11px;
+  color: var(--cs-text-muted);
+}
+
+/* Light mode */
+.cs-theme-light .cs-cw-thumb-wrap {
+  background: #e2e8f0;
+}
+
+/* ======================================================
+   RESUME MODAL POPUP
+   ====================================================== */
+
+.cs-resume-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: cs-search-fade-in 0.2s ease both;
+}
+
+.cs-resume-modal {
+  background: rgba(18, 18, 36, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 40px 36px 32px;
+  width: min(380px, 90vw);
+  text-align: center;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 60px rgba(244, 63, 94, 0.08);
+  animation: cs-search-slide-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.cs-resume-modal-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, rgba(244,63,94,0.18), rgba(244,63,94,0.06));
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 6px;
+  color: #f43f5e;
+}
+
+.cs-resume-modal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #f5f5ff;
+  letter-spacing: -0.02em;
+}
+
+.cs-resume-modal-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.5;
+}
+
+.cs-resume-modal-subtitle strong {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+.cs-resume-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.cs-resume-btn {
+  flex: 1;
+  padding: 11px 18px;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.cs-resume-btn:hover {
+  transform: translateY(-2px);
+}
+
+.cs-resume-btn:active {
+  transform: scale(0.97);
+}
+
+.cs-resume-btn-secondary {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cs-resume-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.cs-resume-btn-primary {
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4);
+}
+
+.cs-resume-btn-primary:hover {
+  box-shadow: 0 10px 28px rgba(244, 63, 94, 0.55);
+}
+
+
+/* ======================================================
+   RESPONSIVE
+   ====================================================== */
+
+@media (max-width: 860px) {
+  /* Collapse search bar to icon + shortcut only on smaller viewports */
+  .cs-nav-search-bar {
+    width: 38px;
+    padding: 8px 12px;
+    justify-content: center;
+  }
+
+  .cs-nav-search-bar:hover {
+    width: 44px;
+  }
+
+  .cs-nav-search-placeholder {
+    display: none;
+  }
+
+  .cs-nav-search-kbd {
+    display: none;
+  }
+
+  .cs-cw-card {
+    width: 140px;
+  }
+
+  .cs-cw-thumb {
+    height: 88px;
+  }
+}
