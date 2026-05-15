@@ -310,9 +310,7 @@ body {
   flex-direction: column;
   justify-content: center;
   padding: 32px 40px;
-  background: radial-gradient(circle at top left,
-      #0a0a0a,
-      #000000);
+  background: linear-gradient(to top, #111111, #252525);
 }
 
 .cs-hero-title {

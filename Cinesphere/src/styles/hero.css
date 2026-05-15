@@ -148,7 +148,7 @@
 /* ── Main content block ── */
 .cs-fs-content {
   position: absolute;
-  bottom: 12%;
+  bottom: 30%;
   left: calc(6vw + 24px);
   z-index: 3;
   display: flex;
@@ -216,7 +216,7 @@
 /* ── Title ── */
 .cs-fs-title {
   margin: 0;
-  font-size: clamp(38px, 5.5vw, 76px);
+  font-size: clamp(32px, 4.8vw, 62px);
   font-weight: 900;
   color: #fff;
   line-height: 1.05;
@@ -248,11 +248,11 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 36px;
+  padding: 14px 32px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -299,7 +299,7 @@
   width: 100%;
   background: transparent;
   padding: 0 calc(6vw - 6px) 30px;
-  margin-top: -60px;
+  margin-top: -95px;
   position: relative;
   z-index: 5;
 }
@@ -320,7 +320,7 @@
 /* ── Individual thumbnail ── */
 .cs-fs-thumb {
   flex-shrink: 0;
-  width: 170px;
+  width: 155px;
   border: 1px solid rgba(255,255,255,0.08);
   cursor: pointer;
   border-radius: 16px;
@@ -351,7 +351,7 @@
 
 .cs-fs-thumb img {
   width: 100%;
-  height: 220px;
+  height: 200px;
   object-fit: cover;
   object-position: center top;
   display: block;
@@ -365,8 +365,8 @@
 /* Title under thumb */
 .cs-fs-thumb-title {
   display: block;
-  padding: 12px 10px 10px;
-  font-size: 12px;
+  padding: 10px 8px 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.8);
@@ -416,12 +416,12 @@
 
   .cs-fs-content {
     left: calc(4vw + 16px);
-    bottom: 15%;
+    bottom: 32%;
   }
 
   .cs-fs-strip-wrap {
     padding: 0 calc(4vw - 4px) 24px;
-    margin-top: -40px;
+    margin-top: -70px;
   }
 
   .cs-fs-strip {
@@ -429,11 +429,11 @@
   }
 
   .cs-fs-thumb {
-    width: 140px;
+    width: 125px;
   }
 
   .cs-fs-thumb img {
-    height: 180px;
+    height: 160px;
   }
 }
 
@@ -452,14 +452,14 @@
 
   .cs-fs-content {
     left: 4vw;
-    bottom: 12%;
+    bottom: 35%;
     max-width: 90vw;
     gap: 12px;
   }
 
   .cs-fs-strip-wrap {
     padding: 0 max(0px, calc(4vw - 16px)) 20px;
-    margin-top: -30px;
+    margin-top: -60px;
   }
 
   .cs-fs-strip {
@@ -467,11 +467,11 @@
   }
 
   .cs-fs-thumb {
-    width: 120px;
+    width: 105px;
   }
 
   .cs-fs-thumb img {
-    height: 160px;
+    height: 140px;
   }
 
   .cs-fs-thumb-title {
