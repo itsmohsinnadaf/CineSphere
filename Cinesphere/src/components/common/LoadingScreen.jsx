@@ -8,7 +8,11 @@ export default function LoadingScreen() {
       <div className="cs-loading-overlay"></div>
       <div className="cs-loading-content">
         <div className="cs-loading-logo">
-          <span className="cs-loading-logo-icon">🎬</span>
+          <img
+            src="/cinesphere-icon.png"
+            alt="CineSphere"
+            className="cs-loading-logo-img"
+          />
           <span className="cs-loading-logo-text">CineSphere</span>
         </div>
         <p className="cs-loading-subtitle">created by Mohsin</p>

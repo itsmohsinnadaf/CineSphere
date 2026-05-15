@@ -117,7 +117,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 10px 24px;
   background: rgba(10, 14, 25, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 28px;
@@ -135,15 +135,27 @@ body {
 .cs-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
-.cs-logo-icon {
-  font-size: 28px;
+/* Logo image in nav */
+.cs-logo-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  filter: drop-shadow(0 3px 10px rgba(244, 63, 94, 0.4));
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.cs-logo:hover .cs-logo-img {
+  filter: drop-shadow(0 4px 12px rgba(244, 63, 94, 0.55));
+  transform: scale(1.06);
 }
 
 .cs-logo-text {
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -286,19 +298,15 @@ body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      to right,
+    linear-gradient(to right,
       rgba(3, 3, 15, 0.92) 0%,
       rgba(10, 4, 30, 0.70) 35%,
       rgba(60, 10, 40, 0.25) 65%,
-      transparent 100%
-    ),
-    linear-gradient(
-      to top,
+      transparent 100%),
+    linear-gradient(to top,
       rgba(180, 20, 50, 0.45) 0%,
       rgba(80, 10, 60, 0.20) 40%,
-      transparent 70%
-    );
+      transparent 70%);
 }
 
 .cs-hero-text {
@@ -306,11 +314,9 @@ body {
   flex-direction: column;
   justify-content: center;
   padding: 32px 40px;
-  background: radial-gradient(
-    circle at top left,
-    rgba(15, 23, 42, 0.9),
-    rgba(15, 23, 42, 0.99)
-  );
+  background: radial-gradient(circle at top left,
+      rgba(15, 23, 42, 0.9),
+      rgba(15, 23, 42, 0.99));
 }
 
 .cs-hero-title {
@@ -380,19 +386,15 @@ body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      to right,
+    linear-gradient(to right,
       rgba(3, 3, 15, 0.95) 0%,
       rgba(10, 4, 30, 0.75) 35%,
       rgba(60, 10, 40, 0.30) 65%,
-      transparent 100%
-    ),
-    linear-gradient(
-      to top,
+      transparent 100%),
+    linear-gradient(to top,
       rgba(180, 20, 50, 0.50) 0%,
       rgba(80, 10, 60, 0.25) 40%,
-      transparent 70%
-    );
+      transparent 70%);
 }
 
 .cs-big-text {
@@ -484,18 +486,14 @@ body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      to top,
+    linear-gradient(to top,
       rgba(3, 3, 15, 0.96) 0%,
       rgba(30, 5, 40, 0.60) 45%,
       rgba(60, 10, 40, 0.20) 70%,
-      transparent 100%
-    ),
-    linear-gradient(
-      135deg,
+      transparent 100%),
+    linear-gradient(135deg,
       rgba(120, 10, 80, 0.18) 0%,
-      transparent 60%
-    );
+      transparent 60%);
 }
 
 .cs-folder-icon {
@@ -548,11 +546,9 @@ body {
 
 
 .cs-theme-light .cs-hero-text {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.98),
-    rgba(248, 250, 252, 0.95)
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(248, 250, 252, 0.95));
   backdrop-filter: blur(10px);
 }
 

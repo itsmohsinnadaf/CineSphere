@@ -15,9 +15,13 @@ export default function Header({
         <div
           className="cs-logo"
           onClick={onLogoClick}
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", alignItems: "center" }}
         >
-          <span className="cs-logo-icon">🎬</span>
+          <img
+            src="/cinesphere-icon.png"
+            alt="CineSphere"
+            className="cs-logo-img"
+          />
           <span className="cs-logo-text">CineSphere</span>
         </div>
 

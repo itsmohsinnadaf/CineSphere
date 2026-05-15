@@ -36,14 +36,20 @@
 
 .cs-loading-logo {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   margin-bottom: 8px;
+  animation: float 6s ease-in-out infinite;
 }
 
-.cs-loading-logo-icon {
-  font-size: 56px;
-  animation: logoGlow 3s ease-in-out infinite, float 6s ease-in-out infinite;
+.cs-loading-logo-img {
+  width: 88px;
+  height: 88px;
+  border-radius: 20px;
+  object-fit: cover;
+  flex-shrink: 0;
+  animation: logoGlow 3s ease-in-out infinite, fadeInOnly 0.8s ease-out both;
   filter: drop-shadow(0 0 20px rgba(244, 75, 75, 0.5));
 }
 
@@ -57,7 +63,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: textShimmer 3s ease-in-out infinite, fadeInUp 1.2s ease-out;
+  animation: textShimmer 3s ease-in-out infinite, fadeInOnly 0.8s ease-out 0.2s both;
   text-shadow: 0 0 30px rgba(244, 75, 75, 0.3);
 }
 
@@ -237,6 +243,12 @@
   }
 }
 
+/* Fade-in without Y translate — used for logo children so the parent float works cleanly */
+@keyframes fadeInOnly {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 @keyframes dotBounce {
   0%, 80%, 100% {
     transform: scale(0.8);
@@ -296,8 +308,9 @@
     padding: 0 20px;
   }
 
-  .cs-loading-logo-icon {
-    font-size: 52px;
+  .cs-loading-logo-img {
+    width: 72px;
+    height: 72px;
   }
 
   .cs-loading-logo-text {
@@ -337,8 +350,9 @@
     margin-bottom: 6px;
   }
 
-  .cs-loading-logo-icon {
-    font-size: 48px;
+  .cs-loading-logo-img {
+    width: 64px;
+    height: 64px;
   }
 
   .cs-loading-logo-text {
@@ -389,13 +403,15 @@
   }
 
   .cs-loading-logo {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
     margin-bottom: 4px;
   }
 
-  .cs-loading-logo-icon {
-    font-size: 42px;
+  .cs-loading-logo-img {
+    width: 56px;
+    height: 56px;
   }
 
   .cs-loading-logo-text {
@@ -494,8 +510,9 @@
     gap: 10px;
   }
 
-  .cs-loading-logo-icon {
-    font-size: 38px;
+  .cs-loading-logo-img {
+    width: 48px;
+    height: 48px;
   }
 
   .cs-loading-logo-text {
@@ -530,8 +547,9 @@
     margin-bottom: 2px;
   }
 
-  .cs-loading-logo-icon {
-    font-size: 36px;
+  .cs-loading-logo-img {
+    width: 44px;
+    height: 44px;
   }
 
   .cs-loading-logo-text {
@@ -554,7 +572,7 @@
 
 /* High DPI displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .cs-loading-logo-icon {
+  .cs-loading-logo-img {
     filter: drop-shadow(0 0 25px rgba(244, 75, 75, 0.6));
   }
 

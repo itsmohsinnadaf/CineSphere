@@ -577,49 +577,334 @@
   object-fit: contain;
 }
 
-/* MOBILE FIX */
+/* ═══════════════════════════════════════════════════
+   MOBILE PLAYER — full redesign for touch screens
+   ═══════════════════════════════════════════════════ */
 
-@media (max-width:600px){
+@media (max-width: 600px) {
 
-  .cs-player-card{
-    padding:12px;
+  /* ── Page / card shell ── */
+  .cs-player-page {
+    display: block;
   }
 
-  .cs-video-inner{
-    min-height:220px;
+  .cs-player-card {
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    background: #000;
+    border: none;
+    box-shadow: none;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
   }
 
-  .cs-player-controls{
-    padding:8px;
+  /* ── Top bar (back + title) ── */
+  .cs-player-header {
+    position: relative;
+    padding: 16px 14px 12px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
   }
 
-  .cs-controls-row{
-    flex-wrap:wrap;
-    gap:6px;
+  .cs-player-header-left {
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
   }
 
-  .cs-controls-left{
-    flex:1;
+  /* Target the div holding the titles inside header-left */
+  .cs-player-header-left > div {
+    min-width: 0;
+    overflow: hidden;
   }
 
-  .cs-controls-right{
-    flex:1;
-    justify-content:flex-end;
+  .cs-player-title {
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    color: #fff;
   }
 
-  .cs-controls-center{
-    width:100%;
-    order:3;
-    margin-top:4px;
+  .cs-player-subtitle, .cs-player-subtitle-small {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .cs-volume-slider{
-    width:50px;
+  /* Hide keyboard hint on mobile */
+  .cs-player-shortcuts-hint {
+    display: none;
   }
 
-  .cs-control-btn{
-    width:34px;
-    height:34px;
+  /* ── Video fills width, 16:9 natural height ── */
+  .cs-video-wrapper {
+    position: relative;
+    margin: 0;
+    border-radius: 0;
+    background: #000;
+    flex: none;
+  }
+
+  .cs-video-inner {
+    padding-top: 0;
+    height: 45vh;
+    min-height: 380px;
+    max-height: 65vh;
+  }
+
+  /* ── Controls overlay — full-bleed, bottom-anchored ── */
+  .cs-player-controls {
+    padding: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.95) 0%,
+      rgba(0,0,0,0.6) 55%,
+      transparent 100%
+    );
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .cs-controls-col {
+    gap: 0;
+    padding: 0 14px 14px;
+  }
+
+  /* ── Progress bar — thicker, easier to scrub ── */
+  .cs-seek-wrap {
+    padding: 10px 0 6px;
+    touch-action: none;
+  }
+
+  .cs-seek-slider {
+    height: 5px;
+  }
+
+  .cs-seek-wrap:hover .cs-seek-slider,
+  .cs-seek-wrap:active .cs-seek-slider {
+    height: 7px;
+  }
+
+  .cs-seek-slider::-webkit-slider-thumb {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ── Controls row: single row on mobile for bottom tools ── */
+  .cs-controls-row {
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Bottom Left (Mute, Speed, Time) */
+  .cs-controls-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+  }
+
+  /* Time display */
+  .cs-time-display {
+    font-size: 11px;
+    white-space: nowrap;
+    margin-left: 8px;
+  }
+
+  /* Hide volume slider on mobile — mute button stays */
+  .cs-volume-slider {
+    display: none;
+  }
+
+  /* Bottom Right (Fullscreen) */
+  .cs-controls-right {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  /* All control buttons — large touch targets (48 × 48) */
+  .cs-control-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+
+  .cs-control-btn:active {
+    background: rgba(249,115,115,0.22);
+    transform: scale(0.92);
+  }
+
+  /* Play button extra emphasis */
+  .cs-play-btn {
+    width: 58px;
+    height: 58px;
+    background: rgba(249,115,115,0.2);
+    border: 2px solid rgba(249,115,115,0.5);
+  }
+
+  .cs-play-btn:active {
+    background: rgba(249,115,115,0.35);
+  }
+
+  /* Speed label alongside icon */
+  .cs-speed-label {
+    font-size: 11px;
+  }
+
+  /* ── Speed / CC / Settings menus — slide up from bottom ── */
+  .cs-speed-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    border-radius: 20px 20px 0 0;
+    min-width: unset;
+    width: 100%;
+    max-height: 50dvh;
+    overflow-y: auto;
+    z-index: 99;
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.85);
+    animation: cs-slide-up 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+    padding-bottom: env(safe-area-inset-bottom, 12px);
+  }
+
+  @keyframes cs-slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .cs-speed-option {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+
+  .cs-speed-menu-title {
+    padding: 14px 20px 8px;
+    font-size: 11px;
+  }
+
+  /* ── Footer (download / copy) ── */
+  .cs-player-footer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 14px 14px env(safe-area-inset-bottom, 14px);
+    background: #0a0a14;
+  }
+
+  .cs-btn-large {
+    flex: 1;
+    justify-content: center;
+    min-width: 130px;
+  }
+
+  /* ── Seek indicator ripple — full half screen ── */
+  .cs-seek-indicator {
+    width: 50%;
+  }
+
+  /* ── Centre play/pause flash — bigger on mobile ── */
+  .cs-center-flash {
+    width: 72px;
+    height: 72px;
+  }
+
+  /* ── Fullscreen: make video truly full-screen ── */
+  .cs-player-card-fullscreen {
+    min-height: 100dvh;
+  }
+
+  .cs-player-card-fullscreen .cs-video-inner {
+    min-height: 100dvh;
+    padding-top: 0;
+  }
+
+  .cs-player-card-fullscreen .cs-video {
+    height: 100dvh;
+  }
+
+  /* ── Center Controls (Play, Rewind, Forward) ── */
+  .cs-mobile-center-controls {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    z-index: 15;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .cs-mobile-center-controls.cs-player-controls-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cs-mobile-center-controls.cs-player-controls-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Make center play button stand out */
+  .cs-mobile-center-controls .cs-play-btn {
+    width: 64px;
+    height: 64px;
+    background: rgba(249,115,115,0.25);
+    border: 2px solid rgba(249,115,115,0.6);
+  }
+
+  /* ── Top Controls inside Video Wrapper (PiP, CC, Settings) ── */
+  .cs-mobile-top-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 14px 16px;
+    z-index: 15;
+    transition: opacity 0.35s ease;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+  }
+
+  .cs-mobile-top-controls.cs-player-controls-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cs-mobile-top-controls.cs-player-controls-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cs-mobile-top-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
   }
 
 }

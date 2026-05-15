@@ -24,7 +24,7 @@ import {
   MdReplay10,
   MdForward10,
 } from "react-icons/md";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { saveProgress, getContinueWatching } from "../../hooks/useContinueWatching";
 
 function formatTimeRaw(secs) {
@@ -66,6 +66,14 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const [isFullscreen,  setIsFullscreen]  = useState(false);
   const [isPiP,         setIsPiP]         = useState(false);
   const [showControls,  setShowControls]  = useState(true);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 600px)').matches);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 600px)');
+    const listener = (e) => setIsMobile(e.matches);
+    media.addEventListener('change', listener);
+    return () => media.removeEventListener('change', listener);
+  }, []);
   const [hoverTime,     setHoverTime]     = useState(null);
   const [selectedSourceIndex] = useState(0);
 
@@ -431,6 +439,99 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const ccActive = activeCC >= 0;
 
   /* ─────────────────────────────────────────────────────
+     REUSABLE CONTROL NODES
+  ───────────────────────────────────────────────────── */
+  const ccButtonNode = (
+    <div className="cs-speed-wrap">
+      <button
+        className={"cs-control-btn" + (ccActive ? " cs-control-btn-active" : "")}
+        onClick={() => { setShowCCMenu(p => !p); setShowSpeedMenu(false); setShowSettings(false); }}
+        title="Subtitles / CC"
+      >
+        {ccActive ? <MdClosedCaption size={22} /> : <MdClosedCaptionDisabled size={22} />}
+      </button>
+      {showCCMenu && (
+        <div className="cs-speed-menu">
+          <p className="cs-speed-menu-title">Subtitles / CC</p>
+          {textTracks.length === 0 ? (
+            <p className="cs-speed-option" style={{ opacity: 0.4, cursor: "default" }}>No subtitles available</p>
+          ) : (
+            <>
+              <button className={"cs-speed-option" + (activeCC === -1 ? " cs-speed-option-active" : "")} onClick={() => toggleCCTrack(-2)}>
+                Off
+              </button>
+              {textTracks.map((t, i) => (
+                <button key={i} className={"cs-speed-option" + (activeCC === i ? " cs-speed-option-active" : "")} onClick={() => toggleCCTrack(i)}>
+                  {t.label || t.language || `Track ${i + 1}`}
+                </button>
+              ))}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  const settingsButtonNode = (
+    <div className="cs-speed-wrap">
+      <button
+        className="cs-control-btn"
+        onClick={() => { setShowSettings(p => !p); setShowSpeedMenu(false); setShowCCMenu(false); }}
+        title="Settings"
+      >
+        <MdSettings size={22} />
+      </button>
+      {showSettings && (
+        <div className="cs-speed-menu cs-settings-menu">
+          <p className="cs-speed-menu-title">
+            <MdAudiotrack size={13} style={{ verticalAlign: "middle", marginRight: 4 }} />
+            Audio Track
+          </p>
+          {audioTracks.length === 0 ? (
+            <p className="cs-speed-option" style={{ opacity: 0.4, cursor: "default" }}>Default audio only</p>
+          ) : (
+            audioTracks.map((t, i) => (
+              <button
+                key={i}
+                className={"cs-speed-option" + (activeAudio === i ? " cs-speed-option-active" : "")}
+                onClick={() => switchAudioTrack(i)}
+              >
+                {t.label || t.language || `Track ${i + 1}`}
+                {t.language ? <span style={{ opacity: 0.5, marginLeft: 6, fontSize: 11 }}>{t.language.toUpperCase()}</span> : null}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  const speedButtonNode = (
+    <div className="cs-speed-wrap">
+      <button className="cs-control-btn cs-speed-btn" onClick={() => { setShowSpeedMenu(p => !p); setShowCCMenu(false); setShowSettings(false); }} title="Speed">
+        <MdSpeed size={22} />
+        <span className="cs-speed-label">{playbackSpeed}×</span>
+      </button>
+      {showSpeedMenu && (
+        <div className="cs-speed-menu">
+          <p className="cs-speed-menu-title">Speed</p>
+          {SPEEDS.map((s) => (
+            <button key={s} className={"cs-speed-option" + (playbackSpeed === s ? " cs-speed-option-active" : "")} onClick={() => setSpeed(s)}>
+              {s === 1 ? "Normal" : `${s}×`}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const pipButtonNode = document.pictureInPictureEnabled && (
+    <button className="cs-control-btn" onClick={togglePiP} title="Picture in Picture">
+      {isPiP ? <MdPictureInPicture size={22} /> : <MdPictureInPictureAlt size={22} />}
+    </button>
+  );
+
+  /* ─────────────────────────────────────────────────────
      RENDER
   ───────────────────────────────────────────────────── */
   return (
@@ -457,8 +558,8 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
         ref={containerRef}
         className={"cs-player-card" + (isFullscreen ? " cs-player-card-fullscreen" : "")}
       >
-        {/* Header */}
-        <div className="cs-player-header">
+        {/* Header — always visible, now sits above the video */}
+        <div className={`cs-player-header ${isMobile ? "cs-player-header-mobile" : ""}`}>
           <div className="cs-player-header-left">
             <button className="cs-ios-back-btn" onClick={onBack} aria-label="Back">
               <IoArrowBack size={18} />
@@ -469,17 +570,20 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
               {subLine  && <p className="cs-player-subtitle cs-player-subtitle-small">{subLine}</p>}
             </div>
           </div>
-          <div className="cs-player-shortcuts-hint">
-            <span><kbd>Space</kbd> Play/Pause</span>
-            <span><kbd>←</kbd><kbd>→</kbd> Seek ±10s</span>
-            <span><kbd>M</kbd> Mute</span>
-            <span><kbd>F</kbd> Fullscreen</span>
-          </div>
+          
+          {!isMobile && (
+            <div className="cs-player-shortcuts-hint">
+              <span><kbd>Space</kbd> Play/Pause</span>
+              <span><kbd>←</kbd><kbd>→</kbd> Seek ±10s</span>
+              <span><kbd>M</kbd> Mute</span>
+              <span><kbd>F</kbd> Fullscreen</span>
+            </div>
+          )}
         </div>
 
         {/* Video wrapper */}
         <div
-          className="cs-video-wrapper"
+          className={`cs-video-wrapper ${isMobile ? "cs-video-wrapper-mobile" : ""}`}
           onMouseMove={showPlayerControls}
           onTouchStart={showPlayerControls}
           onClick={handleVideoAreaClick}
@@ -516,7 +620,46 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
                 </span>
               </div>
             )}
+
+            {/* Mobile top controls (PiP, CC, Settings) */}
+            {isMobile && (
+              <div className={"cs-mobile-top-controls " + (showControls ? "cs-player-controls-visible" : "cs-player-controls-hidden")} onClick={(e) => e.stopPropagation()}>
+                <div className="cs-mobile-top-left">
+                  {pipButtonNode}
+                </div>
+                <div className="cs-mobile-top-right">
+                  {ccButtonNode}
+                  {settingsButtonNode}
+                </div>
+              </div>
+            )}
+
+            {/* Mobile center controls */}
+            {isMobile && (
+              <div className={"cs-mobile-center-controls " + (showControls ? "cs-player-controls-visible" : "cs-player-controls-hidden")} onClick={(e) => e.stopPropagation()}>
+                <button className="cs-control-btn" onClick={() => skip(-10)}>
+                  <MdFastRewind size={36} />
+                </button>
+                <button className="cs-control-btn cs-play-btn" onClick={togglePlay}>
+                  {isPlaying ? <MdPause size={44} /> : <MdPlayArrow size={44} />}
+                </button>
+                <button className="cs-control-btn" onClick={() => skip(10)}>
+                  <MdFastForward size={36} />
+                </button>
+              </div>
+            )}
           </div>
+
+          {/* Mobile menu backdrop — tap to close any open menu */}
+          {isMobile && (showSpeedMenu || showCCMenu || showSettings) && (
+            <div
+              style={{
+                position: 'fixed', inset: 0, zIndex: 98,
+                background: 'rgba(0,0,0,0.5)',
+              }}
+              onClick={() => { setShowSpeedMenu(false); setShowCCMenu(false); setShowSettings(false); }}
+            />
+          )}
 
           {/* Controls overlay */}
           <div
@@ -550,26 +693,33 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
               <div className="cs-controls-row">
                 {/* Left group */}
                 <div className="cs-controls-left">
-                  <button className="cs-control-btn" onClick={() => skip(-10)} title="Rewind 10s (←)">
-                    <MdFastRewind size={24} />
-                  </button>
-                  <button className="cs-control-btn cs-play-btn" onClick={togglePlay} title="Play/Pause (Space)">
-                    {isPlaying ? <MdPause size={30} /> : <MdPlayArrow size={30} />}
-                  </button>
-                  <button className="cs-control-btn" onClick={() => skip(10)} title="Forward 10s (→)">
-                    <MdFastForward size={24} />
-                  </button>
+                  {!isMobile && (
+                    <>
+                      <button className="cs-control-btn" onClick={() => skip(-10)} title="Rewind 10s (←)">
+                        <MdFastRewind size={24} />
+                      </button>
+                      <button className="cs-control-btn cs-play-btn" onClick={togglePlay} title="Play/Pause (Space)">
+                        {isPlaying ? <MdPause size={30} /> : <MdPlayArrow size={30} />}
+                      </button>
+                      <button className="cs-control-btn" onClick={() => skip(10)} title="Forward 10s (→)">
+                        <MdFastForward size={24} />
+                      </button>
+                    </>
+                  )}
                   <button className="cs-control-btn" onClick={toggleMute} title="Mute (M)">
                     {isMuted || volume === 0 ? <MdVolumeOff size={22} /> : <MdVolumeUp size={22} />}
                   </button>
-                  <input
-                    type="range" min="0" max="1" step="0.05"
-                    value={isMuted ? 0 : volume}
-                    onChange={(e) => changeVolume(Number(e.target.value))}
-                    className="cs-volume-slider"
-                    style={{ "--volume": `${(isMuted ? 0 : volume) * 100}%` }}
-                    aria-label="Volume"
-                  />
+                  {!isMobile && (
+                    <input
+                      type="range" min="0" max="1" step="0.05"
+                      value={isMuted ? 0 : volume}
+                      onChange={(e) => changeVolume(Number(e.target.value))}
+                      className="cs-volume-slider"
+                      style={{ "--volume": `${(isMuted ? 0 : volume) * 100}%` }}
+                      aria-label="Volume"
+                    />
+                  )}
+                  {isMobile && speedButtonNode}
                   <span className="cs-time-display">
                     {formatTimeRaw(currentTime)} / {formatTimeRaw(duration)}
                   </span>
@@ -577,93 +727,13 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
 
                 {/* Right group */}
                 <div className="cs-controls-right">
-
-                  {/* Speed */}
-                  <div className="cs-speed-wrap">
-                    <button className="cs-control-btn cs-speed-btn" onClick={() => { setShowSpeedMenu(p => !p); setShowCCMenu(false); setShowSettings(false); }} title="Speed">
-                      <MdSpeed size={22} />
-                      <span className="cs-speed-label">{playbackSpeed}×</span>
-                    </button>
-                    {showSpeedMenu && (
-                      <div className="cs-speed-menu">
-                        <p className="cs-speed-menu-title">Speed</p>
-                        {SPEEDS.map((s) => (
-                          <button key={s} className={"cs-speed-option" + (playbackSpeed === s ? " cs-speed-option-active" : "")} onClick={() => setSpeed(s)}>
-                            {s === 1 ? "Normal" : `${s}×`}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* CC */}
-                  <div className="cs-speed-wrap">
-                    <button
-                      className={"cs-control-btn" + (ccActive ? " cs-control-btn-active" : "")}
-                      onClick={() => { setShowCCMenu(p => !p); setShowSpeedMenu(false); setShowSettings(false); }}
-                      title="Subtitles / CC"
-                    >
-                      {ccActive ? <MdClosedCaption size={22} /> : <MdClosedCaptionDisabled size={22} />}
-                    </button>
-                    {showCCMenu && (
-                      <div className="cs-speed-menu">
-                        <p className="cs-speed-menu-title">Subtitles / CC</p>
-                        {textTracks.length === 0 ? (
-                          <p className="cs-speed-option" style={{ opacity: 0.4, cursor: "default" }}>No subtitles available</p>
-                        ) : (
-                          <>
-                            <button className={"cs-speed-option" + (activeCC === -1 ? " cs-speed-option-active" : "")} onClick={() => toggleCCTrack(-2)}>
-                              Off
-                            </button>
-                            {textTracks.map((t, i) => (
-                              <button key={i} className={"cs-speed-option" + (activeCC === i ? " cs-speed-option-active" : "")} onClick={() => toggleCCTrack(i)}>
-                                {t.label || t.language || `Track ${i + 1}`}
-                              </button>
-                            ))}
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Settings (Audio tracks) */}
-                  <div className="cs-speed-wrap">
-                    <button
-                      className="cs-control-btn"
-                      onClick={() => { setShowSettings(p => !p); setShowSpeedMenu(false); setShowCCMenu(false); }}
-                      title="Settings"
-                    >
-                      <MdSettings size={22} />
-                    </button>
-                    {showSettings && (
-                      <div className="cs-speed-menu cs-settings-menu">
-                        <p className="cs-speed-menu-title">
-                          <MdAudiotrack size={13} style={{ verticalAlign: "middle", marginRight: 4 }} />
-                          Audio Track
-                        </p>
-                        {audioTracks.length === 0 ? (
-                          <p className="cs-speed-option" style={{ opacity: 0.4, cursor: "default" }}>Default audio only</p>
-                        ) : (
-                          audioTracks.map((t, i) => (
-                            <button
-                              key={i}
-                              className={"cs-speed-option" + (activeAudio === i ? " cs-speed-option-active" : "")}
-                              onClick={() => switchAudioTrack(i)}
-                            >
-                              {t.label || t.language || `Track ${i + 1}`}
-                              {t.language ? <span style={{ opacity: 0.5, marginLeft: 6, fontSize: 11 }}>{t.language.toUpperCase()}</span> : null}
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* PiP */}
-                  {document.pictureInPictureEnabled && (
-                    <button className="cs-control-btn" onClick={togglePiP} title="Picture in Picture">
-                      {isPiP ? <MdPictureInPicture size={22} /> : <MdPictureInPictureAlt size={22} />}
-                    </button>
+                  {!isMobile && (
+                    <>
+                      {speedButtonNode}
+                      {ccButtonNode}
+                      {settingsButtonNode}
+                      {pipButtonNode}
+                    </>
                   )}
 
                   {/* Fullscreen */}
