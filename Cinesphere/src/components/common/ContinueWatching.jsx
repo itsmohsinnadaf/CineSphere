@@ -65,8 +65,15 @@ export default function ContinueWatching({ onPlay }) {
                   className="cs-cw-thumb"
                   src={item.image}
                   alt={item.title}
-                  onError={(e) => { e.target.src = "/images/movies/default-poster.jpg"; }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/images/movies/default-poster.jpg";
+                  }}
                 />
+                
+                {/* Bottom Gradient overlay for text */}
+                <div className="cs-cw-bottom-gradient" />
+
                 {/* Progress bar overlay */}
                 <div className="cs-cw-progress-bar">
                   <div
@@ -74,10 +81,18 @@ export default function ContinueWatching({ onPlay }) {
                     style={{ width: `${item.pct}%` }}
                   />
                 </div>
+                
+                {/* Info (Inside thumbnail) */}
+                <div className="cs-cw-info">
+                  <p className="cs-cw-name">{item.title}</p>
+                  <p className="cs-cw-time">{formatTime(remaining)}</p>
+                </div>
+
                 {/* Play icon */}
                 <div className="cs-cw-play-overlay">
                   <span className="cs-cw-play-btn">▶</span>
                 </div>
+                
                 {/* Remove button */}
                 <button
                   className="cs-cw-remove"
@@ -86,14 +101,9 @@ export default function ContinueWatching({ onPlay }) {
                 >
                   ✕
                 </button>
+                
                 {/* Type badge */}
                 <span className="cs-cw-type-badge">{item.type}</span>
-              </div>
-
-              {/* Info */}
-              <div className="cs-cw-info">
-                <p className="cs-cw-name">{item.title}</p>
-                <p className="cs-cw-time">{formatTime(remaining)}</p>
               </div>
             </button>
           );

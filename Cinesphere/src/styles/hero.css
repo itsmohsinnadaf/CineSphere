@@ -245,11 +245,11 @@
 /* ── Title ── */
 .cs-fs-title {
   margin: 0;
-  font-size: clamp(48px, 8vw, 110px);
+  font-size: clamp(32px, 4.5vw, 64px);
   font-weight: 900;
   color: #fff;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
   text-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 0 4px 12px rgba(0,0,0,0.9);
   display: -webkit-box;

@@ -93,7 +93,7 @@ body {
   flex-direction: column;
   background: var(--cs-bg-main);
   color: var(--cs-text-primary);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* HEADER / NAVBAR */
