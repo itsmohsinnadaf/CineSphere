@@ -8,11 +8,12 @@ function formatTime(secs) {
   if (!secs) return "";
   const h = Math.floor(secs / 3600);
   const m = Math.floor((secs % 3600) / 60);
-  const s = Math.floor(secs % 60);
+  // #10 — no seconds shown; < 1 min gets a friendly label
   if (h > 0) return `${h}h ${m}m left`;
-  if (m > 0) return `${m}m ${s}s left`;
-  return `${s}s left`;
+  if (m > 0) return `${m}m left`;
+  return "< 1m left";
 }
+
 
 export default function ContinueWatching({ onPlay }) {
   const [items, setItems] = useState([]);

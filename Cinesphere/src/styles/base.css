@@ -25,26 +25,7 @@ body,
 
 
 /* ========= THEME VARIABLES ========= */
-
-:root {
-  --cs-bg-main: radial-gradient(circle at top, #2a2a40 0, #050509 55%);
-  --cs-bg-header: linear-gradient(to right, #050509, #10101b);
-  --cs-bg-footer: #050509;
-  --cs-surface-1: linear-gradient(130deg, #2a2a3a, #1a1a24);
-  --cs-surface-2: linear-gradient(145deg, #323242, #1e1e2b);
-  --cs-surface-player: linear-gradient(160deg, #10101b, #1b1b2c);
-  --cs-border-soft: rgba(255, 255, 255, 0.06);
-  --cs-border-strong: rgba(255, 255, 255, 0.12);
-  --cs-text-primary: #f5f5ff;
-  --cs-text-secondary: #a5a5c0;
-  --cs-text-muted: #8e8eae;
-  --cs-accent: #f44b4b;
-  --cs-accent-soft: rgba(244, 75, 75, 0.7);
-  --cs-chip-bg: rgba(255, 255, 255, 0.07);
-  --cs-nav-bg: rgba(10, 10, 20, 0.95);
-  --cs-shadow-heavy: 0 20px 45px rgba(0, 0, 0, 0.95);
-  --cs-shadow-medium: 0 16px 35px rgba(0, 0, 0, 0.8);
-}
+/* :root defaults removed (#12) — app always applies .cs-theme-dark or .cs-theme-light */
 
 /* DARK THEME */
 .cs-theme-dark {
@@ -63,6 +44,8 @@ body,
   --cs-accent-soft: rgba(244, 75, 75, 0.7);
   --cs-chip-bg: rgba(255, 255, 255, 0.07);
   --cs-nav-bg: rgba(10, 10, 20, 0.95);
+  --cs-shadow-heavy: 0 20px 45px rgba(0, 0, 0, 0.95);
+  --cs-shadow-medium: 0 16px 35px rgba(0, 0, 0, 0.8);
 }
 
 /* LIGHT THEME */
@@ -85,6 +68,7 @@ body,
   --cs-shadow-heavy: 0 20px 40px rgba(15, 23, 42, 0.1);
   --cs-shadow-medium: 0 10px 25px rgba(15, 23, 42, 0.06);
 }
+
 
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",

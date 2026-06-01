@@ -9,7 +9,16 @@ const graphBase = "https://graph.microsoft.com/v1.0";
 
 /* ============== AUTH ============== */
 
+// #7 — cache the token in memory; refresh only when expired
+let _cachedToken = null;
+let _tokenExpiry = 0;
+
 export async function getAppToken() {
+  // Return cached token if still valid (with 60s buffer)
+  if (_cachedToken && Date.now() < _tokenExpiry - 60_000) {
+    return _cachedToken;
+  }
+
   const url = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`;
 
   const body = new URLSearchParams();
@@ -27,33 +36,44 @@ export async function getAppToken() {
   }
 
   const json = await res.json();
-  return json.access_token;
+  _cachedToken = json.access_token;
+  _tokenExpiry = Date.now() + (json.expires_in * 1000);
+  console.log(`Token refreshed, valid for ${json.expires_in}s`);
+  return _cachedToken;
 }
+
 
 /* ============== GRAPH HELPER ============== */
 
+// #15 — paginate using @odata.nextLink; Graph API caps at 200 items per page
 export async function getChildren(token, fullPath) {
   const user = encodeURIComponent(process.env.GRAPH_USER);
   const encodedPath = encodeURIComponent(fullPath);
 
-  // full payload (no $select) so we get: file, folder, @microsoft.graph.downloadUrl
-  const url = `${graphBase}/users/${user}/drive/root:/${encodedPath}:/children`;
+  let url = `${graphBase}/users/${user}/drive/root:/${encodedPath}:/children`;
+  let allItems = [];
 
-  console.log("➡️ Fetching children for:", fullPath);
+  console.log("Fetching children for:", fullPath);
 
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  do {
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("Graph error for", fullPath, ":", text);
-    throw new Error(`Graph error ${res.status}`);
-  }
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Graph error for", fullPath, ":", text);
+      throw new Error(`Graph error ${res.status}`);
+    }
 
-  const data = await res.json();
-  return data.value || [];
+    const data = await res.json();
+    allItems = [...allItems, ...(data.value || [])];
+    url = data["@odata.nextLink"] || null; // follow pagination link if present
+  } while (url);
+
+  return allItems;
 }
+
 
 /* ============== TYPE DETECTION ============== */
 

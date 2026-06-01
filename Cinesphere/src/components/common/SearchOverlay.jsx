@@ -5,7 +5,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { browsePath } from "../../api/api";
 
-const API_BASE = "https://cinesphere-mj9d.onrender.com";
+// #9 — module-level cache so index survives overlay close/reopen
+let _cachedIndex = null;
+let _indexBuilding = false;
 
 function prettify(name) {
   return name.replace(/\.[^/.]+$/, "").replace(/[._]+/g, " ");
@@ -51,16 +53,18 @@ export default function SearchOverlay({ open, onClose, onPlay }) {
   const inputRef = useRef(null);
   const debounceRef = useRef(null);
 
-  // Build index when first opened
+  // Build index when first opened — use module-level cache (#9)
   useEffect(() => {
-    if (open && index.length === 0 && !indexing) {
-      setIndexing(true);
-      buildIndex()
-        .then(setIndex)
-        .catch(console.error)
-        .finally(() => setIndexing(false));
-    }
-  }, [open]);
+    if (!open) return;
+    if (_cachedIndex) { setIndex(_cachedIndex); return; } // already cached
+    if (_indexBuilding) return;                           // already in-flight
+    _indexBuilding = true;
+    setIndexing(true);
+    buildIndex()
+      .then((result) => { _cachedIndex = result; setIndex(result); })
+      .catch(console.error)
+      .finally(() => { _indexBuilding = false; setIndexing(false); });
+  }, [open]); // #5 — 'open' is the only dep that should trigger rebuild
 
   // Focus input when opened
   useEffect(() => {

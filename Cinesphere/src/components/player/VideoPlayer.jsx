@@ -26,6 +26,7 @@ import {
 } from "react-icons/md";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { saveProgress, getContinueWatching } from "../../hooks/useContinueWatching";
+import { MdCheckCircle } from "react-icons/md";
 
 function formatTimeRaw(secs) {
   if (!secs || Number.isNaN(secs)) return "0:00";
@@ -49,10 +50,21 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const clickTimerRef = useRef(null);
   const clickDataRef = useRef({ count: 0, side: null });
 
-  /* ── Saved position ── */
-  const savedEntry = getContinueWatching().find((i) => i.id === video.id);
-  const resumeTime = savedEntry ? savedEntry.currentTime : 0;
+  /* ── Saved position — read localStorage once via useMemo (#8) ── */
+  const resumeTime = useMemo(() => {
+    const entry = getContinueWatching().find((i) => i.id === video.id);
+    return entry ? entry.currentTime : 0;
+  }, [video.id]);
   const [resumeState, setResumeState] = useState(resumeTime > 0 ? "asking" : "done");
+
+  /* ── Toast notification (#1) ── */
+  const [toast, setToast] = useState(null);
+  const toastTimer = useRef(null);
+  const showToast = useCallback((msg) => {
+    clearTimeout(toastTimer.current);
+    setToast(msg);
+    toastTimer.current = setTimeout(() => setToast(null), 2500);
+  }, []);
 
   /* ── Core state ── */
   const [isPlaying, setIsPlaying] = useState(false);
@@ -75,7 +87,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     return () => media.removeEventListener('change', listener);
   }, []);
   const [hoverTime, setHoverTime] = useState(null);
-  const [selectedSourceIndex] = useState(0);
+  // selectedSourceIndex removed — single-source only for now (#13)
 
   /* ── Speed ── */
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
@@ -102,7 +114,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const sources = video.sources?.length
     ? video.sources
     : [{ label: "Original", url: video.videoUrl }];
-  const currentSource = sources[selectedSourceIndex];
+  const currentSource = sources[0]; // single source (#13)
 
   /* ─────────────────────────────────────────────────────
      CONTROL VISIBILITY
@@ -432,8 +444,13 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
 
   const handleCopyLink = async () => {
     if (!navigator.clipboard || !currentSource?.url) return;
-    try { await navigator.clipboard.writeText(currentSource.url); alert("Link copied!"); }
-    catch (err) { console.error(err); }
+    try {
+      await navigator.clipboard.writeText(currentSource.url);
+      showToast("Link copied to clipboard!"); // #1 — no more alert()
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to copy link");
+    }
   };
 
   const ccActive = activeCC >= 0;
@@ -457,7 +474,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
             <p className="cs-speed-option" style={{ opacity: 0.4, cursor: "default" }}>No subtitles available</p>
           ) : (
             <>
-              <button className={"cs-speed-option" + (activeCC === -1 ? " cs-speed-option-active" : "")} onClick={() => toggleCCTrack(-2)}>
+              <button className={"cs-speed-option" + (activeCC === -1 ? " cs-speed-option-active" : "")} onClick={() => toggleCCTrack(-1)}> {/* #2 — was -2, now correctly -1 */}
                 Off
               </button>
               {textTracks.map((t, i) => (
@@ -562,6 +579,14 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   ───────────────────────────────────────────────────── */
   return (
     <section className="cs-player-page">
+
+      {/* ── Toast notification (#1) ── */}
+      {toast && (
+        <div className="cs-player-toast">
+          <MdCheckCircle size={18} style={{ flexShrink: 0 }} />
+          <span>{toast}</span>
+        </div>
+      )}
 
       {/* ── Resume modal ── */}
       {resumeState === "asking" && (

@@ -1,5 +1,5 @@
 // src/hooks/useLibrary.js
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { browsePath } from "../api/api";
 
 /**
@@ -39,7 +39,7 @@ const DEFAULT_POSTER = "/images/movies/default-poster.jpg";
 
 function prettifyFilename(name) {
   const withoutExt = name.replace(/\.[^/.]+$/, "");
-  return withoutExt.replace(/[._]+/g, " ");
+  return withoutExt.replace(/[._\-]+/g, " "); // #11 — also strips hyphens
 }
 
 function isCloudImage(url) {
@@ -87,7 +87,7 @@ export function useLibrary() {
 
   /* ---------- ROOT (Movies / Series) ---------- */
 
-  async function loadRootFolders() {
+  const loadRootFolders = useCallback(async function () { // #3 — stable ref for useEffect dep
     try {
       setLoading(true);
       setError(null);
@@ -121,7 +121,8 @@ export function useLibrary() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []); // empty deps — uses only stable setters
+
 
   /* ---------- MOVIES FLOW ---------- */
 
@@ -340,7 +341,12 @@ export function useLibrary() {
 
   const backToSeriesRoot = () => {
     setSelectedSeriesRoot(null);
+    setSelectedSeries(null);     // #14 — clear all stale series state
+    setSelectedSeason(null);
+    setSelectedEpisode(null);
     setSeriesFolders([]);
+    setSeasonFolders([]);
+    setEpisodes([]);
     setView("root");
     setActiveNav("home");
   };

@@ -9,8 +9,13 @@ import "dotenv/config";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+// #6 — restrict CORS to the known frontend origin, not wildcard
+app.use(cors({
+  origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
+  methods: ["GET"],
+}));
 app.use(express.json());
+
 
 /* ============== /api/browse (existing behaviour) ============== */
 

@@ -72,7 +72,8 @@ function App() {
 
   useEffect(() => {
     loadRootFolders();
-  }, []);
+  }, [loadRootFolders]); // #3 — added missing dep
+
 
   // Global "/" key opens search
   useEffect(() => {
