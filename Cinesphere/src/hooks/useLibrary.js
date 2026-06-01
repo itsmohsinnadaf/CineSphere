@@ -1,5 +1,6 @@
 // src/hooks/useLibrary.js
 import { useState, useCallback } from "react";
+import { flushSync } from "react-dom";
 import { browsePath } from "../api/api";
 
 /**
@@ -62,6 +63,23 @@ function isCloudImage(url) {
 
 export function useLibrary() {
   const [view, setView] = useState("root");
+
+  // Helper for smooth view transitions
+  const transitionView = (updateFn) => {
+    return new Promise((resolve) => {
+      if (!document.startViewTransition) {
+        updateFn();
+        resolve();
+        return;
+      }
+      document.startViewTransition(() => {
+        flushSync(() => {
+          updateFn();
+        });
+        resolve();
+      });
+    });
+  };
   const [activeNav, setActiveNav] = useState("home");
 
   const [rootFolders, setRootFolders] = useState([]);
@@ -89,8 +107,10 @@ export function useLibrary() {
 
   const loadRootFolders = useCallback(async function () { // #3 — stable ref for useEffect dep
     try {
-      setLoading(true);
-      setError(null);
+      await transitionView(() => {
+        setLoading(true);
+        setError(null);
+      });
 
       const items = await browsePath("");
 
@@ -112,9 +132,11 @@ export function useLibrary() {
           };
         });
 
-      setRootFolders(folders);
-      setView("root");
-      setActiveNav("home");
+      transitionView(() => {
+        setRootFolders(folders);
+        setView("root");
+        setActiveNav("home");
+      });
     } catch (err) {
       console.error("loadRootFolders error:", err);
       setError("Failed to load library");
@@ -128,13 +150,16 @@ export function useLibrary() {
 
   async function openMoviesRoot(rootFolder) {
     try {
-      setSelectedMovieRoot(rootFolder);
-      setSelectedGenre(null);
-      setSelectedMovie(null);
-      setView("moviesGenres");
-      setActiveNav("movies");
-      setLoading(true);
-      setError(null);
+      await transitionView(() => {
+        setMovieGenres([]);
+        setSelectedMovieRoot(rootFolder);
+        setSelectedGenre(null);
+        setSelectedMovie(null);
+        setView("moviesGenres");
+        setActiveNav("movies");
+        setLoading(true);
+        setError(null);
+      });
 
       const items = await browsePath(rootFolder.path);
 
@@ -161,11 +186,14 @@ export function useLibrary() {
 
   async function openMovieGenre(genreFolder) {
     try {
-      setSelectedGenre(genreFolder);
-      setSelectedMovie(null);
-      setView("moviesTitles");
-      setLoading(true);
-      setError(null);
+      await transitionView(() => {
+        setMovieTitles([]);
+        setSelectedGenre(genreFolder);
+        setSelectedMovie(null);
+        setView("moviesTitles");
+        setLoading(true);
+        setError(null);
+      });
 
       const items = await browsePath(genreFolder.path);
 
@@ -200,38 +228,45 @@ export function useLibrary() {
   }
 
   const backToMovieGenres = () => {
-  setSelectedGenre(null);
-  setSelectedMovie(null);
-  setMovieTitles([]);
-  setView("moviesGenres");
-};
+    transitionView(() => {
+      setSelectedGenre(null);
+      setSelectedMovie(null);
+      setMovieTitles([]);
+      setView("moviesGenres");
+    });
+  };
 
 
   const handleMovieClick = (movie) => {
-    setSelectedMovie(movie);
-    setView("moviePlayer"); // full-page player
+    transitionView(() => {
+      setSelectedMovie(movie);
+      setView("moviePlayer"); // full-page player
+    });
   };
 
   const backFromMoviePlayer = () => {
-    // go back to the movie list grid
-    setView("moviesTitles");
+    transitionView(() => {
+      setView("moviesTitles");
+    });
   };
 
   /* ---------- SERIES FLOW ---------- */
 
   async function openSeriesRoot(rootFolder) {
     try {
-      setSelectedSeriesRoot(rootFolder);
-      setSelectedSeries(null);
-      setSelectedSeason(null);
-      setSelectedEpisode(null);
-      setSeriesFolders([]);
-      setSeasonFolders([]);
-      setEpisodes([]);
-      setView("seriesList");
-      setActiveNav("series");
-      setLoading(true);
-      setError(null);
+      await transitionView(() => {
+        setSeriesFolders([]);
+        setSelectedSeriesRoot(rootFolder);
+        setSelectedSeries(null);
+        setSelectedSeason(null);
+        setSelectedEpisode(null);
+        setSeasonFolders([]);
+        setEpisodes([]);
+        setView("seriesList");
+        setActiveNav("series");
+        setLoading(true);
+        setError(null);
+      });
 
       const items = await browsePath(rootFolder.path);
 
@@ -257,16 +292,19 @@ export function useLibrary() {
     }
   }
 
-  async function openSeriesFolder(seriesFolder) {
+  async function openSeriesFolder(seriesObj) {
     try {
-      setSelectedSeries(seriesFolder);
-      setSelectedSeason(null);
-      setSelectedEpisode(null);
-      setView("seriesSeasons");
-      setLoading(true);
-      setError(null);
+      await transitionView(() => {
+        setSeasonFolders([]);
+        setSelectedSeries(seriesObj);
+        setSelectedSeason(null);
+        setSelectedEpisode(null);
+        setView("seriesSeasons");
+        setLoading(true);
+        setError(null);
+      });
 
-      const items = await browsePath(seriesFolder.path);
+      const items = await browsePath(seriesObj.path);
 
       const seasons = items
         .filter((i) => i.type === "folder")
@@ -276,8 +314,6 @@ export function useLibrary() {
           title: item.name,
           path: item.path,
           image: item.coverUrl || SEASON_IMAGES[item.name] || DEFAULT_POSTER,
-          downloadUrl:
-            FOLDER_DOWNLOAD_LINKS[item.path] || item.folderUrl || null,
           isCloudImage: isCloudImage(item.coverUrl),
         }));
 
@@ -292,34 +328,30 @@ export function useLibrary() {
 
   async function openSeason(seasonFolder) {
     try {
-      setSelectedSeason(seasonFolder);
-      setSelectedEpisode(null);
-      setView("seriesEpisodes");
-      setLoading(true);
-      setError(null);
+      await transitionView(() => {
+        setEpisodes([]);
+        setSelectedSeason(seasonFolder);
+        setSelectedEpisode(null);
+        setView("seriesEpisodes");
+        setLoading(true);
+        setError(null);
+      });
 
       const items = await browsePath(seasonFolder.path);
 
       const eps = items
         .filter((i) => i.type === "video")
-        .map((item) => {
-          const title = prettifyFilename(item.name);
-          const chosenPoster =
-            item.posterUrl || VIDEO_IMAGES[title] || DEFAULT_POSTER;
-
-          return {
-            id: item.path,
-            name: item.name,
-            title,
-            path: item.path,
-            type: "Episode",
-            videoUrl: item.videoUrl,
-            image: chosenPoster,
-            posterUrl: item.posterUrl || null,
-            isCloudImage: isCloudImage(item.posterUrl),
-            sources: [{ label: "Original", url: item.videoUrl }],
-          };
-        });
+        .map((item) => ({
+          id: item.path,
+          name: item.name,
+          title: prettifyFilename(item.name),
+          path: item.path,
+          type: "Episode",
+          videoUrl: item.videoUrl,
+          image: item.posterUrl || DEFAULT_POSTER,
+          isCloudImage: isCloudImage(item.posterUrl),
+          sources: [{ label: "Original", url: item.videoUrl }],
+        }));
 
       setEpisodes(eps);
     } catch (err) {
@@ -331,36 +363,46 @@ export function useLibrary() {
   }
 
   const handleEpisodeClick = (episode) => {
-    setSelectedEpisode(episode);
-    setView("episodePlayer"); // full-page player
+    transitionView(() => {
+      setSelectedEpisode(episode);
+      setView("episodePlayer"); // full-page player
+    });
   };
 
   const backFromEpisodePlayer = () => {
-    setView("seriesEpisodes");
+    transitionView(() => {
+      setView("seriesEpisodes");
+    });
   };
 
   const backToSeriesRoot = () => {
-    setSelectedSeriesRoot(null);
-    setSelectedSeries(null);     // #14 — clear all stale series state
-    setSelectedSeason(null);
-    setSelectedEpisode(null);
-    setSeriesFolders([]);
-    setSeasonFolders([]);
-    setEpisodes([]);
-    setView("root");
-    setActiveNav("home");
+    transitionView(() => {
+      setSelectedSeriesRoot(null);
+      setSelectedSeries(null);     // #14 — clear all stale series state
+      setSelectedSeason(null);
+      setSelectedEpisode(null);
+      setSeriesFolders([]);
+      setSeasonFolders([]);
+      setEpisodes([]);
+      setView("root");
+      setActiveNav("home");
+    });
   };
 
   const backToSeriesList = () => {
-    setSelectedSeries(null);
-    setSeasonFolders([]);
-    setView("seriesList");
+    transitionView(() => {
+      setSelectedSeries(null);
+      setSeasonFolders([]);
+      setView("seriesList");
+    });
   };
 
   const backToSeasons = () => {
-    setSelectedSeason(null);
-    setEpisodes([]);
-    setView("seriesSeasons"); 
+    transitionView(() => {
+      setSelectedSeason(null);
+      setEpisodes([]);
+      setView("seriesSeasons"); 
+    });
   };
 
   const jumpToSeries = async (seriesFolder) => {
@@ -385,20 +427,22 @@ export function useLibrary() {
   };
 
   const resetAll = () => {
-    setView("root");
-    setActiveNav("home");
-    setSelectedMovieRoot(null);
-    setSelectedGenre(null);
-    setSelectedMovie(null);
-    setSelectedSeriesRoot(null);
-    setSelectedSeries(null);
-    setSelectedSeason(null);
-    setSelectedEpisode(null);
-    setMovieGenres([]);
-    setMovieTitles([]);
-    setSeriesFolders([]);
-    setSeasonFolders([]);
-    setEpisodes([]);
+    transitionView(() => {
+      setView("root");
+      setActiveNav("home");
+      setSelectedMovieRoot(null);
+      setSelectedGenre(null);
+      setSelectedMovie(null);
+      setSelectedSeriesRoot(null);
+      setSelectedSeries(null);
+      setSelectedSeason(null);
+      setSelectedEpisode(null);
+      setMovieGenres([]);
+      setMovieTitles([]);
+      setSeriesFolders([]);
+      setSeasonFolders([]);
+      setEpisodes([]);
+    });
   };
 
   const handleNavClick = (nav) => {

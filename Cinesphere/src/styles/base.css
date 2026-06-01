@@ -12,9 +12,10 @@ html,
 body,
 #root {
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
+  background: var(--cs-bg-main);
 }
 
 *,
@@ -80,11 +81,36 @@ body {
 /* App wrapper */
 .cs-app {
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   background: var(--cs-bg-main);
   color: var(--cs-text-primary);
   overflow-x: hidden;
 }
+
+
+/* ======================================================
+   SKELETON LOADERS
+   ====================================================== */
+
+.cs-skeleton-pulse {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+  background-size: 200% 100%;
+  animation: cs-skeleton-pulse 1.5s infinite;
+}
+.cs-theme-light .cs-skeleton-pulse {
+  background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.05) 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes cs-skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.cs-skeleton-card {
+  pointer-events: none;
+}
+
 

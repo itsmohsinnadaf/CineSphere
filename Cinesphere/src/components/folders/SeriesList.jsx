@@ -1,13 +1,16 @@
 // src/components/folders/SeriesList.jsx
 import AnimateIn from "../common/AnimateIn";
+import BigSkeletonCard from "../cards/BigSkeletonCard";
 
-export default function SeriesList({ rootTitle, series, onSeriesClick }) {
+export default function SeriesList({ rootTitle, series, onSeriesClick, loading }) {
   return (
     <section className="cs-left">
-      <h2 className="cs-section-title"></h2>
-
       <div className="cs-big-list">
-        {series.map((s, idx) => (
+        {loading && series.length === 0
+          ? Array.from({ length: 4 }).map((_, idx) => (
+              <BigSkeletonCard key={idx} />
+            ))
+          : series.map((s, idx) => (
           <AnimateIn key={s.id} variant="cinematic" delay={idx * 200} duration={0.7} threshold={0.08}>
             <div
               className="cs-big-card"

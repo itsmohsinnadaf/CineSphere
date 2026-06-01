@@ -3,12 +3,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { browsePath } from "../../api/api";
+import { use3DTilt } from "../../hooks/use3DTilt";
 
 function prettify(name) {
   return name.replace(/\.[^/.]+$/, "").replace(/[._]+/g, " ");
 }
 
-const SERIES_IMAGES  = { "Alien Earth": "/images/series/alien-earth.jpg" };
+const SERIES_IMAGES = { "Alien Earth": "/images/series/alien-earth.jpg" };
 const DEFAULT_POSTER = "/images/movies/default-poster.jpg";
 
 function resolveImage(item, fallbackMap = {}) {
@@ -35,12 +36,13 @@ async function fetchSlides(path, type, fallbackMap, kind, limit = 3) {
 }
 
 export default function FeaturedSlider({ onWatchNow }) {
-  const [slides, setSlides]       = useState([]);
-  const [active, setActive]       = useState(0);
-  const [loaded, setLoaded]       = useState(false);
+  const [slides, setSlides] = useState([]);
+  const [active, setActive] = useState(0);
+  const [loaded, setLoaded] = useState(false);
   const [animating, setAnimating] = useState(false);
-  const timerRef  = useRef(null);
-  const stripRef  = useRef(null);
+  const timerRef = useRef(null);
+  const stripRef = useRef(null);
+  const tiltProps = use3DTilt({ maxTilt: 12, scale: 1.05 });
 
   useEffect(() => {
     let cancelled = false;
@@ -54,13 +56,13 @@ export default function FeaturedSlider({ onWatchNow }) {
       if (cancelled) return;
 
       const movies = [...bollywood, ...hollywood, ...tollywood];
-      const mixed  = [];
+      const mixed = [];
       const maxLen = Math.max(movies.length, series.length);
       for (let i = 0; i < maxLen; i++) {
         if (movies[i]) mixed.push(movies[i]);
         if (series[i]) mixed.push(series[i]);
       }
-      const seen   = new Set();
+      const seen = new Set();
       const unique = mixed.filter((s) => {
         if (seen.has(s.title)) return false;
         seen.add(s.title);
@@ -155,10 +157,11 @@ export default function FeaturedSlider({ onWatchNow }) {
               className={`cs-fs-thumb ${i === active ? "cs-fs-thumb-active" : ""}`}
               onClick={() => goTo(i)}
               aria-label={s.title}
+              {...tiltProps}
             >
-              <img 
-                src={s.image} 
-                alt={s.title} 
+              <img
+                src={s.image}
+                alt={s.title}
                 fetchpriority="high"
                 loading="eager"
                 decoding="sync"

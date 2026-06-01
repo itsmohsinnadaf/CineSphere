@@ -1,21 +1,24 @@
-// src/components/folders/MovieGenres.jsx
 import BackButton from "../common/BackButton";
 import AnimateIn from "../common/AnimateIn";
+import BigSkeletonCard from "../cards/BigSkeletonCard";
 
-export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack }) {
+export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack, loading }) {
   return (
       <section className="cs-left">
         <div className="cs-page-header">
-        <BackButton onBack={onBack} />
-
-        <h2 className="cs-section-title">
-          {rootTitle}{" "}
-          <span className="cs-section-subtitle">Categories</span>
-        </h2>
-      </div>
+          <BackButton onBack={onBack} />
+          <h2 className="cs-section-title">
+            {rootTitle}{" "}
+            <span className="cs-section-subtitle">Categories</span>
+          </h2>
+        </div>
 
         <div className="cs-big-list">
-          {genres.map((g, idx) => (
+          {loading && genres.length === 0
+            ? Array.from({ length: 4 }).map((_, idx) => (
+                <BigSkeletonCard key={idx} />
+              ))
+            : genres.map((g, idx) => (
             <AnimateIn key={g.id} variant="cinematic" delay={idx * 200} duration={0.7} threshold={0.08}>
               <div
                 className="cs-big-card"

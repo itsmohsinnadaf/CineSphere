@@ -1,4 +1,5 @@
 // src/components/cards/FolderCard.jsx
+import { use3DTilt } from "../../hooks/use3DTilt";
 
 export default function FolderCard({
   title,
@@ -7,8 +8,10 @@ export default function FolderCard({
   onClick,
   downloadUrl,
 }) {
+  const tiltProps = use3DTilt();
+  
   return (
-    <div className="cs-folder-card" onClick={onClick}>
+    <div className="cs-folder-card" onClick={onClick} {...tiltProps}>
       <div className="cs-folder-image-wrapper cs-folder-large">
         {image && <img src={image} alt={title} className="cs-folder-image" loading="lazy" decoding="async" />}
         <div className="cs-folder-overlay" />

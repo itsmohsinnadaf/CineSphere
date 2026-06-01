@@ -19,6 +19,7 @@ import VideoPlayer from "./components/player/VideoPlayer";
 
 import BackButton from "./components/common/BackButton";
 import AnimateIn from "./components/common/AnimateIn";
+import SkeletonCard from "./components/cards/SkeletonCard";
 import CustomCursor from "./components/common/CustomCursor";
 import FloatingParticles from "./components/common/FloatingParticles";
 import SearchOverlay from "./components/common/SearchOverlay";
@@ -205,15 +206,19 @@ function App() {
             </h2>
           </div>
           <div className="cs-item-grid cs-centered-row">
-            {movieTitles.map((m, idx) => (
-              <AnimateIn key={m.id} variant="fade-up" delay={idx * 60}>
-                <MovieCard
-                  movie={m}
-                  active={false}
-                  onClick={() => handleMovieClick(m)}
-                />
-              </AnimateIn>
-            ))}
+            {loading && movieTitles.length === 0
+              ? Array.from({ length: 8 }).map((_, idx) => (
+                  <SkeletonCard key={idx} type="movie" />
+                ))
+              : movieTitles.map((m, idx) => (
+                  <AnimateIn key={m.id} variant="fade-up" delay={idx * 60}>
+                    <MovieCard
+                      movie={m}
+                      active={false}
+                      onClick={() => handleMovieClick(m)}
+                    />
+                  </AnimateIn>
+                ))}
           </div>
         </section>
       );
@@ -246,6 +251,7 @@ function App() {
             rootTitle={selectedSeriesRoot.title}
             series={seriesFolders}
             onSeriesClick={openSeriesFolder}
+            loading={loading}
           />
         </section>
       );
@@ -266,6 +272,7 @@ function App() {
             seriesTitle={selectedSeries.title}
             seasons={seasonFolders}
             onSeasonClick={openSeason}
+            loading={loading}
           />
         </section>
       );
@@ -283,16 +290,20 @@ function App() {
             </h2>
           </div>
           <div className="cs-item-grid cs-centered-row">
-            {episodes.map((e, idx) => (
-              <AnimateIn key={e.id} variant="fade-up" delay={idx * 60}>
-                <EpisodeCard
-                  episode={e}
-                  index={idx}
-                  active={false}
-                  onClick={() => handleEpisodeClick(e)}
-                />
-              </AnimateIn>
-            ))}
+            {loading && episodes.length === 0
+              ? Array.from({ length: 8 }).map((_, idx) => (
+                  <SkeletonCard key={idx} type="episode" />
+                ))
+              : episodes.map((e, idx) => (
+                  <AnimateIn key={e.id} variant="fade-up" delay={idx * 60}>
+                    <EpisodeCard
+                      episode={e}
+                      index={idx}
+                      active={false}
+                      onClick={() => handleEpisodeClick(e)}
+                    />
+                  </AnimateIn>
+                ))}
           </div>
         </section>
       );

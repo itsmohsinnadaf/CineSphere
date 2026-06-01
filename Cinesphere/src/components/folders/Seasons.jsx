@@ -1,16 +1,16 @@
 // src/components/folders/Seasons.jsx
 import AnimateIn from "../common/AnimateIn";
+import BigSkeletonCard from "../cards/BigSkeletonCard";
 
-export default function Seasons({ seriesTitle, seasons, onSeasonClick }) {
+export default function Seasons({ seriesTitle, seasons, onSeasonClick, loading }) {
   return (
     <section className="cs-left">
-      <h2 className="cs-section-title">
-
-        
-      </h2>
-
       <div className="cs-big-list">
-        {seasons.map((s, idx) => (
+        {loading && seasons.length === 0
+          ? Array.from({ length: 4 }).map((_, idx) => (
+              <BigSkeletonCard key={idx} />
+            ))
+          : seasons.map((s, idx) => (
           <AnimateIn key={s.id} variant="cinematic" delay={idx * 200} duration={0.7} threshold={0.08}>
             <div
               className="cs-big-card"

@@ -9,9 +9,13 @@ import "dotenv/config";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// #6 — restrict CORS to the known frontend origin, not wildcard
+// #6 — restrict CORS to the known frontend origins
 app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
+  origin: [
+    "http://localhost:5173", 
+    "https://cinesphereworld.netlify.app",
+    process.env.FRONTEND_ORIGIN
+  ].filter(Boolean),
   methods: ["GET"],
 }));
 app.use(express.json());

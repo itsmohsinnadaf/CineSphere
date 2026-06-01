@@ -1,10 +1,14 @@
 // src/components/cards/MovieCard.jsx
+import { use3DTilt } from "../../hooks/use3DTilt";
 
 export default function MovieCard({ movie, active, onClick }) {
+  const tiltProps = use3DTilt();
+  
   return (
     <div
       className={`cs-item-card ${active ? "cs-item-card-active" : ""}`}
       onClick={onClick}
+      {...tiltProps}
     >
       <div className="cs-item-image-wrapper">
         <img src={movie.image} alt={movie.title} className="cs-item-image" loading="lazy" decoding="async" />
