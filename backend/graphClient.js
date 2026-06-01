@@ -150,6 +150,10 @@ async function findFolderCover(token, folderFullPath, folderName) {
 
 /* ============== MAIN BROWSE FUNCTION ============== */
 
+// 5-minute TTL cache for browse requests
+const _browseCache = new Map();
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
 /**
  * Browse a relative path inside MyStreamingLibrary.
  *
@@ -159,6 +163,13 @@ async function findFolderCover(token, folderFullPath, folderName) {
  * relativePath "Series"           -> MyStreamingLibrary/Series
  */
 export async function browsePath(relativePath = "") {
+  const cacheKey = relativePath;
+  const cached = _browseCache.get(cacheKey);
+  if (cached && Date.now() < cached.expiry) {
+    console.log(`⚡️ Serving from cache: "${relativePath}"`);
+    return cached.items;
+  }
+
   const token = await getAppToken();
   const root = process.env.GRAPH_FOLDER_PATH; // e.g. "MyStreamingLibrary"
 
@@ -186,25 +197,22 @@ export async function browsePath(relativePath = "") {
   );
 
   /* ----- 1) FOLDERS (Movies, Series, Bollywood, SeriesName, Season1...) ----- */
-  for (const item of folders) {
-    const childRelPath = relativePath
-      ? `${relativePath}/${item.name}`
-      : item.name;
-
+  // Fetch covers concurrently using Promise.all
+  const folderPromises = folders.map(async (item) => {
+    const childRelPath = relativePath ? `${relativePath}/${item.name}` : item.name;
     const subFullPath = `${fullPath}/${item.name}`;
-    const coverUrl = await findFolderCover(
-      token,
-      subFullPath,
-      item.name
-    );
+    const coverUrl = await findFolderCover(token, subFullPath, item.name);
 
-    items.push({
+    return {
       type: "folder",
       name: item.name,
       path: childRelPath,
-      coverUrl, // used by frontend for folder cards
-    });
-  }
+      coverUrl,
+    };
+  });
+
+  const resolvedFolders = await Promise.all(folderPromises);
+  items.push(...resolvedFolders);
 
   /* ----- 2) VIDEOS (movies / episodes) + posterUrl from images in SAME folder ----- */
   for (const item of videos) {
@@ -247,5 +255,12 @@ export async function browsePath(relativePath = "") {
   console.log(
     `✅ browsePath("${relativePath}") returned ${items.length} items`
   );
+
+  // Save to cache
+  _browseCache.set(cacheKey, {
+    items,
+    expiry: Date.now() + CACHE_TTL_MS,
+  });
+
   return items;
 }

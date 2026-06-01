@@ -49,6 +49,8 @@ export default function RootFolders({ folders, loading, error, onRootClick, cont
                     src={root.image}
                     alt={root.title}
                     className="cs-hero-image"
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
                 <div className="cs-hero-image-gradient" />

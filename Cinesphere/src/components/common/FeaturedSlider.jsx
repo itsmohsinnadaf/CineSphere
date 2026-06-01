@@ -156,7 +156,13 @@ export default function FeaturedSlider({ onWatchNow }) {
               onClick={() => goTo(i)}
               aria-label={s.title}
             >
-              <img src={s.image} alt={s.title} />
+              <img 
+                src={s.image} 
+                alt={s.title} 
+                fetchpriority="high"
+                loading="eager"
+                decoding="sync"
+              />
               <div className="cs-fs-thumb-overlay" />
               <span className="cs-fs-thumb-title">{s.title}</span>
             </button>

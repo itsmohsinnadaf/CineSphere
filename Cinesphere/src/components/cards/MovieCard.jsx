@@ -7,7 +7,7 @@ export default function MovieCard({ movie, active, onClick }) {
       onClick={onClick}
     >
       <div className="cs-item-image-wrapper">
-        <img src={movie.image} alt={movie.title} className="cs-item-image" />
+        <img src={movie.image} alt={movie.title} className="cs-item-image" loading="lazy" decoding="async" />
         <div className="cs-item-gradient" />
         <div className="cs-item-play-badge">▶ Play</div>
       </div>

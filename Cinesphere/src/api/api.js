@@ -1,6 +1,9 @@
 // src/api/api.js
 const API_BASE = "https://cinesphere-mj9d.onrender.com";
 
+// Frontend session cache — avoids re-fetching if we revisit a folder
+const _browseCache = new Map();
+
 /**
  * Browse a path via backend.
  * ""                  -> root (Movies, Series)
@@ -9,14 +12,22 @@ const API_BASE = "https://cinesphere-mj9d.onrender.com";
  * "Series/Alien Earth"-> Series/Alien Earth
  */
 export async function browsePath(path = "") {
+  if (_browseCache.has(path)) {
+    return _browseCache.get(path);
+  }
+
   const url = path
     ? `${API_BASE}/api/browse?path=${encodeURIComponent(path)}`
     : `${API_BASE}/api/browse`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  
   const data = await res.json();
-  return Array.isArray(data.items) ? data.items : [];
+  const items = Array.isArray(data.items) ? data.items : [];
+  
+  _browseCache.set(path, items);
+  return items;
 }
 
 /**

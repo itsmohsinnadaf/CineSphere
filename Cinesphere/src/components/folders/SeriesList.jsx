@@ -16,7 +16,7 @@ export default function SeriesList({ rootTitle, series, onSeriesClick }) {
               {/* LEFT IMAGE SIDE */}
               <div className="cs-big-image-wrap">
                 {s.image && (
-                  <img src={s.image} alt={s.title} className="cs-big-image" />
+                  <img src={s.image} alt={s.title} className="cs-big-image" loading="lazy" decoding="async" />
                 )}
                 <div className="cs-big-gradient" />
               </div>
