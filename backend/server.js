@@ -4,8 +4,8 @@ import cors from "cors";
 import archiver from "archiver";
 import fetch from "node-fetch";
 import ffmpeg from "fluent-ffmpeg";
-import ffmpegPath from "ffmpeg-static";
-import ffprobePath from "ffprobe-static";
+import ffmpegPath from "@ffmpeg-installer/ffmpeg";
+import ffprobePath from "@ffprobe-installer/ffprobe";
 import { browsePath, getAppToken, getChildren, getFreshDownloadUrl } from "./graphClient.js";
 import "dotenv/config";
 
@@ -14,13 +14,13 @@ import fs from "fs";
 // Configure fluent-ffmpeg with static binaries
 // Ensure they have execution permissions (fixes issues on Render/Linux deployments)
 try {
-  if (fs.existsSync(ffmpegPath)) fs.chmodSync(ffmpegPath, 0o755);
+  if (fs.existsSync(ffmpegPath.path)) fs.chmodSync(ffmpegPath.path, 0o755);
   if (fs.existsSync(ffprobePath.path)) fs.chmodSync(ffprobePath.path, 0o755);
 } catch (err) {
   console.warn("Could not set execute permissions on ffmpeg binaries:", err);
 }
 
-ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfmpegPath(ffmpegPath.path);
 ffmpeg.setFfprobePath(ffprobePath.path);
 
 const app = express();
