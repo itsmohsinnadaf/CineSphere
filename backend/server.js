@@ -161,7 +161,7 @@ app.get("/api/probe", async (req, res) => {
     ffmpeg.ffprobe(downloadUrl, (err, metadata) => {
       if (err) {
         console.error("ffprobe error:", err.message);
-        return res.status(500).json({ error: "Failed to probe file" });
+        return res.status(500).json({ error: "Failed to probe file", details: err.message });
       }
 
       const streams = metadata.streams || [];
