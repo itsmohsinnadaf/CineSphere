@@ -9,7 +9,17 @@ import ffprobePath from "ffprobe-static";
 import { browsePath, getAppToken, getChildren, getFreshDownloadUrl } from "./graphClient.js";
 import "dotenv/config";
 
+import fs from "fs";
+
 // Configure fluent-ffmpeg with static binaries
+// Ensure they have execution permissions (fixes issues on Render/Linux deployments)
+try {
+  if (fs.existsSync(ffmpegPath)) fs.chmodSync(ffmpegPath, 0o755);
+  if (fs.existsSync(ffprobePath.path)) fs.chmodSync(ffprobePath.path, 0o755);
+} catch (err) {
+  console.warn("Could not set execute permissions on ffmpeg binaries:", err);
+}
+
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath.path);
 
@@ -19,7 +29,7 @@ const PORT = process.env.PORT || 4000;
 // #6 — restrict CORS to the known frontend origins
 app.use(cors({
   origin: [
-    "http://localhost:5173", 
+    "http://localhost:5173",
     "https://cinesphereworld.netlify.app",
     process.env.FRONTEND_ORIGIN
   ].filter(Boolean),
@@ -161,7 +171,7 @@ app.get("/api/probe", async (req, res) => {
     ffmpeg.ffprobe(downloadUrl, (err, metadata) => {
       if (err) {
         console.error("ffprobe error:", err.message);
-        return res.status(500).json({ error: "Failed to probe file", details: err.message });
+        return res.status(500).json({ error: "Failed to probe file" });
       }
 
       const streams = metadata.streams || [];
