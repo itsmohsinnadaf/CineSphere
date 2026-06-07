@@ -165,10 +165,29 @@ app.get("/api/probe", async (req, res) => {
   const filePath = req.query.path;
   if (!filePath) return res.status(400).json({ error: "path is required" });
 
+  const tempId = Date.now() + "-" + Math.floor(Math.random() * 10000);
+  const tempPath = `/tmp/probe-${tempId}.mkv`;
+
   try {
     const downloadUrl = await getFreshDownloadUrl(filePath);
 
-    ffmpeg.ffprobe(downloadUrl, (err, metadata) => {
+    // Render's static ffprobe binaries crash (SIGSEGV) when reading HTTPS streams directly.
+    // Workaround: Download the first 5MB locally to read the MKV headers safely.
+    const fileRes = await fetch(downloadUrl, {
+      headers: { Range: "bytes=0-5242880" }
+    });
+    
+    if (!fileRes.ok) throw new Error("Failed to fetch stream chunk");
+    
+    const buffer = await fileRes.arrayBuffer();
+    fs.writeFileSync(tempPath, Buffer.from(buffer));
+
+    ffmpeg.ffprobe(tempPath, (err, metadata) => {
+      // Clean up the temp file immediately
+      if (fs.existsSync(tempPath)) {
+        try { fs.unlinkSync(tempPath); } catch (e) {}
+      }
+
       if (err) {
         console.error("ffprobe error:", err.message);
         return res.status(500).json({ error: "Failed to probe file", details: err.message });
