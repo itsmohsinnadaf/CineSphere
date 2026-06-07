@@ -162,7 +162,7 @@ export default function FeaturedSlider({ onWatchNow }) {
               <img
                 src={s.image}
                 alt={s.title}
-                fetchpriority="high"
+                fetchPriority="high"
                 loading="eager"
                 decoding="sync"
               />

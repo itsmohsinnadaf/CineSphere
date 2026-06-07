@@ -48,6 +48,7 @@ export default function SearchOverlay({ open, onClose, onPlay }) {
   const [query, setQuery]     = useState("");
   const [results, setResults] = useState([]);
   const [index, setIndex]     = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [indexing, setIndexing] = useState(false);
   const inputRef = useRef(null);
@@ -56,10 +57,10 @@ export default function SearchOverlay({ open, onClose, onPlay }) {
   // Build index when first opened — use module-level cache (#9)
   useEffect(() => {
     if (!open) return;
-    if (_cachedIndex) { setIndex(_cachedIndex); return; } // already cached
+    if (_cachedIndex) { setTimeout(() => setIndex(_cachedIndex), 0); return; } // already cached
     if (_indexBuilding) return;                           // already in-flight
     _indexBuilding = true;
-    setIndexing(true);
+    setTimeout(() => setIndexing(true), 0);
     buildIndex()
       .then((result) => { _cachedIndex = result; setIndex(result); })
       .catch(console.error)
@@ -71,8 +72,10 @@ export default function SearchOverlay({ open, onClose, onPlay }) {
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 80);
     } else {
-      setQuery("");
-      setResults([]);
+      setTimeout(() => {
+        setQuery("");
+        setResults([]);
+      }, 0);
     }
   }, [open]);
 

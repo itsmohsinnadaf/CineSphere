@@ -15,7 +15,9 @@ function load() {
 function save(items) {
   try {
     localStorage.setItem(KEY, JSON.stringify(items));
-  } catch {}
+  } catch (e) {
+    console.warn("Storage error", e);
+  }
 }
 
 /**
@@ -25,7 +27,7 @@ function save(items) {
  * @param {number} duration    – total duration in seconds
  * @param {object} context     – { genre, series, season } for navigation back
  */
-export function saveProgress(video, currentTime, duration, context = {}) {
+export function saveProgress(video, currentTime, duration, context = {}, audioTrack = 0, ccTrack = -1) {
   if (!video?.id || !duration || duration < 5) return;
   const pct = (currentTime / duration) * 100;
   // Don't save if almost finished (>94%) or barely started (<2%)
@@ -48,6 +50,8 @@ export function saveProgress(video, currentTime, duration, context = {}) {
     pct: Math.round(pct),
     savedAt: Date.now(),
     context,
+    audioTrack,
+    ccTrack,
   };
   items.unshift(entry); // most recent first
   save(items.slice(0, MAX_ITEMS));

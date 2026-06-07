@@ -75,6 +75,37 @@ export async function getChildren(token, fullPath) {
 }
 
 
+/**
+ * Resolve a relative file path to a fresh OneDrive download URL.
+ * e.g. "Movies/Bollywood/Shiddat.mkv" → "https://...freshUrl..."
+ *
+ * This always returns a URL valid for ~1 hour, avoiding stale-URL issues.
+ */
+export async function getFreshDownloadUrl(relativePath) {
+  const token = await getAppToken();
+  const root = process.env.GRAPH_FOLDER_PATH;
+  const fullPath = relativePath ? `${root}/${relativePath}` : root;
+  const user = encodeURIComponent(process.env.GRAPH_USER);
+  const encodedPath = encodeURIComponent(fullPath);
+
+  const res = await fetch(
+    `${graphBase}/users/${user}/drive/root:/${encodedPath}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("getFreshDownloadUrl error:", text);
+    throw new Error(`Graph error ${res.status}`);
+  }
+
+  const item = await res.json();
+  const url = item["@microsoft.graph.downloadUrl"];
+  if (!url) throw new Error("No download URL for " + relativePath);
+  return url;
+}
+
+
 /* ============== TYPE DETECTION ============== */
 
 // detect video by mime OR extension

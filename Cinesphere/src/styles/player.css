@@ -97,6 +97,7 @@
        rgba(0, 0, 0, 0.55) 60%,
        transparent);
    display: flex;
+   z-index: 10;
    transition: opacity .35s ease, transform .35s ease;
  }
 
@@ -359,6 +360,34 @@
    }
  }
 
+ /* ── JS-rendered subtitle overlay ── */
+ .cs-subtitle-overlay {
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 60px;
+   display: flex;
+   justify-content: center;
+   pointer-events: none;
+   z-index: 4;
+   padding: 0 20px;
+ }
+
+ .cs-subtitle-text {
+   display: inline-block;
+   max-width: 80%;
+   background: rgba(0, 0, 0, 0.75);
+   color: #fff;
+   font-size: 18px;
+   font-weight: 500;
+   line-height: 1.5;
+   padding: 4px 14px;
+   border-radius: 6px;
+   text-align: center;
+   white-space: pre-line;
+   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+ }
+
  .cs-play-btn {
    width: 40px;
    height: 40px;
@@ -423,56 +452,189 @@
    text-align: left;
  }
 
- .cs-speed-menu {
-   position: absolute;
-   bottom: calc(100% + 10px);
-   right: 0;
-   background: rgba(14, 14, 28, 0.96);
-   border: 1px solid rgba(255, 255, 255, 0.08);
-   border-radius: 14px;
-   overflow: hidden;
-   min-width: 130px;
-   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-   backdrop-filter: blur(12px);
-   z-index: 20;
-   animation: cs-search-slide-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
- }
+  /* ── Settings Popup (Transparent Floating Window) ── */
+  .cs-settings-popup, .cs-speed-menu {
+    position: absolute;
+    bottom: calc(100% + 15px);
+    right: 0;
+    width: 270px;
+    background: rgba(20, 20, 20, 0.85); /* Transparent floating window */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 20;
+    animation: cs-search-slide-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 
- .cs-speed-menu-title {
-   margin: 0;
-   padding: 10px 14px 6px;
-   font-size: 10px;
-   font-weight: 700;
-   letter-spacing: 0.08em;
-   text-transform: uppercase;
-   color: rgba(255, 255, 255, 0.35);
-   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
- }
+  .cs-speed-menu {
+    width: 180px;
+    padding: 8px 0;
+  }
 
- .cs-speed-option {
-   display: block;
-   width: 100%;
-   padding: 9px 14px;
-   border: none;
-   background: transparent;
-   color: rgba(255, 255, 255, 0.75);
-   font-size: 13px;
-   font-weight: 500;
-   font-family: 'Outfit', sans-serif;
-   text-align: left;
-   transition: background 0.15s ease, color 0.15s ease;
- }
+  .cs-speed-menu.cs-cc-menu {
+    width: 220px;
+  }
 
- .cs-speed-option:hover {
-   background: rgba(249, 115, 115, 0.12);
-   color: #fff;
- }
+  .cs-speed-menu-title {
+    padding: 8px 16px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
 
- .cs-speed-option-active {
-   color: #f97373;
-   font-weight: 700;
-   background: rgba(249, 115, 115, 0.08);
- }
+  .cs-speed-option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 16px;
+    background: transparent;
+    color: #fff;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .cs-speed-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .cs-speed-option.active {
+    background: rgba(255, 255, 255, 0.05);
+    font-weight: 600;
+  }
+  
+  .cs-speed-option.active::before {
+    content: "✓";
+    margin-right: 8px;
+    color: #f97373;
+    font-weight: 800;
+  }
+
+  .cs-settings-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+  }
+
+  /* Main menu row */
+  .cs-settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.15s ease;
+  }
+
+  .cs-settings-row:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .cs-settings-row-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cs-settings-row-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+  }
+
+  /* Sub menu header */
+  .cs-settings-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: background 0.15s ease;
+  }
+
+  .cs-settings-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Sub menu options */
+  .cs-settings-options {
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  .cs-settings-options::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .cs-settings-options::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+  }
+
+  .cs-settings-option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .cs-settings-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .cs-settings-option-active {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .cs-no-icon-padding {
+    padding-left: 28px;
+  }
+
+  .cs-check-icon {
+    margin-right: 12px;
+  }
+
+  .cs-channels-badge {
+    margin-left: auto;
+    font-size: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .cs-settings-empty {
+    padding: 12px 16px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    margin: 0;
+  }
 
  /* ── Keyboard shortcut hints ── */
  .cs-player-shortcuts-hint {
@@ -580,32 +742,43 @@
 
  /* FULLSCREEN */
 
- .cs-player-card-fullscreen {
-   border-radius: 0;
-   padding: 0;
-   background: #000;
- }
+   .cs-player-card-fullscreen {
+    border-radius: 0;
+    padding: 0;
+    background: #000;
+  }
 
- /* Allow native cursor in fullscreen because custom cursor is behind the backdrop */
- .cs-player-card-fullscreen,
- .cs-player-card-fullscreen *:not(button):not(input):not(a):not(.cs-control-btn):not(.cs-seek-slider):not(.cs-seek-wrap) {
-   cursor: auto !important;
- }
+  /* In fullscreen the custom cursor (dot/ring/glow) lives outside the
+     fullscreen element and is invisible. Restore the native cursor on
+     the card and ALL descendants — needs !important to beat the global
+     `* { cursor: none !important }` from the custom-cursor system. */
+  .cs-player-card-fullscreen,
+  .cs-player-card-fullscreen * {
+    cursor: default !important;
+  }
 
- .cs-player-card-fullscreen button,
- .cs-player-card-fullscreen a,
- .cs-player-card-fullscreen input,
- .cs-player-card-fullscreen .cs-control-btn,
- .cs-player-card-fullscreen .cs-seek-wrap,
- .cs-player-card-fullscreen .cs-seek-slider {
-   cursor: pointer !important;
- }
+  /* Interactive elements show pointer */
+  .cs-player-card-fullscreen button,
+  .cs-player-card-fullscreen a,
+  .cs-player-card-fullscreen input,
+  .cs-player-card-fullscreen .cs-control-btn,
+  .cs-player-card-fullscreen .cs-seek-wrap,
+  .cs-player-card-fullscreen .cs-seek-slider {
+    cursor: pointer !important;
+  }
 
- /* Hide the cursor in fullscreen when controls auto-hide */
- .cs-player-card-fullscreen.cs-player-hide-cursor,
- .cs-player-card-fullscreen.cs-player-hide-cursor * {
-   cursor: none !important;
- }
+  /* Hide cursor again when controls auto-hide (must come AFTER the
+     restore rule above so same-specificity source-order wins). */
+  .cs-player-card-fullscreen.cs-player-hide-cursor,
+  .cs-player-card-fullscreen.cs-player-hide-cursor * {
+    cursor: none !important;
+  }
+
+  /* Windowed mode — hides cursor over the video wrapper when idle */
+  .cs-video-wrapper.cs-player-hide-cursor,
+  .cs-video-wrapper.cs-player-hide-cursor * {
+    cursor: none !important;
+  }
 
  .cs-player-card-fullscreen .cs-player-header,
  .cs-player-card-fullscreen .cs-player-footer {
@@ -637,19 +810,24 @@
 
    /* ── Page / card shell ── */
    .cs-player-page {
-     display: block;
+     display: flex;
+     justify-content: center;
+     padding: 8px;
    }
 
    .cs-player-card {
-     border-radius: 24px;
+     border-radius: 20px;
      padding: 0;
-     margin: 0;
-     background: #000;
-     border: none;
-     box-shadow: none;
+     margin: 0 auto;
+     width: 100%;
+     max-width: 100%;
+     background: var(--cs-surface-player);
+     border: 1px solid var(--cs-border-soft);
+     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
      min-height: auto;
      display: flex;
      flex-direction: column;
+     overflow: hidden;
    }
 
    /* ── Top bar (back + title) ── */
@@ -702,8 +880,8 @@
    /* ── Video fills width, 16:9 natural height ── */
    .cs-video-wrapper {
      position: relative;
-     margin: 10px 14px;
-     border-radius: 24px;
+     margin: 8px 12px;
+     border-radius: 18px;
      background: #000;
      flex: none;
    }
@@ -719,9 +897,9 @@
    .cs-player-controls {
      padding: 0;
      background: linear-gradient(to top,
-         rgba(0, 0, 0, 0.95) 0%,
-         rgba(0, 0, 0, 0.6) 55%,
-         transparent 100%);
+         rgba(0, 0, 0, 0.92),
+         rgba(0, 0, 0, 0.55) 60%,
+         transparent);
      flex-direction: column;
      justify-content: flex-end;
    }
@@ -787,33 +965,33 @@
      gap: 12px;
    }
 
-   /* All control buttons — large touch targets (48 × 48) */
+   /* All control buttons — large touch targets (44 × 44) */
    .cs-control-btn {
-     width: 48px;
-     height: 48px;
+     width: 44px;
+     height: 44px;
      border-radius: 50%;
-     background: rgba(255, 255, 255, 0.06);
+     background: transparent;
      display: flex;
      align-items: center;
      justify-content: center;
-     transition: background 0.15s ease, transform 0.1s ease;
+     transition: color 0.2s ease, transform 0.15s ease;
    }
 
    .cs-control-btn:active {
-     background: rgba(249, 115, 115, 0.22);
+     color: #f97373;
      transform: scale(0.92);
    }
 
    /* Play button extra emphasis */
    .cs-play-btn {
-     width: 58px;
-     height: 58px;
-     background: rgba(249, 115, 115, 0.2);
-     border: 2px solid rgba(249, 115, 115, 0.5);
+     width: 52px;
+     height: 52px;
+     background: rgba(249, 115, 115, 0.15);
+     border: 1.5px solid rgba(249, 115, 115, 0.35);
    }
 
    .cs-play-btn:active {
-     background: rgba(249, 115, 115, 0.35);
+     background: rgba(249, 115, 115, 0.28);
    }
 
    /* Speed label alongside icon */
@@ -830,7 +1008,7 @@
      top: auto;
      border-radius: 20px 20px 0 0;
      min-width: unset;
-     width: 100%;
+     width: 100% !important;
      max-height: 50dvh;
      overflow-y: auto;
      z-index: 99;
@@ -858,7 +1036,7 @@
 
    .cs-speed-menu-title {
      padding: 14px 20px 8px;
-     font-size: 11px;
+     font-size: 13px;
    }
 
    /* ── Footer (download / copy) ── */
@@ -867,8 +1045,9 @@
      flex-wrap: wrap;
      gap: 10px;
      justify-content: center;
-     padding: 14px 14px env(safe-area-inset-bottom, 14px);
-     background: #0a0a14;
+     padding: 12px 12px env(safe-area-inset-bottom, 12px);
+     background: transparent;
+     border-top: 1px solid rgba(255, 255, 255, 0.06);
    }
 
    .cs-btn-large {
@@ -941,12 +1120,12 @@
    .cs-mobile-center-controls .cs-control-btn,
    .cs-mobile-top-controls .cs-control-btn,
    .cs-controls-row .cs-control-btn {
-     width: 46px;
-     height: 46px;
+     width: 44px;
+     height: 44px;
      border-radius: 50%;
-     background: rgba(20, 20, 25, 0.65);
-     border: 1px solid rgba(255, 255, 255, 0.08);
-     backdrop-filter: blur(12px);
+     background: rgba(0, 0, 0, 0.35);
+     backdrop-filter: blur(8px);
+     -webkit-backdrop-filter: blur(8px);
      display: flex;
      align-items: center;
      justify-content: center;
@@ -954,10 +1133,11 @@
 
    /* Make center play button stand out */
    .cs-mobile-center-controls .cs-play-btn {
-     width: 74px !important;
-     height: 74px !important;
-     background: rgba(244, 75, 75, 0.25) !important;
-     border: 2px solid #f44b4b !important;
+     width: 64px !important;
+     height: 64px !important;
+     background: rgba(249, 115, 115, 0.2) !important;
+     border: 2px solid rgba(249, 115, 115, 0.45) !important;
+     backdrop-filter: blur(12px) !important;
    }
 
    /* ── Top Controls inside Video Wrapper (PiP, CC, Settings) ── */
@@ -969,10 +1149,10 @@
      display: flex;
      justify-content: space-between;
      align-items: flex-start;
-     padding: 16px;
+     padding: 14px;
      z-index: 15;
      transition: opacity 0.35s ease;
-     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), transparent);
    }
 
    .cs-mobile-top-controls.cs-player-controls-hidden {
@@ -989,6 +1169,163 @@
      display: flex;
      gap: 12px;
      align-items: center;
+   }
+
+   /* ── Mobile Bottom Sheet ── */
+   .cs-mobile-sheet-backdrop {
+     position: fixed;
+     inset: 0;
+     z-index: 98;
+     background: rgba(0, 0, 0, 0.45);
+     animation: cs-fade-in 0.15s ease both;
+   }
+
+   @keyframes cs-fade-in {
+     from { opacity: 0; }
+     to   { opacity: 1; }
+   }
+
+   .cs-mobile-sheet {
+     position: fixed;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     z-index: 99;
+     background: rgba(20, 20, 25, 0.92);
+     backdrop-filter: blur(20px);
+     -webkit-backdrop-filter: blur(20px);
+     border: 1px solid rgba(255, 255, 255, 0.08);
+     border-bottom: none;
+     border-radius: 14px 14px 0 0;
+     box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.6);
+     max-height: 40dvh;
+     overflow-y: auto;
+     padding-bottom: env(safe-area-inset-bottom, 8px);
+     animation: cs-slide-up 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+   }
+
+   .cs-mobile-sheet-handle {
+     width: 28px;
+     height: 3px;
+     border-radius: 3px;
+     background: rgba(255, 255, 255, 0.2);
+     margin: 8px auto 4px;
+   }
+
+   .cs-mobile-sheet-content {
+     padding: 0 0 4px;
+   }
+
+   .cs-mobile-sheet-title {
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     padding: 8px 16px 10px;
+     font-size: 14px;
+     font-weight: 600;
+     color: #fff;
+     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+   }
+
+   .cs-mobile-sheet-back {
+     display: flex;
+     align-items: center;
+     gap: 2px;
+     padding: 8px 12px 10px;
+     font-size: 14px;
+     font-weight: 600;
+     color: #fff;
+     cursor: pointer;
+     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+     transition: background 0.15s ease;
+   }
+
+   .cs-mobile-sheet-back:active {
+     background: rgba(255, 255, 255, 0.08);
+   }
+
+   .cs-mobile-sheet-options {
+     padding: 4px 0;
+   }
+
+   .cs-mobile-sheet-option {
+     display: flex;
+     align-items: center;
+     width: 100%;
+     padding: 10px 16px;
+     background: transparent;
+     border: none;
+     color: rgba(255, 255, 255, 0.85);
+     font-size: 13px;
+     text-align: left;
+     cursor: pointer;
+     transition: background 0.15s ease;
+     gap: 8px;
+   }
+
+   .cs-mobile-sheet-option:active {
+     background: rgba(255, 255, 255, 0.08);
+   }
+
+   .cs-mobile-sheet-option.active {
+     color: #fff;
+     font-weight: 600;
+   }
+
+   .cs-mobile-sheet-check {
+     color: #f97373;
+     flex-shrink: 0;
+   }
+
+   /* Settings sheet rows */
+   .cs-mobile-sheet-row {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     width: 100%;
+     padding: 10px 16px;
+     background: transparent;
+     border: none;
+     color: #fff;
+     cursor: pointer;
+     font-size: 13px;
+     font-weight: 500;
+     transition: background 0.15s ease;
+   }
+
+   .cs-mobile-sheet-row:active {
+     background: rgba(255, 255, 255, 0.08);
+   }
+
+   .cs-mobile-sheet-row-left {
+     display: flex;
+     align-items: center;
+     gap: 10px;
+   }
+
+   .cs-mobile-sheet-row-right {
+     display: flex;
+     align-items: center;
+     gap: 3px;
+     color: rgba(255, 255, 255, 0.5);
+     font-size: 12px;
+   }
+
+   .cs-mobile-sheet-empty {
+     padding: 12px 16px;
+     color: rgba(255, 255, 255, 0.45);
+     font-size: 13px;
+     margin: 0;
+   }
+
+   /* Hide the desktop settings popup on mobile */
+   .cs-settings-popup {
+     display: none !important;
+   }
+
+   /* Hide the desktop speed/cc floating menus on mobile */
+   .cs-speed-menu {
+     display: none !important;
    }
 
  }

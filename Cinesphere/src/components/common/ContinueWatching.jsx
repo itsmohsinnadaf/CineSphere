@@ -21,7 +21,7 @@ export default function ContinueWatching({ onPlay }) {
   const refresh = () => setItems(getContinueWatching());
 
   useEffect(() => {
-    refresh();
+    setTimeout(refresh, 0);
     // Re-read on storage events (e.g. other tab)
     window.addEventListener("storage", refresh);
     return () => window.removeEventListener("storage", refresh);
@@ -53,10 +53,13 @@ export default function ContinueWatching({ onPlay }) {
         {items.map((item) => {
           const remaining = item.duration - item.currentTime;
           return (
-            <button
+            <div
               key={item.id}
               className="cs-cw-card"
               onClick={() => onPlay(item)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPlay(item); } }}
+              role="button"
+              tabIndex={0}
               title={item.title}
             >
               {/* Thumbnail */}
@@ -105,7 +108,7 @@ export default function ContinueWatching({ onPlay }) {
                 {/* Type badge */}
                 <span className="cs-cw-type-badge">{item.type}</span>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>

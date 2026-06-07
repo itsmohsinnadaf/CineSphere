@@ -3,8 +3,15 @@ import express from "express";
 import cors from "cors";
 import archiver from "archiver";
 import fetch from "node-fetch";
-import { browsePath, getAppToken, getChildren } from "./graphClient.js";
+import ffmpeg from "fluent-ffmpeg";
+import ffmpegPath from "ffmpeg-static";
+import ffprobePath from "ffprobe-static";
+import { browsePath, getAppToken, getChildren, getFreshDownloadUrl } from "./graphClient.js";
 import "dotenv/config";
+
+// Configure fluent-ffmpeg with static binaries
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath.path);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -135,6 +142,201 @@ app.get("/api/download", async (req, res) => {
     }
   }
 });
+
+/* ============== /api/probe (audio + subtitle tracks) ============== */
+
+/**
+ * GET /api/probe?path=Movies/Bollywood/Shiddat.mkv
+ *
+ * Uses ffprobe to list all audio and subtitle tracks embedded in the file.
+ * Returns: { audio: [...], subtitles: [...] }
+ */
+app.get("/api/probe", async (req, res) => {
+  const filePath = req.query.path;
+  if (!filePath) return res.status(400).json({ error: "path is required" });
+
+  try {
+    const downloadUrl = await getFreshDownloadUrl(filePath);
+
+    ffmpeg.ffprobe(downloadUrl, (err, metadata) => {
+      if (err) {
+        console.error("ffprobe error:", err.message);
+        return res.status(500).json({ error: "Failed to probe file" });
+      }
+
+      const streams = metadata.streams || [];
+
+      const audio = streams
+        .filter((s) => s.codec_type === "audio")
+        .map((s, i) => ({
+          index: s.index,
+          language: s.tags?.language || "und",
+          title: s.tags?.title || "",
+          codec: s.codec_name,
+          channels: s.channels,
+          default: !!(s.disposition?.default),
+          order: i,
+        }));
+
+      // Only text-based subtitle codecs can be converted to WebVTT.
+      // Bitmap-based formats (PGS, VobSub, DVB, XSUB) are excluded.
+      const TEXT_SUB_CODECS = new Set([
+        "srt", "subrip", "ass", "ssa", "webvtt", "mov_text", "text",
+        "ttml", "stl", "realtext", "subviewer", "subviewer1",
+        "microdvd", "mpl2", "jacosub", "sami", "pjs",
+      ]);
+
+      const allSubs = streams.filter((s) => s.codec_type === "subtitle");
+      const subtitles = allSubs
+        .filter((s) => TEXT_SUB_CODECS.has(s.codec_name))
+        .map((s) => {
+          // Find the original order index among ALL subtitle streams
+          // (needed for ffmpeg -map 0:s:N which counts by subtitle-stream order)
+          const orderAmongAll = allSubs.indexOf(s);
+          return {
+            index: s.index,
+            language: s.tags?.language || "und",
+            title: s.tags?.title || "",
+            codec: s.codec_name,
+            default: !!(s.disposition?.default),
+            forced: !!(s.disposition?.forced),
+            order: orderAmongAll,
+          };
+        });
+
+      const totalDuration = parseFloat(metadata.format?.duration) || 0;
+      console.log(`🎵 Probe "${filePath}": ${audio.length} audio, ${subtitles.length} subtitle tracks, duration: ${totalDuration}s`);
+      res.json({ audio, subtitles, duration: totalDuration });
+    });
+  } catch (err) {
+    console.error("probe endpoint error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+/* ============== /api/stream (remux with selected audio track) ============== */
+
+/**
+ * GET /api/stream?path=Movies/Bollywood/Shiddat.mkv&audio=1
+ *
+ * Remuxes the video with only the selected audio track.
+ * Uses -c copy (no re-encoding) for speed.
+ * Outputs MP4 container for broad browser compatibility.
+ */
+app.get("/api/stream", async (req, res) => {
+  const filePath = req.query.path;
+  const audioIndex = parseInt(req.query.audio, 10);
+  const startTime = parseFloat(req.query.ss) || 0;
+  if (!filePath) return res.status(400).json({ error: "path is required" });
+  if (isNaN(audioIndex)) return res.status(400).json({ error: "audio index is required" });
+
+  try {
+    const downloadUrl = await getFreshDownloadUrl(filePath);
+
+    console.log(`🔄 Streaming "${filePath}" with audio track ${audioIndex} from ${startTime}s`);
+
+    res.setHeader("Content-Type", "video/mp4");
+    res.setHeader("Transfer-Encoding", "chunked");
+
+    let command = ffmpeg(downloadUrl);
+    if (startTime > 0) {
+      command = command.setStartTime(startTime);
+    }
+
+    command = command
+      .outputOptions([
+        "-map", "0:v:0",            // first video stream
+        "-map", `0:a:${audioIndex}`, // selected audio stream (by order among audio streams)
+        "-c", "copy",               // no re-encoding
+        "-movflags", "frag_keyframe+empty_moov+faststart", // streaming-friendly MP4
+        "-f", "mp4",
+      ])
+      .on("error", (err) => {
+        // "Output stream closed" is normal when the user navigates away
+        if (!err.message.includes("Output stream closed")) {
+          console.error("stream ffmpeg error:", err.message);
+        }
+        if (!res.headersSent) res.status(500).end();
+      })
+      .pipe(res, { end: true });
+
+    // If client disconnects, kill ffmpeg
+    req.on("close", () => {
+      command?.kill?.("SIGKILL");
+    });
+  } catch (err) {
+    console.error("stream endpoint error:", err);
+    if (!res.headersSent) res.status(500).json({ error: err.message });
+  }
+});
+
+/* ============== /api/subtitles (extract subtitle as WebVTT — cached) ============== */
+
+// In-memory subtitle cache: key = "path:track" → VTT string
+const _subtitleCache = new Map();
+
+/**
+ * GET /api/subtitles?path=Movies/Bollywood/Shiddat.mkv&track=0
+ *
+ * Extracts the specified subtitle track and converts to WebVTT format.
+ * Results are cached in memory so repeat requests are instant.
+ */
+app.get("/api/subtitles", async (req, res) => {
+  const filePath = req.query.path;
+  const trackOrder = parseInt(req.query.track, 10);
+  if (!filePath) return res.status(400).json({ error: "path is required" });
+  if (isNaN(trackOrder)) return res.status(400).json({ error: "track index is required" });
+
+  const cacheKey = `${filePath}:${trackOrder}`;
+
+  // Serve from cache if available
+  if (_subtitleCache.has(cacheKey)) {
+    console.log(`⚡️ Subtitle cache hit: "${cacheKey}"`);
+    res.setHeader("Content-Type", "text/vtt; charset=utf-8");
+    return res.send(_subtitleCache.get(cacheKey));
+  }
+
+  try {
+    const downloadUrl = await getFreshDownloadUrl(filePath);
+
+    console.log(`📝 Extracting subtitle track ${trackOrder} from "${filePath}"`);
+
+    // Collect ffmpeg output into a buffer, then cache + send
+    const chunks = [];
+    const command = ffmpeg(downloadUrl)
+      .outputOptions([
+        "-map", `0:s:${trackOrder}`,
+        "-f", "webvtt",
+      ])
+      .on("error", (err) => {
+        if (!err.message.includes("Output stream closed")) {
+          console.error("subtitle ffmpeg error:", err.message);
+        }
+        if (!res.headersSent) res.status(500).end();
+      });
+
+    const stream = command.pipe();
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("end", () => {
+      const vttText = Buffer.concat(chunks).toString("utf-8");
+      _subtitleCache.set(cacheKey, vttText);
+      console.log(`✅ Subtitle cached: "${cacheKey}" (${vttText.length} bytes)`);
+      if (!res.headersSent) {
+        res.setHeader("Content-Type", "text/vtt; charset=utf-8");
+        res.send(vttText);
+      }
+    });
+
+    req.on("close", () => {
+      if (!res.writableEnded) command?.kill?.("SIGKILL");
+    });
+  } catch (err) {
+    console.error("subtitle endpoint error:", err);
+    if (!res.headersSent) res.status(500).json({ error: err.message });
+  }
+});
+
 
 /* ============== START SERVER ============== */
 

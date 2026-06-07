@@ -1,5 +1,7 @@
 // src/api/api.js
-const API_BASE = "https://cinesphere-mj9d.onrender.com";
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:4000"
+  : "https://cinesphere-mj9d.onrender.com";
 
 // Frontend session cache — avoids re-fetching if we revisit a folder
 const _browseCache = new Map();
@@ -31,6 +33,17 @@ export async function browsePath(path = "") {
 }
 
 /**
+ * Silently pre-warm the backend + client cache for a path.
+ * Safe to call at any time — ignores errors.
+ */
+export function prefetchPath(path = "") {
+  if (_browseCache.has(path)) return; // already cached
+  browsePath(path).catch(() => {});
+}
+
+
+
+/**
  * Trigger a folder download handled by the browser.
  * Backend returns a ZIP stream.
  */
@@ -45,4 +58,34 @@ export function downloadFolder(path = "", suggestedName = "download") {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+}
+
+
+/* ============== Media Track APIs ============== */
+
+/**
+ * Probe a video file for audio and subtitle tracks.
+ * Returns: { audio: [...], subtitles: [...] }
+ */
+export async function probeMediaTracks(path) {
+  const url = `${API_BASE}/api/probe?path=${encodeURIComponent(path)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Probe failed: HTTP ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Build a stream URL with a specific audio track selected.
+ * The backend remuxes on-the-fly with ffmpeg -c copy.
+ */
+export function getStreamUrl(path, audioIndex, start = 0) {
+  return `${API_BASE}/api/stream?path=${encodeURIComponent(path)}&audio=${audioIndex}&ss=${start}`;
+}
+
+/**
+ * Build a subtitle URL for a specific subtitle track.
+ * The backend extracts and converts to WebVTT.
+ */
+export function getSubtitleUrl(path, trackOrder) {
+  return `${API_BASE}/api/subtitles?path=${encodeURIComponent(path)}&track=${trackOrder}`;
 }

@@ -2,7 +2,7 @@
 import AnimateIn from "../common/AnimateIn";
 import BigSkeletonCard from "../cards/BigSkeletonCard";
 
-export default function Seasons({ seriesTitle, seasons, onSeasonClick, loading }) {
+export default function Seasons({ seasons, onSeasonClick, loading }) {
   return (
     <section className="cs-left">
       <div className="cs-big-list">

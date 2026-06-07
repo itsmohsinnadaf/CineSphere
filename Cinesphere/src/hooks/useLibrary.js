@@ -1,7 +1,7 @@
 // src/hooks/useLibrary.js
 import { useState, useCallback } from "react";
 import { flushSync } from "react-dom";
-import { browsePath } from "../api/api";
+import { browsePath, prefetchPath } from "../api/api";
 
 /**
  * Same constants as before – fallbacks for images and posters.
@@ -40,7 +40,7 @@ const DEFAULT_POSTER = "/images/movies/default-poster.jpg";
 
 function prettifyFilename(name) {
   const withoutExt = name.replace(/\.[^/.]+$/, "");
-  return withoutExt.replace(/[._\-]+/g, " "); // #11 — also strips hyphens
+  return withoutExt.replace(/[._-]+/g, " "); // #11 — also strips hyphens
 }
 
 function isCloudImage(url) {
@@ -137,6 +137,9 @@ export function useLibrary() {
         setView("root");
         setActiveNav("home");
       });
+
+      // Background-prefetch sub-paths so first navigation is instant
+      folders.forEach(f => prefetchPath(f.path));
     } catch (err) {
       console.error("loadRootFolders error:", err);
       setError("Failed to load library");
@@ -176,6 +179,9 @@ export function useLibrary() {
         }));
 
       setMovieGenres(genres);
+
+      // Prefetch movie titles for all genres immediately in the background
+      genres.forEach(g => prefetchPath(g.path));
     } catch (err) {
       console.error("openMoviesRoot error:", err);
       setError("Failed to load movie categories");
