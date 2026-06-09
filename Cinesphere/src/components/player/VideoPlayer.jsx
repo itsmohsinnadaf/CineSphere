@@ -86,6 +86,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const clickTimerRef = useRef(null);
   const clickDataRef = useRef({ count: 0, side: null });
   const skipDebounceRef = useRef(null);
+  const pendingCleanups = useRef([]);
 
   /* ── Saved position — read localStorage once via useMemo (#8) ── */
   const resumeEntry = useMemo(() => {
@@ -148,7 +149,12 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const [mobileSheet, setMobileSheet] = useState(null); // null | 'speed' | 'cc' | 'settings'
 
   /* ── Current video source (may change when switching audio tracks) ── */
-  const [videoSrc, setVideoSrc] = useState(video.videoUrl);
+  const [videoSrc, setVideoSrc] = useState(() => {
+    // Defer loading if resuming with a non-default audio track;
+    // the probe effect will set the correct stream URL.
+    if (resumeEntry?.audioTrack > 0) return null;
+    return video.videoUrl;
+  });
   const [streamOffset, setStreamOffset] = useState(0); // Offset for FFmpeg streams
 
   /* ── Seek Bar Dragging State ── */
@@ -162,6 +168,57 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   /* ── Centre play/pause flash ── */
   const [playPauseFlash, setPlayPauseFlash] = useState(null); // 'play' | 'pause' | null
   const flashTimerRef = useRef(null);
+
+  /* ─────────────────────────────────────────────────────
+     CENTRALIZED VIDEO LOADER WITH LISTENER CLEANUP
+  ───────────────────────────────────────────────────── */
+  const loadVideoSource = useCallback((options = {}) => {
+    const { play = false, seekTo = null, errorMsg = '' } = options;
+
+    // Clear any pending one-time listeners from previous loads
+    pendingCleanups.current.forEach(fn => fn());
+    pendingCleanups.current = [];
+
+    const el = videoRef.current;
+    if (!el) return;
+
+    const onCanPlay = () => {
+      if (seekTo != null) el.currentTime = seekTo;
+      if (play) el.play().catch(e => console.warn(e));
+      cleanupListeners();
+    };
+    const onError = () => {
+      setIsBuffering(false);
+      if (errorMsg) showToast(errorMsg);
+      cleanupListeners();
+    };
+    const cleanupListeners = () => {
+      el.removeEventListener('canplay', onCanPlay);
+      el.removeEventListener('error', onError);
+      pendingCleanups.current = pendingCleanups.current.filter(fn => fn !== cleanupListeners);
+    };
+
+    el.addEventListener('canplay', onCanPlay);
+    el.addEventListener('error', onError);
+    pendingCleanups.current.push(cleanupListeners);
+
+    // If the element already has enough data (e.g. src was set and auto-loaded),
+    // fire immediately instead of waiting for an event that already passed.
+    if (el.readyState >= 3) {
+      onCanPlay();
+      return;
+    }
+
+    el.load();
+  }, [showToast]);
+
+  // Cleanup pending video listeners on unmount
+  useEffect(() => {
+    return () => {
+      pendingCleanups.current.forEach(fn => fn());
+      pendingCleanups.current = [];
+    };
+  }, []);
 
   /* ─────────────────────────────────────────────────────
      CONTROL VISIBILITY
@@ -234,6 +291,12 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
         setActiveAudio(audioIdx);
         setActiveCC(ccIdx);
 
+        // If we deferred the initial videoSrc (non-default audio resume) and
+        // the resolved audio track is default (0), restore the direct play URL.
+        if (audioIdx === 0) {
+          setVideoSrc(prev => prev || video.videoUrl);
+        }
+
         // Background-prefetch all text subtitle tracks so the backend caches them
         // and the client cue cache is warm before the user clicks CC
         (data.subtitles || []).forEach((track) => {
@@ -255,7 +318,11 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
         }
       })
       .catch((err) => {
-        if (!cancelled) console.warn("Probe failed:", err.message);
+        if (!cancelled) {
+          console.warn("Probe failed:", err.message);
+          // If videoSrc was deferred (null), fall back to direct URL
+          setVideoSrc(prev => prev ?? video.videoUrl);
+        }
       })
       .finally(() => {
         if (!cancelled) setProbeLoading(false);
@@ -342,20 +409,15 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     const el = videoRef.current;
     if (activeAudio !== 0) {
       setStreamOffset(0);
-      setVideoSrc(getStreamUrl(video.path, activeAudio, 0));
       setIsBuffering(true);
-      setTimeout(() => {
-        const v = videoRef.current;
-        if (!v) return;
-        const onCanPlay = () => {
-          v.play().catch(e => console.warn(e));
-          v.removeEventListener("canplay", onCanPlay);
-        };
-        v.addEventListener("canplay", onCanPlay);
-        v.load();
-      }, 50);
+      // Attach listeners BEFORE setting src so we catch the auto-load canplay
+      loadVideoSource({ play: true });
+      setVideoSrc(getStreamUrl(video.path, activeAudio, 0));
     } else {
-      if (el) { el.currentTime = 0; el.play(); }
+      if (el) {
+        el.currentTime = 0;
+        el.play().catch(e => console.warn('play rejected:', e));
+      }
     }
     setIsPlaying(true);
     setResumeState("done");
@@ -365,20 +427,15 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     const el = videoRef.current;
     if (activeAudio !== 0) {
       setStreamOffset(resumeTime);
-      setVideoSrc(getStreamUrl(video.path, activeAudio, resumeTime));
       setIsBuffering(true);
-      setTimeout(() => {
-        const v = videoRef.current;
-        if (!v) return;
-        const onCanPlay = () => {
-          v.play().catch(e => console.warn(e));
-          v.removeEventListener("canplay", onCanPlay);
-        };
-        v.addEventListener("canplay", onCanPlay);
-        v.load();
-      }, 50);
+      // Attach listeners BEFORE setting src so we catch the auto-load canplay
+      loadVideoSource({ play: true });
+      setVideoSrc(getStreamUrl(video.path, activeAudio, resumeTime));
     } else {
-      if (el) { el.currentTime = resumeTime; el.play(); }
+      if (el) {
+        el.currentTime = resumeTime;
+        el.play().catch(e => console.warn('play rejected:', e));
+      }
     }
     setIsPlaying(true);
     setResumeState("done");
@@ -402,18 +459,10 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
 
     if (activeAudio !== 0) {
       setStreamOffset(targetTime);
-      setVideoSrc(getStreamUrl(video.path, activeAudio, targetTime));
       setIsBuffering(true);
       if (!isPlaying) setIsPlaying(true);
-      setTimeout(() => {
-        const v = videoRef.current;
-        if (!v) return;
-        const onCanPlay = () => { v.play().catch(e => console.warn(e)); v.removeEventListener('canplay', onCanPlay); };
-        const onError = () => { setIsBuffering(false); showToast('Stream failed — try again'); v.removeEventListener('error', onError); };
-        v.addEventListener('canplay', onCanPlay);
-        v.addEventListener('error', onError);
-        v.load();
-      }, 50);
+      loadVideoSource({ play: true, errorMsg: 'Stream failed — try again' });
+      setVideoSrc(getStreamUrl(video.path, activeAudio, targetTime));
     } else {
       el.currentTime = targetTime;
     }
@@ -433,23 +482,15 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
         setStreamOffset(targetTime);
         setIsBuffering(true);
         skipDebounceRef.current = setTimeout(() => {
+          loadVideoSource({ play: true });
           setVideoSrc(getStreamUrl(video.path, activeAudio, targetTime));
-          setTimeout(() => {
-            const v = videoRef.current;
-            if (!v) return;
-            const onCanPlay = () => { v.play().catch(e => console.warn(e)); v.removeEventListener('canplay', onCanPlay); };
-            const onError = () => { setIsBuffering(false); v.removeEventListener('error', onError); };
-            v.addEventListener('canplay', onCanPlay);
-            v.addEventListener('error', onError);
-            v.load();
-          }, 30);
         }, 400);
       } else {
         el.currentTime = targetTime;
       }
       return targetTime;
     });
-  }, [duration, activeAudio, video.path]);
+  }, [duration, activeAudio, video.path, loadVideoSource]);
 
   /* ─────────────────────────────────────────────────────
      MEDIA SESSION API — PiP title + OS media controls
@@ -624,48 +665,20 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     if (index === 0) {
       // Switching back to direct play (original file)
       setStreamOffset(0);
+      loadVideoSource({
+        play: wasPlaying,
+        seekTo: currentVirtualTime,
+        errorMsg: 'Failed to load audio track',
+      });
       setVideoSrc(video.videoUrl);
-
-      setTimeout(() => {
-        const v = videoRef.current;
-        if (!v) return;
-
-        const onCanPlay = () => {
-          v.currentTime = currentVirtualTime;
-          if (wasPlaying) v.play().catch(e => console.warn(e));
-          v.removeEventListener('canplay', onCanPlay);
-        };
-        const onError = () => {
-          setIsBuffering(false);
-          showToast('Failed to load audio track');
-          v.removeEventListener('error', onError);
-        };
-        v.addEventListener('canplay', onCanPlay);
-        v.addEventListener('error', onError);
-        v.load();
-      }, 50);
     } else {
       // Switching to an alternate audio track via FFmpeg stream
       setStreamOffset(currentVirtualTime);
+      loadVideoSource({
+        play: wasPlaying,
+        errorMsg: 'Failed to load audio track',
+      });
       setVideoSrc(getStreamUrl(video.path, index, currentVirtualTime));
-
-      setTimeout(() => {
-        const v = videoRef.current;
-        if (!v) return;
-
-        const onCanPlay = () => {
-          if (wasPlaying) v.play().catch(e => console.warn(e));
-          v.removeEventListener('canplay', onCanPlay);
-        };
-        const onError = () => {
-          setIsBuffering(false);
-          showToast('Failed to load audio track');
-          v.removeEventListener('error', onError);
-        };
-        v.addEventListener('canplay', onCanPlay);
-        v.addEventListener('error', onError);
-        v.load();
-      }, 50);
     }
   };
 
@@ -1071,9 +1084,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
           onClick={handleVideoAreaClick}
         >
           <div className="cs-video-inner">
-            <video ref={videoRef} className="cs-video" playsInline>
-              <source src={videoSrc} />
-            </video>
+            <video ref={videoRef} className="cs-video" playsInline src={videoSrc || undefined} />
 
             {/* JS-rendered subtitle overlay */}
             {ccText && (

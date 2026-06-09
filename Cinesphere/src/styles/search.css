@@ -19,8 +19,13 @@
 }
 
 @keyframes cs-search-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .cs-search-panel {
@@ -40,8 +45,15 @@
 }
 
 @keyframes cs-search-slide-in {
-  from { opacity: 0; transform: translateY(-24px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* ── Header row ── */
@@ -154,6 +166,7 @@
   background: rgba(18, 18, 36, 0.97);
   border-color: rgba(255, 255, 255, 0.08);
 }
+
 .cs-theme-light .cs-search-input {
   color: #f0f0ff;
 }
@@ -297,7 +310,7 @@
   border-color: rgba(255, 255, 255, 0.30);
   background: rgba(255, 255, 255, 0.22);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.14),
-              0 0 0 3px rgba(255, 255, 255, 0.08);
+    0 0 0 3px rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.98);
   width: 240px;
 }
@@ -336,7 +349,7 @@
   border-color: rgba(148, 163, 184, 0.35);
   background: rgba(148, 163, 184, 0.16);
   box-shadow: inset 0 1px 3px rgba(148, 163, 184, 0.1),
-              0 0 0 3px rgba(148, 163, 184, 0.08);
+    0 0 0 3px rgba(148, 163, 184, 0.08);
   color: rgba(15, 23, 42, 0.95);
 }
 
@@ -403,9 +416,18 @@
   scrollbar-color: rgba(244, 63, 94, 0.3) transparent;
 }
 
-.cs-cw-strip::-webkit-scrollbar { height: 4px; }
-.cs-cw-strip::-webkit-scrollbar-track { background: transparent; }
-.cs-cw-strip::-webkit-scrollbar-thumb { background: rgba(244, 63, 94, 0.3); border-radius: 4px; }
+.cs-cw-strip::-webkit-scrollbar {
+  height: 4px;
+}
+
+.cs-cw-strip::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cs-cw-strip::-webkit-scrollbar-thumb {
+  background: rgba(244, 63, 94, 0.3);
+  border-radius: 4px;
+}
 
 /* ── Individual card ── */
 .cs-cw-card {
@@ -419,12 +441,12 @@
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .cs-cw-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
 }
 
 .cs-cw-thumb-wrap {
@@ -454,11 +476,25 @@
   transform: scale(1.02);
 }
 
-.cs-cw-bg-0 { background: linear-gradient(135deg, #1e1b4b, #312e81); }
-.cs-cw-bg-1 { background: linear-gradient(135deg, #3f0727, #831843); }
-.cs-cw-bg-2 { background: linear-gradient(135deg, #064e3b, #022c22); }
-.cs-cw-bg-3 { background: linear-gradient(135deg, #172554, #1e3a8a); }
-.cs-cw-bg-4 { background: linear-gradient(135deg, #4c1d95, #2e1065); }
+.cs-cw-bg-0 {
+  background: linear-gradient(135deg, #1e1b4b, #312e81);
+}
+
+.cs-cw-bg-1 {
+  background: linear-gradient(135deg, #3f0727, #831843);
+}
+
+.cs-cw-bg-2 {
+  background: linear-gradient(135deg, #064e3b, #022c22);
+}
+
+.cs-cw-bg-3 {
+  background: linear-gradient(135deg, #172554, #1e3a8a);
+}
+
+.cs-cw-bg-4 {
+  background: linear-gradient(135deg, #4c1d95, #2e1065);
+}
 
 .cs-cw-card:hover .cs-cw-thumb,
 .cs-cw-card:hover .cs-cw-fallback {
@@ -472,7 +508,7 @@
   left: 0;
   right: 0;
   height: 80px;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
   z-index: 1;
 }
 
@@ -603,7 +639,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .cs-cw-time {
@@ -611,7 +647,7 @@
   font-size: 12px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 /* Light mode */
@@ -655,7 +691,7 @@
 .cs-resume-modal-icon {
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, rgba(244,63,94,0.18), rgba(244,63,94,0.06));
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.18), rgba(244, 63, 94, 0.06));
   border: 1px solid rgba(244, 63, 94, 0.25);
   border-radius: 50%;
   display: flex;
@@ -740,6 +776,7 @@
    ====================================================== */
 
 @media (max-width: 860px) {
+
   /* Collapse search bar to icon + shortcut only on smaller viewports */
   .cs-nav-search-bar {
     width: 38px;

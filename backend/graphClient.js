@@ -50,7 +50,7 @@ export async function getChildren(token, fullPath) {
   const user = encodeURIComponent(process.env.GRAPH_USER);
   const encodedPath = encodeURIComponent(fullPath);
 
-  let url = `${graphBase}/users/${user}/drive/root:/${encodedPath}:/children`;
+  let url = `${graphBase}/users/${user}/drive/root:/${encodedPath}:/children?$expand=thumbnails`;
   let allItems = [];
 
   console.log("Fetching children for:", fullPath);
@@ -220,6 +220,25 @@ export async function browsePath(relativePath = "") {
   const images = children.filter((i) => isImageFile(i));
   const videos = children.filter((i) => isVideoFile(i));
 
+  // Smart sort to ensure 'Season 2' comes before 'Season 10', 
+  // and handle typos like 'Epsiode 2' vs 'Episode 3' by extracting the number.
+  const smartSort = (a, b) => {
+    const isEpA = /epsiode|episode|season/i.test(a.name);
+    const isEpB = /epsiode|episode|season/i.test(b.name);
+    
+    if (isEpA && isEpB) {
+      const numA = parseInt((a.name.match(/\d+/) || [])[0]);
+      const numB = parseInt((b.name.match(/\d+/) || [])[0]);
+      if (!isNaN(numA) && !isNaN(numB) && numA !== numB) {
+        return numA - numB;
+      }
+    }
+    return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+  };
+
+  folders.sort(smartSort);
+  videos.sort(smartSort);
+
   const firstImageUrl =
     images.length > 0 ? images[0]["@microsoft.graph.downloadUrl"] : null;
 
@@ -259,11 +278,17 @@ export async function browsePath(relativePath = "") {
     let exactPoster = images.find(
       (img) => normalizeName(img.name) === vKey
     );
-    let posterItem = exactPoster || images[0] || null;
 
-    const posterUrl = posterItem
-      ? posterItem["@microsoft.graph.downloadUrl"]
-      : null;
+    let posterUrl = null;
+
+    if (exactPoster) {
+      posterUrl = exactPoster["@microsoft.graph.downloadUrl"];
+    } else if (item.thumbnails && item.thumbnails.length > 0) {
+      const thumb = item.thumbnails[0];
+      posterUrl = thumb.large?.url || thumb.medium?.url || thumb.small?.url || null;
+    } else if (images.length > 0) {
+      posterUrl = images[0]["@microsoft.graph.downloadUrl"];
+    }
 
     console.log(
       "  🎥 video item:",
@@ -271,7 +296,7 @@ export async function browsePath(relativePath = "") {
       "| videoUrl:",
       videoUrl ? "OK" : "MISSING",
       "| poster:",
-      posterItem ? posterItem.name : "none"
+      posterUrl ? "URL_FOUND" : "none"
     );
 
     items.push({

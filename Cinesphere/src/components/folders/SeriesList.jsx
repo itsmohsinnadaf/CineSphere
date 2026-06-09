@@ -1,5 +1,5 @@
 // src/components/folders/SeriesList.jsx
-import AnimateIn from "../common/AnimateIn";
+import CenterZoom from "../common/CenterZoom";
 import BigSkeletonCard from "../cards/BigSkeletonCard";
 
 export default function SeriesList({ series, onSeriesClick, loading }) {
@@ -11,7 +11,7 @@ export default function SeriesList({ series, onSeriesClick, loading }) {
               <BigSkeletonCard key={idx} />
             ))
           : series.map((s, idx) => (
-          <AnimateIn key={s.id} variant="cinematic" delay={idx * 200} duration={0.7} threshold={0.08}>
+          <CenterZoom key={s.id}>
             <div
               className="cs-big-card"
               onClick={() => onSeriesClick(s)}
@@ -56,7 +56,7 @@ export default function SeriesList({ series, onSeriesClick, loading }) {
                 )}
               </div>
             </div>
-          </AnimateIn>
+          </CenterZoom>
         ))}
       </div>
     </section>

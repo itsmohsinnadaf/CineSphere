@@ -154,7 +154,7 @@ function App() {
             </h2>
           </div>
           <div className="cs-item-grid cs-centered-row">
-            <AnimateIn variant="fade-up" delay={0}>
+            <AnimateIn variant="scale-reveal" delay={0}>
               <MovieCard
                 movie={directCard}
                 active={false}
@@ -211,7 +211,7 @@ function App() {
                   <SkeletonCard key={idx} type="movie" />
                 ))
               : movieTitles.map((m, idx) => (
-                  <AnimateIn key={m.id} variant="fade-up" delay={idx * 60}>
+                  <AnimateIn key={m.id} variant="scale-reveal" delay={0}>
                     <MovieCard
                       movie={m}
                       active={false}
@@ -295,7 +295,7 @@ function App() {
                   <SkeletonCard key={idx} type="episode" />
                 ))
               : episodes.map((e, idx) => (
-                  <AnimateIn key={e.id} variant="fade-up" delay={idx * 60}>
+                  <AnimateIn key={e.id} variant="scale-reveal" delay={0}>
                     <EpisodeCard
                       episode={e}
                       index={idx}

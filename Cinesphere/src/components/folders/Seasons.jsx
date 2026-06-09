@@ -1,5 +1,5 @@
 // src/components/folders/Seasons.jsx
-import AnimateIn from "../common/AnimateIn";
+import CenterZoom from "../common/CenterZoom";
 import BigSkeletonCard from "../cards/BigSkeletonCard";
 
 export default function Seasons({ seasons, onSeasonClick, loading }) {
@@ -11,7 +11,7 @@ export default function Seasons({ seasons, onSeasonClick, loading }) {
               <BigSkeletonCard key={idx} />
             ))
           : seasons.map((s, idx) => (
-          <AnimateIn key={s.id} variant="cinematic" delay={idx * 200} duration={0.7} threshold={0.08}>
+          <CenterZoom key={s.id}>
             <div
               className="cs-big-card"
               onClick={() => onSeasonClick(s)}
@@ -56,7 +56,7 @@ export default function Seasons({ seasons, onSeasonClick, loading }) {
                 )}
               </div>
             </div>
-          </AnimateIn>
+          </CenterZoom>
         ))}
       </div>
     </section>

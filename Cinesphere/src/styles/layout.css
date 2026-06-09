@@ -333,9 +333,9 @@ body {
 .cs-big-list {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 72px;
   max-width: 1000px;
-  margin: 20px auto 0;
+  margin: 40px auto 0;
 }
 
 .cs-big-card {
