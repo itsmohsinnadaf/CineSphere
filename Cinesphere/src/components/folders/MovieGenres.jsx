@@ -18,7 +18,7 @@ export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack })
           ? Array.from({ length: 3 }).map((_, idx) => (
               <BigSkeletonCard key={idx} />
             ))
-          : genres.map((g, idx) => (
+          : genres.map((g) => (
             <CenterZoom key={g.id}>
               <div
                 className="cs-big-card"

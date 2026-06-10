@@ -210,7 +210,7 @@ function App() {
               ? Array.from({ length: 8 }).map((_, idx) => (
                   <SkeletonCard key={idx} type="movie" />
                 ))
-              : movieTitles.map((m, idx) => (
+              : movieTitles.map((m) => (
                   <AnimateIn key={m.id} variant="scale-reveal" delay={0}>
                     <MovieCard
                       movie={m}
@@ -294,11 +294,11 @@ function App() {
               ? Array.from({ length: 8 }).map((_, idx) => (
                   <SkeletonCard key={idx} type="episode" />
                 ))
-              : episodes.map((e, idx) => (
+              : episodes.map((e, index) => (
                   <AnimateIn key={e.id} variant="scale-reveal" delay={0}>
                     <EpisodeCard
                       episode={e}
-                      index={idx}
+                      index={index}
                       active={false}
                       onClick={() => handleEpisodeClick(e)}
                     />

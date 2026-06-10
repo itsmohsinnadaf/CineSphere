@@ -10,7 +10,7 @@ export default function SeriesList({ series, onSeriesClick, loading }) {
           ? Array.from({ length: 4 }).map((_, idx) => (
               <BigSkeletonCard key={idx} />
             ))
-          : series.map((s, idx) => (
+          : series.map((s) => (
           <CenterZoom key={s.id}>
             <div
               className="cs-big-card"

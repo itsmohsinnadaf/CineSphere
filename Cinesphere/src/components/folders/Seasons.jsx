@@ -10,7 +10,7 @@ export default function Seasons({ seasons, onSeasonClick, loading }) {
           ? Array.from({ length: 4 }).map((_, idx) => (
               <BigSkeletonCard key={idx} />
             ))
-          : seasons.map((s, idx) => (
+          : seasons.map((s) => (
           <CenterZoom key={s.id}>
             <div
               className="cs-big-card"

@@ -19,7 +19,7 @@ export default function CustomCursor() {
 
     const onMove = (e) => {
       pos.current = { x: e.clientX, y: e.clientY };
-      if (!visible) setVisible(true);
+      setVisible(true);
     };
 
     const onDown = () => {
