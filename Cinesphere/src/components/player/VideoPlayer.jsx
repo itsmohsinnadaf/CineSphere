@@ -1180,7 +1180,10 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
             </p>
             {probeLoading ? (
               <div className="cs-resume-loading">
-                <div className="cs-spinner" />
+                <div className="cs-spinner-wrap">
+                  <div className="cs-spinner" />
+                  <div className="cs-dots"><span></span><span></span><span></span></div>
+                </div>
                 <p>Loading, please wait…</p>
               </div>
             ) : (
@@ -1238,7 +1241,12 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
             )}
 
             {isBuffering && (
-              <div className="cs-video-buffering"><div className="cs-spinner" /></div>
+              <div className="cs-video-buffering">
+                <div className="cs-spinner-wrap">
+                  <div className="cs-spinner" />
+                  <div className="cs-dots"><span></span><span></span><span></span></div>
+                </div>
+              </div>
             )}
 
             {/* ── Centre play/pause flash ── */}

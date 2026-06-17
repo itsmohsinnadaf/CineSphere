@@ -1,11 +1,22 @@
 // src/components/folders/RootFolders.jsx
 import AnimateIn from "../common/AnimateIn";
 import FeaturedSlider from "../common/FeaturedSlider";
+import BigSkeletonCard from "../cards/BigSkeletonCard";
 
 export default function RootFolders({ folders, loading, error, onRootClick, continueWatchingSlot, onWatchNow }) {
-  // Loading screen is rendered at the App level (outside animated wrapper)
   if (loading && !folders.length) {
-    return null;
+    return (
+      <section className="cs-left">
+        <FeaturedSlider onWatchNow={onWatchNow} />
+        {continueWatchingSlot}
+        <h2 className="cs-section-title" style={{ marginTop: 10 }}>Library</h2>
+        <div className="cs-hero-list">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <BigSkeletonCard key={idx} />
+          ))}
+        </div>
+      </section>
+    );
   }
 
   if (error && !folders.length) {

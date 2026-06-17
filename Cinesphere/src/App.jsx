@@ -25,6 +25,7 @@ import FloatingParticles from "./components/common/FloatingParticles";
 import SearchOverlay from "./components/common/SearchOverlay";
 import ContinueWatching from "./components/common/ContinueWatching";
 import ScrollToTop from "./components/common/ScrollToTop";
+import InstallPrompt from "./components/common/InstallPrompt";
 
 
 function App() {
@@ -363,8 +364,7 @@ function App() {
         onSearchOpen={() => setSearchOpen(true)}
       />
 
-      {/* Loading screen rendered outside animated wrapper so it's always visible */}
-      {loading && view === "root" && !rootFolders.length && <LoadingScreen />}
+      {/* Loading screen removed in favor of Skeleton loading grids */}
 
       <main className="cs-main">
         <div key={view} className="cs-view-enter">
@@ -373,6 +373,7 @@ function App() {
       </main>
 
       <Footer />
+      <InstallPrompt />
     </div>
   );
 }

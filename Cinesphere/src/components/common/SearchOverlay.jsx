@@ -148,7 +148,10 @@ export default function SearchOverlay({ open, onClose, onPlay }) {
 
         {indexing && !query && (
           <div className="cs-search-hint">
-            <div className="cs-search-indexing-spinner" />
+            <div className="cs-spinner-wrap">
+              <div className="cs-search-indexing-spinner" />
+              <div className="cs-dots"><span></span><span></span><span></span></div>
+            </div>
             <p>Scanning library…</p>
           </div>
         )}

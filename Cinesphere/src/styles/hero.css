@@ -224,16 +224,18 @@
   gap: 6px;
   padding: 6px 16px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   width: fit-content;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .cs-theme-light .cs-fs-kind-badge {
@@ -257,7 +259,7 @@
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
 }
 
 /* Light mode: title stays white because slider is always dark */
@@ -280,41 +282,37 @@
   gap: 16px;
   padding: 16px 40px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: none;
   cursor: pointer;
   font-size: 16px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 2px 10px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, var(--cs-accent) 0%, #ff1f5a 100%);
+  box-shadow: 0 12px 40px rgba(244, 75, 75, 0.4), inset 0 2px 10px rgba(255, 255, 255, 0.2);
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   width: fit-content;
   position: relative;
   overflow: hidden;
 }
 
-.cs-fs-watch-btn::before {
-  content: '';
+.cs-fs-watch-btn::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--cs-accent) 0%, #ff1f5a 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: skewX(-25deg);
+  animation: cs-shine-sweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
 }
 
 .cs-fs-watch-btn:hover {
   transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 16px 48px rgba(244, 75, 75, 0.5), 0 4px 16px rgba(0, 0, 0, 0.6);
-  border-color: transparent;
-}
-
-.cs-fs-watch-btn:hover::before {
-  opacity: 1;
+  box-shadow: 0 16px 48px rgba(244, 75, 75, 0.6), 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .cs-fs-watch-btn:active {
@@ -542,7 +540,7 @@
   width: 280px;
   height: 280px;
   pointer-events: none;
-  z-index: 9990;
+  z-index: 99990;
   border-radius: 50%;
   background: radial-gradient(circle,
       rgba(244, 63, 94, 0.14) 0%,
@@ -571,7 +569,7 @@
   width: 36px;
   height: 36px;
   pointer-events: none;
-  z-index: 9997;
+  z-index: 99997;
   border-radius: 50%;
   border: 1.5px solid rgba(244, 63, 94, 0.7);
   background: transparent;
@@ -608,7 +606,7 @@
   width: 7px;
   height: 7px;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 99999;
   border-radius: 50%;
   background: #f43f5e;
   box-shadow: 0 0 8px rgba(244, 63, 94, 0.9), 0 0 20px rgba(244, 63, 94, 0.4);
@@ -914,9 +912,30 @@
 }
 
 .cs-hero-action-primary {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(135deg, #f44b4b, #e11d48);
   color: #fff;
   box-shadow: 0 8px 24px rgba(244, 75, 75, 0.4);
+}
+
+.cs-hero-action-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: skewX(-25deg);
+  animation: cs-shine-sweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes cs-shine-sweep {
+  0% { left: -100%; }
+  20% { left: 200%; }
+  100% { left: 200%; }
 }
 
 .cs-hero-action-primary:hover {
