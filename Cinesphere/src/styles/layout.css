@@ -271,10 +271,12 @@ body {
     border-color 0.35s ease;
 }
 
-.cs-hero-card:hover {
-  transform: translateY(-7px);
-  box-shadow: var(--cs-shadow-heavy);
-  border-color: var(--cs-accent-soft);
+@media (hover: hover) {
+  .cs-hero-card:hover {
+    transform: translateY(-7px);
+    box-shadow: var(--cs-shadow-heavy);
+    border-color: var(--cs-accent-soft);
+  }
 }
 
 .cs-hero-image-wrap {
@@ -291,9 +293,11 @@ body {
     filter 0.6s ease;
 }
 
-.cs-hero-card:hover .cs-hero-image {
-  transform: scale(1.1);
-  filter: brightness(1.1);
+@media (hover: hover) {
+  .cs-hero-card:hover .cs-hero-image {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+  }
 }
 
 .cs-hero-image-gradient {
@@ -353,10 +357,12 @@ body {
     border-color 0.35s ease;
 }
 
-.cs-big-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--cs-shadow-heavy);
-  border-color: var(--cs-accent-soft);
+@media (hover: hover) {
+  .cs-big-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--cs-shadow-heavy);
+    border-color: var(--cs-accent-soft);
+  }
 }
 
 .cs-big-image-wrap {
@@ -373,9 +379,11 @@ body {
     filter 0.6s ease;
 }
 
-.cs-big-card:hover .cs-big-image {
-  transform: scale(1.1);
-  filter: brightness(1.1);
+@media (hover: hover) {
+  .cs-big-card:hover .cs-big-image {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+  }
 }
 
 .cs-big-gradient {
@@ -393,6 +401,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
   padding: 22px 28px;
 }
 
@@ -414,6 +423,14 @@ body {
   font-size: 12px;
   color: var(--cs-accent);
   text-decoration: none;
+}
+
+.cs-big-text .cs-btn {
+  margin-top: 14px;
+  font-weight: 800;
+  align-self: flex-end;
+  padding: 10px 20px;
+  font-size: 13px;
 }
 
 /* ========= GENERIC FOLDERS ========= */
@@ -441,37 +458,62 @@ body {
     box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1),
     border 0.32s ease;
   border: 1px solid var(--cs-border-soft);
+  position: relative;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
-.cs-folder-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--cs-shadow-heavy);
-  border-color: var(--cs-accent-soft);
+.cs-folder-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 -40px 40px -20px rgba(244, 75, 75, 0);
+  transition: box-shadow 0.4s ease;
+  pointer-events: none;
+  z-index: 3;
+}
+
+@media (hover: hover) {
+  .cs-folder-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--cs-shadow-heavy);
+    border-color: var(--cs-accent-soft);
+  }
+
+  .cs-folder-card:hover::after {
+    box-shadow: inset 0 -60px 50px -20px rgba(244, 75, 75, 0.4);
+  }
+
+  .cs-folder-card:hover .cs-folder-image {
+    transform: scale(1.12);
+    filter: saturate(1.3) brightness(1.1);
+  }
 }
 
 .cs-folder-image-wrapper {
-  position: relative;
-  height: 130px;
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
+  z-index: 0;
 }
 
 .cs-folder-large {
-  height: 150px;
+  height: 100%;
 }
 
 .cs-folder-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(1.2);
+  filter: saturate(1.1);
   transform: scale(1.05);
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
     filter 0.5s ease;
-}
-
-.cs-folder-card:hover .cs-folder-image {
-  transform: scale(1.12);
-  filter: saturate(1.3) brightness(1.1);
 }
 
 .cs-folder-overlay {
@@ -479,34 +521,44 @@ body {
   inset: 0;
   background:
     linear-gradient(to top,
-      rgba(0, 0, 0, 0.85) 0%,
-      rgba(0, 0, 0, 0.40) 25%,
-      rgba(0, 0, 0, 0.05) 45%,
-      transparent 60%);
+      rgba(0, 0, 0, 0.95) 0%,
+      rgba(0, 0, 0, 0.5) 30%,
+      rgba(0, 0, 0, 0.1) 60%,
+      transparent 100%);
+  z-index: 1;
 }
 
 .cs-folder-icon {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  font-size: 22px;
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+  display: none; /* Hide old large icon since we have a compact glass layout now */
 }
 
 .cs-folder-info {
-  padding: 10px 12px 12px;
+  position: relative;
+  z-index: 2;
+  padding: 8px 12px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(10, 14, 25, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  max-width: fit-content;
+  margin: 14px 16px;
 }
 
 .cs-folder-info h3 {
-  margin: 0 0 2px;
+  margin: 0;
   font-size: 15px;
-  color: var(--cs-text-primary);
+  font-weight: 600;
+  color: #fff;
 }
 
 .cs-folder-info p {
-  margin: 0 0 6px;
+  margin: 0;
   font-size: 12px;
-  color: var(--cs-text-secondary);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .cs-download-pill {
@@ -517,9 +569,12 @@ body {
   font-size: 11px;
   border-radius: 999px;
   border: 1px solid var(--cs-accent-soft);
-  color: var(--cs-accent);
+  color: #fff;
+  background: var(--cs-accent);
   text-decoration: none;
-  background: rgba(0, 0, 0, 0.25);
+  font-weight: 600;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(244, 75, 75, 0.3);
 }
 
 /* LIGHT MODE OVERRIDES */
@@ -706,48 +761,61 @@ body {
   .cs-mobile-nav {
     position: fixed;
     bottom: 16px;
-    left: 16px;
-    right: 16px;
-    width: calc(100% - 32px);
-    background: rgba(15, 15, 25, 0.65);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 10px 16px;
-    justify-content: space-around;
-    gap: 8px;
-    flex-wrap: nowrap;
-    align-items: center;
-    z-index: 26;
-    display: flex;
-  }
-
-  .cs-mobile-nav .cs-nav-btn,
-  .cs-mobile-nav .cs-theme-toggle {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .cs-mobile-nav .cs-nav-btn {
-    background: rgb(22 22 48 / 48%);
-    padding: 10px 14px;
-    font-size: 12px;
-    border-radius: 999px;
-  }
-
-  .cs-mobile-nav .cs-nav-btn-active {
-    background: var(--cs-accent);
-    color: #ffffff;
-    box-shadow: 0 8px 20px rgba(244, 75, 75, 0.25);
-  }
-
-  .cs-mobile-nav .cs-theme-toggle {
-    margin-left: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: max-content;
+    background: rgba(18, 18, 28, 0.75);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border-radius: 99px;
     padding: 8px 12px;
-    font-size: 12px;
-    border-radius: 999px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+    z-index: 100;
+  }
+
+  .cs-nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 8px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .cs-nav-tab svg {
+    flex-shrink: 0;
+  }
+
+  .cs-nav-tab span {
+    display: none;
+    white-space: nowrap;
+  }
+
+  .cs-nav-tab.active {
+    background: var(--cs-accent);
+    color: #fff;
+    padding: 8px 16px;
+    box-shadow: 0 8px 24px rgba(244, 75, 75, 0.35);
+  }
+
+  .cs-nav-tab.active span {
+    display: inline-block;
+    animation: cs-fade-in 0.3s ease forwards;
+  }
+
+  .cs-mobile-nav .cs-theme-toggle {
+    display: none; /* Hide theme toggle from mobile dock to save space, or put it elsewhere */
   }
 
   .cs-hero-card {
@@ -755,50 +823,101 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     position: relative;
-    border-radius: 24px;
-    min-height: 240px;
+    border-radius: 16px;
+    min-height: auto;
+    aspect-ratio: 16 / 9;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    width: 92%;
+    margin: 0 auto;
+    overflow: hidden;
   }
 
-  .cs-hero-image-wrap {
+  .cs-big-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    border-radius: 16px;
+    min-height: auto;
+    aspect-ratio: 16 / 9;
+    width: 92%;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .cs-hero-image-wrap,
+  .cs-big-image-wrap {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
   }
 
-  .cs-hero-image {
+  .cs-hero-image,
+  .cs-big-image {
     height: 100%;
     width: 100%;
+    object-fit: cover;
   }
 
-  .cs-hero-text {
-    position: relative;
+  .cs-hero-image-gradient,
+  .cs-big-gradient {
+    opacity: 1;
+  }
+
+  .cs-hero-text,
+  .cs-big-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     z-index: 2;
     background: transparent;
-    padding: 24px 20px 20px;
+    padding: 8px 12px 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 
+      "title button"
+      "subtitle button";
+    align-items: center;
+    gap: 0 12px;
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  .cs-hero-title {
-    font-size: 28px;
+  .cs-hero-title, .cs-big-title {
+    grid-area: title;
+    font-size: 20px;
     color: #fff;
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    margin: 0 0 2px !important;
+    line-height: 1.1;
   }
 
-  .cs-hero-subtitle {
-    font-size: 13px;
+  .cs-hero-subtitle, .cs-big-subtitle {
+    grid-area: subtitle;
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 0;
+    margin: 0 !important;
+    line-height: 1;
+  }
+
+  .cs-hero-text .cs-btn,
+  .cs-big-text .cs-btn {
+    grid-area: button;
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    height: auto !important;
+    min-height: 24px !important;
+    border-radius: 99px !important;
+    margin: 0 !important;
+    align-self: center !important;
   }
 
   .cs-folder-row {
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 12px;
-  }
-
-  .cs-item-grid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 12px;
   }
 

@@ -31,7 +31,7 @@ export default function SeriesList({ series, onSeriesClick, loading }) {
 
                 {s.path && (
                   <button
-                    className="cs-btn cs-btn-primary cs-btn-large"
+                    className="cs-btn cs-btn-primary"
                     style={{
                       marginTop: "24px",
                       alignSelf: "flex-end",

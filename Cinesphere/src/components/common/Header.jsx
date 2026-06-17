@@ -1,5 +1,5 @@
 import ThemeToggle from "./ThemeToggle";
-import { MdSearch } from "react-icons/md";
+import { MdSearch, MdHome, MdMovie, MdTv } from "react-icons/md";
 
 export default function Header({
   activeNav,
@@ -63,30 +63,36 @@ export default function Header({
 
       <nav className="cs-mobile-nav">
         <button
-          className={`cs-nav-btn ${activeNav === "home" ? "cs-nav-btn-active" : ""}`}
+          className={`cs-nav-tab ${activeNav === "home" ? "active" : ""}`}
           onClick={() => onNavClick("home")}
+          aria-label="Home"
         >
-          Home
+          <MdHome size={22} />
+          <span>Home</span>
         </button>
         <button
-          className={`cs-nav-btn ${activeNav === "movies" ? "cs-nav-btn-active" : ""}`}
+          className={`cs-nav-tab ${activeNav === "movies" ? "active" : ""}`}
           onClick={() => onNavClick("movies")}
+          aria-label="Movies"
         >
-          Movies
+          <MdMovie size={22} />
+          <span>Movies</span>
         </button>
         <button
-          className={`cs-nav-btn ${activeNav === "series" ? "cs-nav-btn-active" : ""}`}
+          className={`cs-nav-tab ${activeNav === "series" ? "active" : ""}`}
           onClick={() => onNavClick("series")}
+          aria-label="Series"
         >
-          Series
+          <MdTv size={22} />
+          <span>Series</span>
         </button>
         <button
-          className="cs-nav-btn"
+          className="cs-nav-tab"
           onClick={onSearchOpen}
           aria-label="Search"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          <MdSearch size={24} />
+          <MdSearch size={22} />
+          <span>Search</span>
         </button>
       </nav>
     </>

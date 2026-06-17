@@ -32,8 +32,10 @@ export default function AnimateIn({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Toggle: animate in when entering, animate out when leaving
-        setVisible(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(el);
+        }
       },
       { threshold }
     );

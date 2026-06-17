@@ -14,8 +14,7 @@ export default function CustomCursor() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Only show on pointer devices
-    if (window.matchMedia("(hover: none)").matches) return;
+    // Mousemove determines visibility
 
     const onMove = (e) => {
       pos.current = { x: e.clientX, y: e.clientY };

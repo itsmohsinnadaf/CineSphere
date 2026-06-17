@@ -40,7 +40,7 @@ export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack })
                 <div className="cs-big-text">
                   <h3 className="cs-big-title">{g.title}</h3>
                   <p className="cs-big-subtitle">Movies</p>
-                  <span className="cs-big-download">View Collection &rarr;</span>
+                  <span className="cs-btn cs-btn-primary">View Collection</span>
                 </div>
               </div>
             </CenterZoom>

@@ -3,7 +3,7 @@
 export default function MovieCard({ movie, active, onClick }) {
   return (
     <div
-      className={`cs-item-card ${active ? "cs-item-card-active" : ""}`}
+      className={`cs-item-card cs-portrait-card ${active ? "cs-item-card-active" : ""}`}
       onClick={onClick}
     >
       <div className="cs-item-image-wrapper">
