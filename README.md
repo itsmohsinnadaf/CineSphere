@@ -212,12 +212,6 @@ Contributions, bug reports, and feature requests are welcome!
 
 ---
 
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
 <div align="center">
   Built with ❤️ — turning OneDrive into your personal cinema.
 </div>
