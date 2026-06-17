@@ -283,8 +283,13 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
           if (audioIdx < 0) audioIdx = 0;
         }
 
-        let ccIdx = resumeEntry?.ccTrack ?? -1;
-        if (ccIdx >= (data.subtitles || []).length) ccIdx = -1;
+        let ccIdx = resumeEntry?.ccTrack;
+        if (ccIdx === undefined) {
+          // No saved preference -> turn on first CC track by default if available
+          ccIdx = (data.subtitles && data.subtitles.length > 0) ? 0 : -1;
+        } else if (ccIdx >= (data.subtitles || []).length) {
+          ccIdx = -1;
+        }
 
         setActiveAudio(audioIdx);
         setActiveCC(ccIdx);
@@ -749,16 +754,14 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
 
     const onTime = () => {
       const vt = (el.currentTime || 0) + streamOffset;
-      // Binary-style search for the active cue
-      let found = "";
+      // Find all active cues (avoids skipping overlapping or unordered cues)
+      let found = [];
       for (let i = 0; i < ccCues.length; i++) {
         if (vt >= ccCues[i].start && vt <= ccCues[i].end) {
-          found = ccCues[i].text;
-          break;
+          found.push(ccCues[i].text);
         }
-        if (ccCues[i].start > vt) break; // cues are sorted, no need to continue
       }
-      setCcText(found);
+      setCcText(found.join('\n'));
     };
     el.addEventListener('timeupdate', onTime);
     return () => el.removeEventListener('timeupdate', onTime);
@@ -772,9 +775,12 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     const vid = videoRef.current;
     if (!vid) return;
 
-    // Check if the target audio element is ready (for non-default tracks)
-    if (index !== 0 && !audioReady[index]) {
-      // Fallback: audio not ready yet — use old stream approach
+    // Determine if we are currently using the fallback proxy stream
+    const isUsingFallback = videoSrc && videoSrc !== video.videoUrl;
+
+    // If we're already using the fallback stream, or if the target audio element isn't ready yet
+    if (isUsingFallback || (index !== 0 && !audioReady[index])) {
+      // Fallback: use backend stream remuxing
       const currentVirtualTime = (vid.currentTime || 0) + streamOffset;
       const wasPlaying = !vid.paused;
       setActiveAudio(index);

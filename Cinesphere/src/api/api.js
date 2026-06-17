@@ -101,3 +101,13 @@ export function getSubtitleUrl(path, trackOrder) {
 export function getAudioStreamUrl(path, audioIndex, start = 0) {
   return `${API_BASE}/api/audio-stream?path=${encodeURIComponent(path)}&audio=${audioIndex}&ss=${start}`;
 }
+
+/**
+ * Resolve a path to get a fresh Graph API video URL and poster URL.
+ */
+export async function resolveVideo(path) {
+  const url = `${API_BASE}/api/resolve?path=${encodeURIComponent(path)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to resolve video");
+  return res.json();
+}

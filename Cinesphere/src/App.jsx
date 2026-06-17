@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import "./styles/base.css";
 
 import { useLibrary } from "./hooks/useLibrary";
+import { resolveVideo } from "./api/api";
 
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
@@ -94,19 +95,36 @@ function App() {
   const toggleTheme = () =>
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
 
-  // Called when user picks a result from search or ContinueWatching
-  const handlePlayItem = useCallback((item) => {
+// Called when user picks a result from search or ContinueWatching
+  const handlePlayItem = useCallback(async (item) => {
+    setSearchOpen(false);
+
+    let finalVideoUrl = item.videoUrl;
+    let finalImage = item.image;
+
+    // Check if the item is from Continue Watching and might be expired
+    if (item.savedAt && Date.now() - item.savedAt > 45 * 60 * 1000) {
+      try {
+        const fresh = await resolveVideo(item.path);
+        if (fresh.videoUrl) {
+          finalVideoUrl = fresh.videoUrl;
+          if (fresh.posterUrl) finalImage = fresh.posterUrl;
+        }
+      } catch (err) {
+        console.warn("Failed to resolve fresh video URL", err);
+      }
+    }
+
     // Build a self-contained video object — no genre context needed
     setDirectVideo({
       id: item.id || item.path,
       title: item.title,
       path: item.path,
-      videoUrl: item.videoUrl,
-      image: item.image,
+      videoUrl: finalVideoUrl,
+      image: finalImage,
       type: item.type || item.kind || "Movie",
-      sources: [{ label: "Original", url: item.videoUrl }],
+      sources: [{ label: "Original", url: finalVideoUrl }],
     });
-    setSearchOpen(false);
   }, []);
 
   // Called when user picks a result from Search

@@ -2,7 +2,8 @@
 // "Continue Watching" horizontal scroll row shown on the home page.
 
 import { useEffect, useState } from "react";
-import { getContinueWatching, removeProgress } from "../../hooks/useContinueWatching";
+import { getContinueWatching, removeProgress, updateContinueWatching } from "../../hooks/useContinueWatching";
+import { resolveVideo } from "../../api/api";
 
 function formatTime(secs) {
   if (!secs) return "";
@@ -14,17 +15,52 @@ function formatTime(secs) {
   return "< 1m left";
 }
 
-
 export default function ContinueWatching({ onPlay }) {
   const [items, setItems] = useState([]);
 
   const refresh = () => setItems(getContinueWatching());
 
   useEffect(() => {
-    setTimeout(refresh, 0);
-    // Re-read on storage events (e.g. other tab)
-    window.addEventListener("storage", refresh);
-    return () => window.removeEventListener("storage", refresh);
+    let mounted = true;
+    const fetchFresh = async () => {
+      const stored = getContinueWatching();
+      setItems(stored); // Optimistic render
+
+      let updated = false;
+      const refreshed = await Promise.all(
+        stored.map(async (item) => {
+          // If the item hasn't been refreshed/saved recently (older than 45 mins), fetch a fresh Graph URL
+          if (!item.savedAt || Date.now() - item.savedAt > 45 * 60 * 1000) {
+            try {
+              const fresh = await resolveVideo(item.path);
+              if (fresh.videoUrl) {
+                item.videoUrl = fresh.videoUrl;
+                if (fresh.posterUrl) item.image = fresh.posterUrl;
+                item.savedAt = Date.now();
+                updated = true;
+              }
+            } catch (err) {
+              console.warn("Failed to refresh continue watching URLs", err);
+            }
+          }
+          return item;
+        })
+      );
+
+      if (mounted && updated) {
+        setItems([...refreshed]);
+        updateContinueWatching(refreshed);
+      }
+    };
+
+    fetchFresh();
+
+    const onStorage = () => setItems(getContinueWatching());
+    window.addEventListener("storage", onStorage);
+    return () => {
+      mounted = false;
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
 
   if (!items.length) return null;

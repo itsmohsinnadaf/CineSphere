@@ -66,6 +66,10 @@ export function getContinueWatching() {
   return load();
 }
 
+export function updateContinueWatching(items) {
+  save(items);
+}
+
 export function clearContinueWatching() {
   save([]);
 }

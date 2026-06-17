@@ -243,6 +243,44 @@ app.get("/api/probe", async (req, res) => {
   }
 });
 
+/* ============== /api/resolve (fresh Graph URLs) ============== */
+
+app.get("/api/resolve", async (req, res) => {
+  const relativePath = req.query.path;
+  if (!relativePath) return res.status(400).json({ error: "path is required" });
+
+  try {
+    const token = await getAppToken();
+    const root = process.env.GRAPH_FOLDER_PATH;
+    const fullPath = relativePath ? `${root}/${relativePath}` : root;
+    const user = encodeURIComponent(process.env.GRAPH_USER);
+    const encodedPath = encodeURIComponent(fullPath);
+
+    const graphBase = "https://graph.microsoft.com/v1.0";
+
+    const graphRes = await fetch(
+      `${graphBase}/users/${user}/drive/root:/${encodedPath}?$expand=thumbnails`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (!graphRes.ok) throw new Error(`Graph error ${graphRes.status}`);
+
+    const item = await graphRes.json();
+    const videoUrl = item["@microsoft.graph.downloadUrl"];
+    
+    let posterUrl = null;
+    if (item.thumbnails && item.thumbnails.length > 0) {
+      const thumb = item.thumbnails[0];
+      posterUrl = thumb.large?.url || thumb.medium?.url || thumb.small?.url || null;
+    }
+
+    res.json({ videoUrl, posterUrl });
+  } catch (err) {
+    console.error("resolve endpoint error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 /* ============== /api/stream (remux with selected audio track) ============== */
 
