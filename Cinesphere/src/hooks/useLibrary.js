@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { flushSync } from "react-dom";
 import { browsePath, prefetchPath } from "../api/api";
+import { SERIES_IMAGES, DEFAULT_POSTER, prettifyFilename } from "../utils/constants";
 
 /**
  * Same constants as before – fallbacks for images and posters.
@@ -24,10 +25,6 @@ const SUB_IMAGES = {
   Tollywood: "/images/folders/tollywood.png",
 };
 
-const SERIES_IMAGES = {
-  "Alien Earth": "/images/series/alien-earth.jpg",
-};
-
 const SEASON_IMAGES = {
   // "Season 1": "/images/series/season1.jpg",
 };
@@ -35,13 +32,6 @@ const SEASON_IMAGES = {
 const VIDEO_IMAGES = {
   // "Shiddat 2021 1080p Hindi": "/images/movies/shiddat-2021.jpg",
 };
-
-const DEFAULT_POSTER = "/images/movies/default-poster.jpg";
-
-function prettifyFilename(name) {
-  const withoutExt = name.replace(/\.[^/.]+$/, "");
-  return withoutExt.replace(/[._-]+/g, " "); // #11 — also strips hyphens
-}
 
 function isCloudImage(url) {
   if (!url) return false;

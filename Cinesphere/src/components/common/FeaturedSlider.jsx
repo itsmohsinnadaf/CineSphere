@@ -6,7 +6,7 @@ import { browsePath } from "../../api/api";
 import { use3DTilt } from "../../hooks/use3DTilt";
 
 function prettify(name) {
-  return name.replace(/\.[^/.]+$/, "").replace(/[._]+/g, " ");
+  return name.replace(/\.[^/.]+$/, "").replace(/[._-]+/g, " ");
 }
 
 const SERIES_IMAGES = { "Alien Earth": "/images/series/alien-earth.jpg" };

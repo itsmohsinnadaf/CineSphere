@@ -68,6 +68,8 @@ export default function ContinueWatching({ onPlay }) {
                   className="cs-cw-thumb"
                   src={item.image}
                   alt={item.title}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/images/movies/default-poster.jpg";

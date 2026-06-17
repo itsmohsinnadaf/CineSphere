@@ -39,9 +39,7 @@ export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack })
                 </div>
                 <div className="cs-big-text">
                   <h3 className="cs-big-title">{g.title}</h3>
-                  <p className="cs-big-subtitle">
-                    {g.count} Movies
-                  </p>
+                  <p className="cs-big-subtitle">Movies</p>
                   <span className="cs-big-download">View Collection &rarr;</span>
                 </div>
               </div>

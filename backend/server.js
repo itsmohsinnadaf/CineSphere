@@ -300,6 +300,60 @@ app.get("/api/stream", async (req, res) => {
   }
 });
 
+/* ============== /api/audio-stream (audio-only, no video) ============== */
+
+/**
+ * GET /api/audio-stream?path=Movies/Bollywood/Shiddat.mkv&audio=1&ss=0
+ *
+ * Extracts ONLY the selected audio track (no video) and streams it as MP4.
+ * Much lighter than /api/stream (~50-200MB vs full video+audio).
+ * Used by the frontend to pre-load alternate audio tracks as hidden <audio>
+ * elements for instant track switching with zero reload.
+ */
+app.get("/api/audio-stream", async (req, res) => {
+  const filePath = req.query.path;
+  const audioIndex = parseInt(req.query.audio, 10);
+  const startTime = parseFloat(req.query.ss) || 0;
+  if (!filePath) return res.status(400).json({ error: "path is required" });
+  if (isNaN(audioIndex)) return res.status(400).json({ error: "audio index is required" });
+
+  try {
+    const downloadUrl = await getFreshDownloadUrl(filePath);
+
+    console.log(`🎧 Audio-only stream "${filePath}" track ${audioIndex} from ${startTime}s`);
+
+    res.setHeader("Content-Type", "audio/mp4");
+    res.setHeader("Transfer-Encoding", "chunked");
+
+    let command = ffmpeg(downloadUrl);
+    if (startTime > 0) {
+      command = command.setStartTime(startTime);
+    }
+
+    command = command
+      .outputOptions([
+        "-map", `0:a:${audioIndex}`, // audio only — NO video mapping
+        "-c", "copy",                // no re-encoding
+        "-movflags", "frag_keyframe+empty_moov+faststart",
+        "-f", "mp4",
+      ])
+      .on("error", (err) => {
+        if (!err.message.includes("Output stream closed")) {
+          console.error("audio-stream ffmpeg error:", err.message);
+        }
+        if (!res.headersSent) res.status(500).end();
+      })
+      .pipe(res, { end: true });
+
+    req.on("close", () => {
+      command?.kill?.("SIGKILL");
+    });
+  } catch (err) {
+    console.error("audio-stream endpoint error:", err);
+    if (!res.headersSent) res.status(500).json({ error: err.message });
+  }
+});
+
 /* ============== /api/subtitles (extract subtitle as WebVTT — cached) ============== */
 
 // In-memory subtitle cache: key = "path:track" → VTT string

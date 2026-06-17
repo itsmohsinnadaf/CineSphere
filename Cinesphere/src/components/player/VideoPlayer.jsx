@@ -29,7 +29,7 @@ import {
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { saveProgress, getContinueWatching } from "../../hooks/useContinueWatching";
 import { MdCheckCircle } from "react-icons/md";
-import { probeMediaTracks, getStreamUrl, getSubtitleUrl } from "../../api/api";
+import { probeMediaTracks, getStreamUrl, getSubtitleUrl, getAudioStreamUrl } from "../../api/api";
 
 /* ── VTT parser (shared) ── */
 function parseVtt(vttText) {
@@ -41,7 +41,7 @@ function parseVtt(vttText) {
     if (timingIdx < 0) continue;
     const m = lines[timingIdx].match(/(\d{1,2}:)?([\d]{2}):(\d{2})[.,](\d{3})\s*-->\s*(\d{1,2}:)?([\d]{2}):(\d{2})[.,](\d{3})/);
     if (!m) continue;
-    const t = (h, min, s, ms) => (h ? parseInt(h) : 0) * 3600 + parseInt(min) * 60 + parseInt(s) + parseInt(ms) / 1000;
+    const t = (h, min, s, ms) => (h ? parseInt(h.replace(':', '')) : 0) * 3600 + parseInt(min) * 60 + parseInt(s) + parseInt(ms) / 1000;
     const start = t(m[1], m[2], m[3], m[4]);
     const end   = t(m[5], m[6], m[7], m[8]);
     const text  = lines.slice(timingIdx + 1).join('\n').replace(/<[^>]+>/g, '').trim();
@@ -85,8 +85,11 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const seekWrapRef = useRef(null);
   const clickTimerRef = useRef(null);
   const clickDataRef = useRef({ count: 0, side: null });
-  const skipDebounceRef = useRef(null);
   const pendingCleanups = useRef([]);
+
+  /* ── Parallel audio track elements ── */
+  const audioElementsRef = useRef({});   // { [trackIndex]: HTMLAudioElement }
+  const [audioReady, setAudioReady] = useState({}); // { [trackIndex]: boolean }
 
   /* ── Saved position — read localStorage once via useMemo (#8) ── */
   const resumeEntry = useMemo(() => {
@@ -148,13 +151,8 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   /* ── Mobile bottom sheet ── */
   const [mobileSheet, setMobileSheet] = useState(null); // null | 'speed' | 'cc' | 'settings'
 
-  /* ── Current video source (may change when switching audio tracks) ── */
-  const [videoSrc, setVideoSrc] = useState(() => {
-    // Defer loading if resuming with a non-default audio track;
-    // the probe effect will set the correct stream URL.
-    if (resumeEntry?.audioTrack > 0) return null;
-    return video.videoUrl;
-  });
+  /* ── Current video source — always direct URL; audio handled by hidden <audio> elements ── */
+  const [videoSrc, setVideoSrc] = useState(video.videoUrl);
   const [streamOffset, setStreamOffset] = useState(0); // Offset for FFmpeg streams
 
   /* ── Seek Bar Dragging State ── */
@@ -291,11 +289,9 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
         setActiveAudio(audioIdx);
         setActiveCC(ccIdx);
 
-        // If we deferred the initial videoSrc (non-default audio resume) and
-        // the resolved audio track is default (0), restore the direct play URL.
-        if (audioIdx === 0) {
-          setVideoSrc(prev => prev || video.videoUrl);
-        }
+        // Always use direct play URL — audio switching is handled
+        // by hidden <audio> elements, not by changing the video src.
+        setVideoSrc(prev => prev || video.videoUrl);
 
         // Background-prefetch all text subtitle tracks so the backend caches them
         // and the client cue cache is warm before the user clicks CC
@@ -311,10 +307,44 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
             .catch(() => {}); // silent — this is best-effort prefetch
         });
 
-        // If not asking to resume (fresh start) and audioIdx !== 0, load stream immediately
-        if (resumeTime === 0 && audioIdx !== 0) {
-           setStreamOffset(0);
-           setVideoSrc(getStreamUrl(video.path, audioIdx, 0));
+        // ── Parallel audio pre-loading ──
+        // Create hidden <audio> elements for each non-default audio track.
+        // These load the audio-only stream in the background so switching
+        // is instant (just mute/unmute, no reload).
+        const tracks = data.audio || [];
+        if (tracks.length > 1) {
+          tracks.forEach((_, i) => {
+            if (i === 0) return; // track 0 = default, played by the <video> element
+            if (audioElementsRef.current[i]) return; // already created
+
+            const audioEl = new Audio();
+            audioEl.preload = 'auto';
+            audioEl.muted = true; // muted until the user selects this track
+            audioEl.src = getAudioStreamUrl(video.path, i, 0);
+            audioEl.load();
+
+            audioEl.addEventListener('canplaythrough', () => {
+              if (!cancelled) {
+                setAudioReady(prev => ({ ...prev, [i]: true }));
+              }
+            });
+
+            audioElementsRef.current[i] = audioEl;
+          });
+
+          // If resuming with a non-default audio track, mute the video
+          // and unmute the correct <audio> element once it's ready
+          if (audioIdx !== 0 && audioElementsRef.current[audioIdx]) {
+            const targetAudio = audioElementsRef.current[audioIdx];
+            const onReady = () => {
+              if (!cancelled) {
+                targetAudio.muted = false;
+                // The video element will be muted via the sync effect
+              }
+              targetAudio.removeEventListener('canplaythrough', onReady);
+            };
+            targetAudio.addEventListener('canplaythrough', onReady);
+          }
         }
       })
       .catch((err) => {
@@ -403,40 +433,125 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   }, [videoSrc, isDragging, streamOffset]);
 
   /* ─────────────────────────────────────────────────────
+     AUDIO SYNC LOOP — keep hidden <audio> elements in sync with <video>
+  ───────────────────────────────────────────────────── */
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    // Helper to get the currently active non-default audio element
+    const getActiveAud = () => {
+      // Read from a closure-safe ref — activeAudio state may be stale in listeners
+      // We check which element is NOT muted to find the active one
+      for (const [, aud] of Object.entries(audioElementsRef.current)) {
+        if (!aud.muted) return aud;
+      }
+      return null;
+    };
+
+    const syncAudio = () => {
+      const aud = getActiveAud();
+      if (!aud) return;
+      // Only sync if drift > 0.3s to avoid constant seeking
+      if (Math.abs(aud.currentTime - vid.currentTime) > 0.3) {
+        aud.currentTime = vid.currentTime;
+      }
+    };
+
+    const onPlay = () => {
+      const aud = getActiveAud();
+      if (aud) aud.play().catch(() => {});
+    };
+
+    const onPause = () => {
+      const aud = getActiveAud();
+      if (aud) aud.pause();
+    };
+
+    const onSeeked = () => {
+      const aud = getActiveAud();
+      if (aud) aud.currentTime = vid.currentTime;
+    };
+
+    vid.addEventListener('timeupdate', syncAudio);
+    vid.addEventListener('play', onPlay);
+    vid.addEventListener('pause', onPause);
+    vid.addEventListener('seeked', onSeeked);
+    return () => {
+      vid.removeEventListener('timeupdate', syncAudio);
+      vid.removeEventListener('play', onPlay);
+      vid.removeEventListener('pause', onPause);
+      vid.removeEventListener('seeked', onSeeked);
+    };
+  }, [videoSrc]);
+
+  /* ─────────────────────────────────────────────────────
+     AUDIO ELEMENTS CLEANUP ON UNMOUNT
+  ───────────────────────────────────────────────────── */
+  useEffect(() => {
+    return () => {
+      Object.values(audioElementsRef.current).forEach(a => {
+        a.pause();
+        a.removeAttribute('src');
+        a.load(); // release resources
+      });
+      audioElementsRef.current = {};
+    };
+  }, []);
+
+  /* ─────────────────────────────────────────────────────
      RESUME MODAL ACTIONS
   ───────────────────────────────────────────────────── */
   const handleRestart = () => {
     const el = videoRef.current;
+    if (el) {
+      el.currentTime = 0;
+      el.play().catch(e => console.warn('play rejected:', e));
+    }
+    // If on a non-default audio track, mute video and unmute the audio element
     if (activeAudio !== 0) {
-      setStreamOffset(0);
-      setIsBuffering(true);
-      // Attach listeners BEFORE setting src so we catch the auto-load canplay
-      loadVideoSource({ play: true });
-      setVideoSrc(getStreamUrl(video.path, activeAudio, 0));
-    } else {
-      if (el) {
-        el.currentTime = 0;
-        el.play().catch(e => console.warn('play rejected:', e));
+      if (el) el.muted = true;
+      const targetAudio = audioElementsRef.current[activeAudio];
+      if (targetAudio) {
+        targetAudio.currentTime = 0;
+        targetAudio.muted = false;
+        targetAudio.play().catch(() => {});
       }
     }
+    // Sync all other hidden audio elements to start
+    Object.entries(audioElementsRef.current).forEach(([idx, a]) => {
+      a.currentTime = 0;
+      if (parseInt(idx) !== activeAudio) a.muted = true;
+    });
     setIsPlaying(true);
     setResumeState("done");
   };
 
   const handleContinue = () => {
     const el = videoRef.current;
+    // resumeTime is the virtual/absolute position; when using ffmpeg streams
+    // the element's timeline starts at 0 but represents streamOffset onward,
+    // so we must subtract the offset to get the correct element time.
+    const elementTime = Math.max(0, resumeTime - streamOffset);
+    if (el) {
+      el.currentTime = elementTime;
+      el.play().catch(e => console.warn('play rejected:', e));
+    }
+    // If on a non-default audio track, mute video and unmute the audio element
     if (activeAudio !== 0) {
-      setStreamOffset(resumeTime);
-      setIsBuffering(true);
-      // Attach listeners BEFORE setting src so we catch the auto-load canplay
-      loadVideoSource({ play: true });
-      setVideoSrc(getStreamUrl(video.path, activeAudio, resumeTime));
-    } else {
-      if (el) {
-        el.currentTime = resumeTime;
-        el.play().catch(e => console.warn('play rejected:', e));
+      if (el) el.muted = true;
+      const targetAudio = audioElementsRef.current[activeAudio];
+      if (targetAudio) {
+        targetAudio.currentTime = elementTime;
+        targetAudio.muted = false;
+        targetAudio.play().catch(() => {});
       }
     }
+    // Sync all other hidden audio elements
+    Object.entries(audioElementsRef.current).forEach(([idx, a]) => {
+      a.currentTime = elementTime;
+      if (parseInt(idx) !== activeAudio) a.muted = true;
+    });
     setIsPlaying(true);
     setResumeState("done");
   };
@@ -457,15 +572,9 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     const pct = Number(value);
     const targetTime = (pct / 100) * duration;
 
-    if (activeAudio !== 0) {
-      setStreamOffset(targetTime);
-      setIsBuffering(true);
-      if (!isPlaying) setIsPlaying(true);
-      loadVideoSource({ play: true, errorMsg: 'Stream failed — try again' });
-      setVideoSrc(getStreamUrl(video.path, activeAudio, targetTime));
-    } else {
-      el.currentTime = targetTime;
-    }
+    // With parallel audio, seeking is always simple — just set currentTime.
+    // The audio sync loop will keep hidden <audio> elements in sync.
+    el.currentTime = targetTime;
     
     setProgress(pct);
     setCurrentTime(targetTime);
@@ -476,21 +585,12 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     if (!el) return;
     setCurrentTime(prevTime => {
       const targetTime = Math.max(0, Math.min(duration || Infinity, prevTime + seconds));
-      if (activeAudio !== 0) {
-        // Debounce: accumulate rapid skips into one stream request
-        clearTimeout(skipDebounceRef.current);
-        setStreamOffset(targetTime);
-        setIsBuffering(true);
-        skipDebounceRef.current = setTimeout(() => {
-          loadVideoSource({ play: true });
-          setVideoSrc(getStreamUrl(video.path, activeAudio, targetTime));
-        }, 400);
-      } else {
-        el.currentTime = targetTime;
-      }
+      // With parallel audio, seeking is always simple — just set currentTime.
+      // The audio sync loop keeps hidden <audio> elements in sync.
+      el.currentTime = targetTime;
       return targetTime;
     });
-  }, [duration, activeAudio, video.path, loadVideoSource]);
+  }, [duration]);
 
   /* ─────────────────────────────────────────────────────
      MEDIA SESSION API — PiP title + OS media controls
@@ -532,15 +632,33 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     if (!el) return;
     el.volume = v;
     setVolume(v);
-    setIsMuted(v === 0);
+    // When on an alternate audio track, volume controls the <audio> element;
+    // keep the video muted so its default track doesn't leak through.
+    if (activeAudio !== 0) {
+      const aud = audioElementsRef.current[activeAudio];
+      if (aud) aud.volume = v;
+      setIsMuted(v === 0);
+    } else {
+      setIsMuted(v === 0);
+    }
   };
 
   const toggleMute = () => {
     const el = videoRef.current;
     if (!el) return;
-    el.muted = !el.muted;
-    setIsMuted(el.muted);
-    if (!el.muted && el.volume === 0) { el.volume = 0.5; setVolume(0.5); }
+    if (activeAudio !== 0) {
+      // On an alternate audio track — toggle mute on the <audio> element,
+      // keep the video itself muted so its default track doesn't play.
+      const aud = audioElementsRef.current[activeAudio];
+      if (aud) {
+        aud.muted = !aud.muted;
+        setIsMuted(aud.muted);
+      }
+    } else {
+      el.muted = !el.muted;
+      setIsMuted(el.muted);
+      if (!el.muted && el.volume === 0) { el.volume = 0.5; setVolume(0.5); }
+    }
   };
 
   const toggleFullscreen = async () => {
@@ -647,39 +765,61 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   }, [ccCues, streamOffset]);
 
   /* ─────────────────────────────────────────────────────
-     AUDIO TRACKS — switch via backend stream endpoint
+     AUDIO TRACKS — instant switch via parallel <audio> elements
   ───────────────────────────────────────────────────── */
   const switchAudioTrack = (index) => {
     if (index === activeAudio) return;
-    if (!video.path) return;
+    const vid = videoRef.current;
+    if (!vid) return;
 
-    const el = videoRef.current;
-    const currentVirtualTime = (el ? el.currentTime : 0) + streamOffset;
-    const wasPlaying = el ? !el.paused : false;
+    // Check if the target audio element is ready (for non-default tracks)
+    if (index !== 0 && !audioReady[index]) {
+      // Fallback: audio not ready yet — use old stream approach
+      const currentVirtualTime = (vid.currentTime || 0) + streamOffset;
+      const wasPlaying = !vid.paused;
+      setActiveAudio(index);
+      setShowSettings(false);
+      setIsBuffering(true);
+      showToast('Loading audio track…');
+      setStreamOffset(currentVirtualTime);
+      loadVideoSource({ play: wasPlaying, errorMsg: 'Failed to load audio track' });
+      setVideoSrc(getStreamUrl(video.path, index, currentVirtualTime));
+      return;
+    }
+
+    // ── Instant switch via mute/unmute ──
+    if (index === 0) {
+      // Switching back to default track: unmute video, mute + pause all <audio> elements
+      vid.muted = false;
+      Object.values(audioElementsRef.current).forEach(a => {
+        a.muted = true;
+        a.pause();
+      });
+    } else {
+      // Switching to alternate track: mute video, activate target <audio>
+      vid.muted = true;
+      // Pause + mute all audio elements first
+      Object.values(audioElementsRef.current).forEach(a => {
+        a.muted = true;
+        a.pause();
+      });
+      // Then force-restart the target: sync position → unmute → play
+      // This recovers from stalled/waiting states that happen when the
+      // element was playing muted in the background.
+      const target = audioElementsRef.current[index];
+      if (target) {
+        target.currentTime = vid.currentTime;
+        target.muted = false;
+        target.volume = vid.volume; // match video volume
+        if (!vid.paused) {
+          target.play().catch(() => {});
+        }
+      }
+    }
 
     setActiveAudio(index);
     setShowSettings(false);
-    setIsBuffering(true);
-    showToast(`Switching audio track…`);
-
-    if (index === 0) {
-      // Switching back to direct play (original file)
-      setStreamOffset(0);
-      loadVideoSource({
-        play: wasPlaying,
-        seekTo: currentVirtualTime,
-        errorMsg: 'Failed to load audio track',
-      });
-      setVideoSrc(video.videoUrl);
-    } else {
-      // Switching to an alternate audio track via FFmpeg stream
-      setStreamOffset(currentVirtualTime);
-      loadVideoSource({
-        play: wasPlaying,
-        errorMsg: 'Failed to load audio track',
-      });
-      setVideoSrc(getStreamUrl(video.path, index, currentVirtualTime));
-    }
+    showToast(`Switched to ${LANG_NAMES[audioTracks[index]?.language] || 'Track ' + (index + 1)}`);
   };
 
   /* ─────────────────────────────────────────────────────
@@ -1038,13 +1178,17 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
             <p className="cs-resume-modal-subtitle">
               You left off at <strong>{formatTimeRaw(resumeTime)}</strong>
             </p>
-            {probeLoading && (
-              <p style={{ fontSize: 12, opacity: 0.5, margin: '4px 0 0' }}>Loading tracks…</p>
+            {probeLoading ? (
+              <div className="cs-resume-loading">
+                <div className="cs-spinner" />
+                <p>Loading, please wait…</p>
+              </div>
+            ) : (
+              <div className="cs-resume-modal-actions">
+                <button className="cs-resume-btn cs-resume-btn-secondary" onClick={handleRestart}>↺ Restart</button>
+                <button className="cs-resume-btn cs-resume-btn-primary" onClick={handleContinue}>▶ Continue</button>
+              </div>
             )}
-            <div className="cs-resume-modal-actions">
-              <button className="cs-resume-btn cs-resume-btn-secondary" onClick={handleRestart} disabled={probeLoading} style={probeLoading ? { opacity: 0.4, pointerEvents: 'none' } : {}}>↺ Restart</button>
-              <button className="cs-resume-btn cs-resume-btn-primary" onClick={handleContinue} disabled={probeLoading} style={probeLoading ? { opacity: 0.4, pointerEvents: 'none' } : {}}>▶ Continue</button>
-            </div>
           </div>
         </div>
       )}
@@ -1351,9 +1495,9 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
                     setIsDragging(false);
                     if (activeAudio !== 0) seek(e.target.value);
                   }}
-                  onTouchEnd={(e) => {
+                  onTouchEnd={() => {
                     setIsDragging(false);
-                    if (activeAudio !== 0) seek(e.target.value);
+                    if (activeAudio !== 0) seek(dragProgress);
                   }}
                   className="cs-seek-slider"
                   style={{ "--progress": `${isDragging ? dragProgress : progress}%`, "--buffered": `${Math.max(progress, buffered)}%` }}

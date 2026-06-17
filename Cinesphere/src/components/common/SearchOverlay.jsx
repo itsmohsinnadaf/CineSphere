@@ -10,7 +10,7 @@ let _cachedIndex = null;
 let _indexBuilding = false;
 
 function prettify(name) {
-  return name.replace(/\.[^/.]+$/, "").replace(/[._]+/g, " ");
+  return name.replace(/\.[^/.]+$/, "").replace(/[._-]+/g, " ");
 }
 
 const SEARCH_PATHS = [

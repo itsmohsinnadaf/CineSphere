@@ -44,10 +44,10 @@
 }
 
 .cs-loading-logo-img {
-  width: 88px;
   height: 88px;
+  width: 88px;
   border-radius: 20px;
-  object-fit: cover;
+  object-fit: contain;
   flex-shrink: 0;
   animation: logoGlow 3s ease-in-out infinite, fadeInOnly 0.8s ease-out both;
   filter: drop-shadow(0 0 20px rgba(244, 75, 75, 0.5));
@@ -309,8 +309,8 @@
   }
 
   .cs-loading-logo-img {
-    width: 72px;
     height: 72px;
+    width: 72px;
   }
 
   .cs-loading-logo-text {
@@ -351,8 +351,8 @@
   }
 
   .cs-loading-logo-img {
-    width: 64px;
     height: 64px;
+    width: 64px;
   }
 
   .cs-loading-logo-text {
@@ -410,8 +410,8 @@
   }
 
   .cs-loading-logo-img {
-    width: 56px;
     height: 56px;
+    width: 56px;
   }
 
   .cs-loading-logo-text {
@@ -511,8 +511,8 @@
   }
 
   .cs-loading-logo-img {
-    width: 48px;
     height: 48px;
+    width: 48px;
   }
 
   .cs-loading-logo-text {
@@ -548,8 +548,8 @@
   }
 
   .cs-loading-logo-img {
-    width: 44px;
     height: 44px;
+    width: 44px;
   }
 
   .cs-loading-logo-text {

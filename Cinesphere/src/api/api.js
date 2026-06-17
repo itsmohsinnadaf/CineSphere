@@ -4,7 +4,9 @@ const API_BASE = window.location.hostname === "localhost" || window.location.hos
   : "https://cinesphere-mj9d.onrender.com";
 
 // Frontend session cache — avoids re-fetching if we revisit a folder
+// Entries expire after 5 minutes to pick up newly added content.
 const _browseCache = new Map();
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
 /**
  * Browse a path via backend.
@@ -14,8 +16,9 @@ const _browseCache = new Map();
  * "Series/Alien Earth"-> Series/Alien Earth
  */
 export async function browsePath(path = "") {
-  if (_browseCache.has(path)) {
-    return _browseCache.get(path);
+  const cached = _browseCache.get(path);
+  if (cached && Date.now() < cached.expiry) {
+    return cached.items;
   }
 
   const url = path
@@ -28,7 +31,7 @@ export async function browsePath(path = "") {
   const data = await res.json();
   const items = Array.isArray(data.items) ? data.items : [];
   
-  _browseCache.set(path, items);
+  _browseCache.set(path, { items, expiry: Date.now() + CACHE_TTL_MS });
   return items;
 }
 
@@ -37,7 +40,8 @@ export async function browsePath(path = "") {
  * Safe to call at any time — ignores errors.
  */
 export function prefetchPath(path = "") {
-  if (_browseCache.has(path)) return; // already cached
+  const cached = _browseCache.get(path);
+  if (cached && Date.now() < cached.expiry) return; // still valid
   browsePath(path).catch(() => {});
 }
 
@@ -88,4 +92,12 @@ export function getStreamUrl(path, audioIndex, start = 0) {
  */
 export function getSubtitleUrl(path, trackOrder) {
   return `${API_BASE}/api/subtitles?path=${encodeURIComponent(path)}&track=${trackOrder}`;
+}
+
+/**
+ * Build an audio-only stream URL for a specific audio track.
+ * The backend extracts only the audio (no video) — much lighter for parallel loading.
+ */
+export function getAudioStreamUrl(path, audioIndex, start = 0) {
+  return `${API_BASE}/api/audio-stream?path=${encodeURIComponent(path)}&audio=${audioIndex}&ss=${start}`;
 }

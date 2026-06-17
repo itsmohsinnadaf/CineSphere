@@ -770,6 +770,28 @@
   box-shadow: 0 10px 28px rgba(244, 63, 94, 0.55);
 }
 
+/* Loading state inside resume modal */
+.cs-resume-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 8px 0;
+}
+
+.cs-resume-loading .cs-spinner {
+  width: 32px;
+  height: 32px;
+}
+
+.cs-resume-loading p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
 
 /* ======================================================
    RESPONSIVE
