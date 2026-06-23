@@ -1,5 +1,7 @@
 // src/components/cards/MovieCard.jsx
 
+import ProgressiveImage from "../common/ProgressiveImage";
+
 export default function MovieCard({ movie, active, onClick }) {
   return (
     <div
@@ -7,7 +9,7 @@ export default function MovieCard({ movie, active, onClick }) {
       onClick={onClick}
     >
       <div className="cs-item-image-wrapper">
-        <img src={movie.image} alt={movie.title} className="cs-item-image" loading="lazy" decoding="async" />
+        <ProgressiveImage src={movie.image} alt={movie.title} className="cs-item-image" />
         <div className="cs-item-gradient" />
         <div className="cs-item-play-badge">▶ Play</div>
       </div>

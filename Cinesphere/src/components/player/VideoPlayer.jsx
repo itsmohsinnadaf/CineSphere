@@ -155,6 +155,9 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
   const [videoSrc, setVideoSrc] = useState(video.videoUrl);
   const [streamOffset, setStreamOffset] = useState(0); // Offset for FFmpeg streams
 
+  /* ── Video ready state — tracks whether video has loaded enough to play ── */
+  const [videoReady, setVideoReady] = useState(false);
+
   /* ── Seek Bar Dragging State ── */
   const [isDragging, setIsDragging] = useState(false);
   const [dragProgress, setDragProgress] = useState(0);
@@ -182,7 +185,16 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
 
     const onCanPlay = () => {
       if (seekTo != null) el.currentTime = seekTo;
-      if (play) el.play().catch(e => console.warn(e));
+      // Clear buffering spinner now that data is ready
+      setIsBuffering(false);
+      if (play) {
+        el.play().catch(e => console.warn(e));
+        setIsPlaying(true);
+      } else {
+        // Video was paused when track was switched — keep it paused
+        el.pause();
+        setIsPlaying(false);
+      }
       cleanupListeners();
     };
     const onError = () => {
@@ -234,6 +246,25 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
     return () => clearTimeout(hideTimer.current);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying]); // showPlayerControls is stable via useCallback
+
+  /* ─────────────────────────────────────────────────────
+     TRACK VIDEO READY STATE
+  ───────────────────────────────────────────────────── */
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    const markReady = () => setVideoReady(true);
+
+    // If already loaded enough, mark ready immediately
+    if (el.readyState >= 3) {
+      setVideoReady(true);
+      return;
+    }
+
+    el.addEventListener('canplay', markReady);
+    return () => el.removeEventListener('canplay', markReady);
+  }, [videoSrc]);
 
   /* ─────────────────────────────────────────────────────
      AUTO-SAVE PROGRESS
@@ -508,6 +539,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
      RESUME MODAL ACTIONS
   ───────────────────────────────────────────────────── */
   const handleRestart = () => {
+    setResumeState("done");
     const el = videoRef.current;
     if (el) {
       el.currentTime = 0;
@@ -529,10 +561,10 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
       if (parseInt(idx) !== activeAudio) a.muted = true;
     });
     setIsPlaying(true);
-    setResumeState("done");
   };
 
   const handleContinue = () => {
+    setResumeState("done");
     const el = videoRef.current;
     // resumeTime is the virtual/absolute position; when using ffmpeg streams
     // the element's timeline starts at 0 but represents streamOffset onward,
@@ -558,7 +590,6 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
       if (parseInt(idx) !== activeAudio) a.muted = true;
     });
     setIsPlaying(true);
-    setResumeState("done");
   };
 
   /* ─────────────────────────────────────────────────────
@@ -783,13 +814,17 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
       // Fallback: use backend stream remuxing
       const currentVirtualTime = (vid.currentTime || 0) + streamOffset;
       const wasPlaying = !vid.paused;
+      // Pause video immediately to stop old audio from playing during load
+      vid.pause();
       setActiveAudio(index);
       setShowSettings(false);
       setIsBuffering(true);
+      setIsPlaying(false);
       showToast('Loading audio track…');
       setStreamOffset(currentVirtualTime);
-      loadVideoSource({ play: wasPlaying, errorMsg: 'Failed to load audio track' });
+      // Set the new source first, then attach load listeners
       setVideoSrc(getStreamUrl(video.path, index, currentVirtualTime));
+      loadVideoSource({ play: wasPlaying, errorMsg: 'Failed to load audio track' });
       return;
     }
 
@@ -1184,20 +1219,36 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
             <p className="cs-resume-modal-subtitle">
               You left off at <strong>{formatTimeRaw(resumeTime)}</strong>
             </p>
-            {probeLoading ? (
-              <div className="cs-resume-loading">
-                <div className="cs-spinner-wrap">
-                  <div className="cs-spinner" />
-                  <div className="cs-dots"><span></span><span></span><span></span></div>
-                </div>
-                <p>Loading, please wait…</p>
-              </div>
-            ) : (
-              <div className="cs-resume-modal-actions">
-                <button className="cs-resume-btn cs-resume-btn-secondary" onClick={handleRestart}>↺ Restart</button>
-                <button className="cs-resume-btn cs-resume-btn-primary" onClick={handleContinue}>▶ Continue</button>
-              </div>
-            )}
+            <div className="cs-resume-modal-actions">
+              <button
+                className={"cs-resume-btn cs-resume-btn-secondary" + (!videoReady ? " cs-resume-btn-disabled" : "")}
+                onClick={handleRestart}
+                disabled={!videoReady}
+              >
+                {!videoReady ? (
+                  <span className="cs-resume-btn-loading">
+                    <span className="cs-resume-btn-spinner" />
+                    Loading…
+                  </span>
+                ) : (
+                  "↺ Restart"
+                )}
+              </button>
+              <button
+                className={"cs-resume-btn cs-resume-btn-primary" + (!videoReady ? " cs-resume-btn-disabled" : "")}
+                onClick={handleContinue}
+                disabled={!videoReady}
+              >
+                {!videoReady ? (
+                  <span className="cs-resume-btn-loading">
+                    <span className="cs-resume-btn-spinner" />
+                    Loading…
+                  </span>
+                ) : (
+                  "▶ Continue"
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1237,7 +1288,7 @@ export default function VideoPlayer({ video, metaLine, subLine, onBack, context 
           onClick={handleVideoAreaClick}
         >
           <div className="cs-video-inner">
-            <video ref={videoRef} className="cs-video" playsInline src={videoSrc || undefined} />
+            <video ref={videoRef} className="cs-video" playsInline preload="auto" src={videoSrc || undefined} />
 
             {/* JS-rendered subtitle overlay */}
             {ccText && (

@@ -1,6 +1,7 @@
 // src/components/folders/SeriesList.jsx
 import CenterZoom from "../common/CenterZoom";
 import BigSkeletonCard from "../cards/BigSkeletonCard";
+import ProgressiveImage from "../common/ProgressiveImage";
 
 export default function SeriesList({ series, onSeriesClick, loading }) {
   return (
@@ -19,7 +20,7 @@ export default function SeriesList({ series, onSeriesClick, loading }) {
               {/* LEFT IMAGE SIDE */}
               <div className="cs-big-image-wrap">
                 {s.image && (
-                  <img src={s.image} alt={s.title} className="cs-big-image" loading="lazy" decoding="async" />
+                  <ProgressiveImage src={s.image} alt={s.title} className="cs-big-image" />
                 )}
                 <div className="cs-big-gradient" />
               </div>

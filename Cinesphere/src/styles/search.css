@@ -783,6 +783,44 @@
   box-shadow: 0 10px 28px rgba(244, 63, 94, 0.55);
 }
 
+/* Disabled state — shown while video is loading */
+.cs-resume-btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.cs-resume-btn-disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.cs-resume-btn-disabled:active {
+  transform: none;
+}
+
+/* Inline loading content inside disabled buttons */
+.cs-resume-btn-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.cs-resume-btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #f43f5e;
+  border-radius: 50%;
+  animation: cs-resume-spin 0.7s linear infinite;
+}
+
+@keyframes cs-resume-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Loading state inside resume modal */
 .cs-resume-loading {
   display: flex;

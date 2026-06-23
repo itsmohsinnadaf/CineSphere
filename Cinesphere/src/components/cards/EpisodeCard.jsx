@@ -1,5 +1,7 @@
 // src/components/cards/EpisodeCard.jsx
 
+import ProgressiveImage from "../common/ProgressiveImage";
+
 export default function EpisodeCard({ episode, index, active, onClick }) {
   const episodeNumber = index + 1;
 
@@ -9,13 +11,7 @@ export default function EpisodeCard({ episode, index, active, onClick }) {
       onClick={onClick}
     >
       <div className="cs-item-image-wrapper">
-        <img
-          src={episode.image}
-          alt={episode.title}
-          className="cs-item-image"
-          loading="lazy"
-          decoding="async"
-        />
+        <ProgressiveImage src={episode.image} alt={episode.title} className="cs-item-image" />
         <div className="cs-item-gradient" />
         <div className="cs-item-play-badge">▶ Play</div>
         <span className="cs-episode-chip">Ep {episodeNumber}</span>

@@ -4,6 +4,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { browsePath } from "../../api/api";
+import ProgressiveImage from "./ProgressiveImage";
 
 // #9 — module-level cache so index survives overlay close/reopen
 let _cachedIndex = null;
@@ -170,11 +171,10 @@ export default function SearchOverlay({ open, onClose, onPlay }) {
                     onClose();
                   }}
                 >
-                  <img
+                  <ProgressiveImage
                     className="cs-search-thumb"
                     src={item.image}
                     alt={item.title}
-                    onError={(e) => { e.target.src = "/images/movies/default-poster.jpg"; }}
                   />
                   <div className="cs-search-meta">
                     <span className="cs-search-title">{item.title}</span>

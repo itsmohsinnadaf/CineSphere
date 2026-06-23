@@ -1,6 +1,7 @@
 import CenterZoom from "../common/CenterZoom";
 import BackButton from "../common/BackButton";
 import BigSkeletonCard from "../cards/BigSkeletonCard";
+import ProgressiveImage from "../common/ProgressiveImage";
 
 export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack }) {
   return (
@@ -26,11 +27,10 @@ export default function MovieGenres({ rootTitle, genres, onGenreClick, onBack })
               >
                 <div className="cs-big-image-wrap">
                   {g.image ? (
-                    <img
+                    <ProgressiveImage
                       src={g.image}
                       alt={g.title}
                       className="cs-big-image"
-                      loading="lazy"
                     />
                   ) : (
                     <div className="cs-big-image" style={{ background: "#222" }} />

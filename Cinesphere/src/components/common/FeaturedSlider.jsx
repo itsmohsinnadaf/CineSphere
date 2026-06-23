@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { browsePath } from "../../api/api";
 import { use3DTilt } from "../../hooks/use3DTilt";
+import ProgressiveImage from "./ProgressiveImage";
 
 function prettify(name) {
   return name.replace(/\.[^/.]+$/, "").replace(/[._-]+/g, " ");
@@ -159,7 +160,7 @@ export default function FeaturedSlider({ onWatchNow }) {
               aria-label={s.title}
               {...tiltProps}
             >
-              <img
+              <ProgressiveImage
                 src={s.image}
                 alt={s.title}
                 fetchPriority="high"

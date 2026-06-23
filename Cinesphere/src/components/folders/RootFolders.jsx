@@ -2,6 +2,7 @@
 import AnimateIn from "../common/AnimateIn";
 import FeaturedSlider from "../common/FeaturedSlider";
 import BigSkeletonCard from "../cards/BigSkeletonCard";
+import ProgressiveImage from "../common/ProgressiveImage";
 
 export default function RootFolders({ folders, loading, error, onRootClick, continueWatchingSlot, onWatchNow }) {
   if (loading && !folders.length) {
@@ -56,12 +57,10 @@ export default function RootFolders({ folders, loading, error, onRootClick, cont
             >
               <div className="cs-hero-image-wrap">
                 {root.image && (
-                  <img
+                  <ProgressiveImage
                     src={root.image}
                     alt={root.title}
                     className="cs-hero-image"
-                    loading="lazy"
-                    decoding="async"
                   />
                 )}
                 <div className="cs-hero-image-gradient" />

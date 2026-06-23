@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { getContinueWatching, removeProgress, updateContinueWatching } from "../../hooks/useContinueWatching";
 import { resolveVideo } from "../../api/api";
+import ProgressiveImage from "./ProgressiveImage";
 
 function formatTime(secs) {
   if (!secs) return "";
@@ -100,18 +101,11 @@ export default function ContinueWatching({ onPlay }) {
             >
               {/* Thumbnail */}
               <div className="cs-cw-thumb-wrap">
-                <img
+                <ProgressiveImage
                   className="cs-cw-thumb"
                   src={item.image}
                   alt={item.title}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/images/movies/default-poster.jpg";
-                  }}
                 />
-                
                 {/* Bottom Gradient overlay for text */}
                 <div className="cs-cw-bottom-gradient" />
 

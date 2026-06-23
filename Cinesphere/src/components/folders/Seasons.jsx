@@ -1,6 +1,7 @@
 // src/components/folders/Seasons.jsx
 import CenterZoom from "../common/CenterZoom";
 import BigSkeletonCard from "../cards/BigSkeletonCard";
+import ProgressiveImage from "../common/ProgressiveImage";
 
 export default function Seasons({ seasons, onSeasonClick, loading }) {
   return (
@@ -19,7 +20,7 @@ export default function Seasons({ seasons, onSeasonClick, loading }) {
               {/* LEFT IMAGE SIDE */}
               <div className="cs-big-image-wrap">
                 {s.image && (
-                  <img src={s.image} alt={s.title} className="cs-big-image" />
+                  <ProgressiveImage src={s.image} alt={s.title} className="cs-big-image" />
                 )}
                 <div className="cs-big-gradient" />
               </div>

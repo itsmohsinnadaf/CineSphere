@@ -96,35 +96,36 @@ function App() {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
 
 // Called when user picks a result from search or ContinueWatching
-  const handlePlayItem = useCallback(async (item) => {
+  const handlePlayItem = useCallback((item) => {
     setSearchOpen(false);
 
-    let finalVideoUrl = item.videoUrl;
-    let finalImage = item.image;
-
-    // Check if the item is from Continue Watching and might be expired
-    if (item.savedAt && Date.now() - item.savedAt > 45 * 60 * 1000) {
-      try {
-        const fresh = await resolveVideo(item.path);
-        if (fresh.videoUrl) {
-          finalVideoUrl = fresh.videoUrl;
-          if (fresh.posterUrl) finalImage = fresh.posterUrl;
-        }
-      } catch (err) {
-        console.warn("Failed to resolve fresh video URL", err);
-      }
-    }
-
-    // Build a self-contained video object — no genre context needed
-    setDirectVideo({
+    // Show the player immediately with the cached URL — don't block on network
+    const videoObj = {
       id: item.id || item.path,
       title: item.title,
       path: item.path,
-      videoUrl: finalVideoUrl,
-      image: finalImage,
+      videoUrl: item.videoUrl,
+      image: item.image,
       type: item.type || item.kind || "Movie",
-      sources: [{ label: "Original", url: finalVideoUrl }],
-    });
+      sources: [{ label: "Original", url: item.videoUrl }],
+    };
+    setDirectVideo(videoObj);
+
+    // If the cached URL might be expired, refresh it in the background.
+    // The player will update seamlessly if a fresh URL arrives.
+    if (item.savedAt && Date.now() - item.savedAt > 45 * 60 * 1000) {
+      resolveVideo(item.path)
+        .then((fresh) => {
+          if (fresh.videoUrl) {
+            setDirectVideo((prev) =>
+              prev && prev.path === item.path
+                ? { ...prev, videoUrl: fresh.videoUrl, image: fresh.posterUrl || prev.image, sources: [{ label: "Original", url: fresh.videoUrl }] }
+                : prev
+            );
+          }
+        })
+        .catch((err) => console.warn("Failed to resolve fresh video URL", err));
+    }
   }, []);
 
   // Called when user picks a result from Search
